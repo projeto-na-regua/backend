@@ -1,11 +1,9 @@
 # NaRegua (Back-end)
-
 Repositório destinado aos arquivos de desenvolvimento back-end.
 
-![Logo-Photoroom png-Photoroom](https://github.com/project-na-regua/NaRegua-Frontend/assets/86022706/b79fea92-8265-4bf1-a503-e6e7bf936960)
-
-
 ## O projeto
+
+![Design sem nome (3)](https://github.com/project-na-regua/NaRegua-Backend/assets/86022706/1f3f5e13-9a1b-42e0-a0dd-2a716575150b)
 
 Nas comunidades mais carentes, como favelas e bairros periféricos, há uma riqueza de talento e habilidades que muitas vezes passam despercebidas. Entre esses talentos estão os barbeiros, profissionais que não só são especialistas em cortes de cabelo, mas muitas vezes também são pilares fundamentais dessas comunidades. No entanto, a falta de acesso a recursos tecnológicos e sistemas de gestão tem sido uma barreira significativa para o desenvolvimento profissional desses barbeiros. 
 
