@@ -42,3 +42,10 @@ Inclusão Digital: Ao oferecer treinamento e suporte para o uso da plataforma, e
  
 
 Valorização da Cultura Local: Este projeto não apenas beneficia os barbeiros, mas também contribui para valorizar a cultura local das comunidades. Ao destacar os serviços e talentos únicos desses profissionais, estamos promovendo um senso de orgulho e identidade nessas áreas. 
+
+### 🤝 Equipe:
+- Melissa Neves
+- Douglas Queiroz
+- Rian Neris
+- Gabriel Perniconi
+- Lucas Farias
