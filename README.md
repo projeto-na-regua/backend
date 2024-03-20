@@ -2,7 +2,7 @@
 
 Repositório destinado aos arquivos de desenvolvimento back-end.
 
-# O Projeto
+## O projeto
 
 Nas comunidades mais carentes, como favelas e bairros periféricos, há uma riqueza de talento e habilidades que muitas vezes passam despercebidas. Entre esses talentos estão os barbeiros, profissionais que não só são especialistas em cortes de cabelo, mas muitas vezes também são pilares fundamentais dessas comunidades. No entanto, a falta de acesso a recursos tecnológicos e sistemas de gestão tem sido uma barreira significativa para o desenvolvimento profissional desses barbeiros. 
 
