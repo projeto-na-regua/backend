@@ -1,4 +1,4 @@
-package projetopi.projetopi;
+package projetopi.projetopi.dominio;
 
 public abstract class Usuario {
     private String nome;

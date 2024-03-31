@@ -1,8 +1,10 @@
-package projetopi.projetopi;
+package projetopi.projetopi.dominio;
 
-import java.time.LocalDateTime;
+import projetopi.projetopi.dominio.*;
 
 public interface iAgendavel {
 
     AgendaAux agendar(Barbearia b, Barbeiro bb, Cliente c, Servico s);
+
+
 }

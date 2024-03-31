@@ -1,10 +1,19 @@
-package projetopi.projetopi;
+package projetopi.projetopi.dominio;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class Cliente extends Usuario implements iAgendavel{
+@Entity
+public class Cliente extends Usuario implements iAgendavel {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
     public Cliente(String nome, String telefone, String email) {
         super(nome, telefone, email);
@@ -24,5 +33,11 @@ public class Cliente extends Usuario implements iAgendavel{
 
     }
 
+    public Integer getId() {
+        return id;
+    }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
 }

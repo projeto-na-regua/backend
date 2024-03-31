@@ -1,9 +1,15 @@
-package projetopi.projetopi;
+package projetopi.projetopi.dominio;
 
-import java.time.LocalDateTime;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 
-public class Barbearia implements iAgendavel{
-
+@Entity
+public class Barbearia implements iAgendavel {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
     private String nomeDoNegocio;
     private String celular;
     private String email;
@@ -20,6 +26,20 @@ public class Barbearia implements iAgendavel{
         this.logradouro = logradouro;
         this.numero = numero;
         this.cidade = cidade;
+    }
+
+
+    @Override
+    public AgendaAux agendar(Barbearia b, Barbeiro bb, Cliente c, Servico s) {
+        return null;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getNomeDoNegocio() {
@@ -91,10 +111,4 @@ public class Barbearia implements iAgendavel{
                 '}';
     }
 
-    @Override
-        public AgendaAux agendar(Barbearia b, Barbeiro bb, Cliente c, Servico s) {
-
-        return null;
-
-            }
 }

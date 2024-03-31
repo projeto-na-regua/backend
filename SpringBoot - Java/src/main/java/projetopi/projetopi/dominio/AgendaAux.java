@@ -1,10 +1,15 @@
-package projetopi.projetopi;
+package projetopi.projetopi.dominio;
 
-import org.springframework.cglib.core.Local;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 
-import java.time.LocalDateTime;
-
+@Entity
 public class AgendaAux {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
     private String nomeCliente;
     private String nomeBarbearia;
     private String enderecoBarbearia;
@@ -17,7 +22,10 @@ public class AgendaAux {
     private Double precoServico;
     private String horario;
 
-    public AgendaAux(String nomeCliente, String nomeBarbearia, String enderecoBarbearia, String numeroBarbearia, String cep, String cidade, String nomeBarbeiro, String nomeServico, Integer tempoEstimado, Double precoServico, String horario) {
+    public AgendaAux(String nomeCliente, String nomeBarbearia,
+                     String enderecoBarbearia, String numeroBarbearia, String cep,
+                     String cidade, String nomeBarbeiro, String nomeServico,
+                     Integer tempoEstimado, Double precoServico, String horario) {
         this.nomeCliente = nomeCliente;
         this.nomeBarbearia = nomeBarbearia;
         this.enderecoBarbearia = enderecoBarbearia;
@@ -29,6 +37,14 @@ public class AgendaAux {
         this.tempoEstimado = tempoEstimado;
         this.precoServico = precoServico;
         this.horario = horario;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getNomeCliente() {
