@@ -1,37 +1,35 @@
 package projetopi.projetopi.dominio;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.annotation.Nullable;
+import jakarta.persistence.*;
 
 @Entity
-public class Barbearia implements iAgendavel {
+public class Barbearia {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="id_barbearia",unique = true, nullable = false)
     private Integer id;
+    @Column(name="nome_negocio", unique = true, nullable = false)
     private String nomeDoNegocio;
+    @Column(name="celular", unique = true, nullable = false)
     private String celular;
+    @Column(name="email", unique = true, nullable = false)
     private String email;
-    private String cep;
-    private String logradouro;
-    private String numero;
-    private String cidade;
+    @JsonIgnore
+    @Column(name="img_perfil")
+    private byte[] imgPerfil;
+    @OneToOne(cascade = CascadeType.ALL)
+    //name: nome da coluna 'fk', referencedColumnName: nome da coluna original da tabela referenciada:
+    @JoinColumn(name = "barbearia_fk_endereco", referencedColumnName = "id_endereco")
+    private Endereco endereco;
 
-    public Barbearia(String nomeDoNegocio, String celular, String email, String cep, String logradouro, String numero, String cidade) {
+    public Barbearia(String nomeDoNegocio, String celular, String email, byte[] imgPerfil, Endereco endereco) {
         this.nomeDoNegocio = nomeDoNegocio;
         this.celular = celular;
         this.email = email;
-        this.cep = cep;
-        this.logradouro = logradouro;
-        this.numero = numero;
-        this.cidade = cidade;
-    }
-
-
-    @Override
-    public AgendaAux agendar(Barbearia b, Barbeiro bb, Cliente c, Servico s) {
-        return null;
+        this.imgPerfil = imgPerfil;
+        this.endereco = endereco;
     }
 
     public Integer getId() {
@@ -66,49 +64,19 @@ public class Barbearia implements iAgendavel {
         this.email = email;
     }
 
-    public String getCep() {
-        return cep;
+    public byte[] getImgPerfil() {
+        return imgPerfil;
     }
 
-    public void setCep(String cep) {
-        this.cep = cep;
+    public void setImgPerfil(byte[] imgPerfil) {
+        this.imgPerfil = imgPerfil;
     }
 
-    public String getLogradouro() {
-        return logradouro;
+    public Endereco getEndereco() {
+        return endereco;
     }
 
-    public void setLogradouro(String logradouro) {
-        this.logradouro = logradouro;
+    public void setEndereco(Endereco endereco) {
+        this.endereco = endereco;
     }
-
-    public String getNumero() {
-        return numero;
-    }
-
-    public void setNumero(String numero) {
-        this.numero = numero;
-    }
-
-    public String getCidade() {
-        return cidade;
-    }
-
-    public void setCidade(String cidade) {
-        this.cidade = cidade;
-    }
-
-    @Override
-    public String toString() {
-        return "Barbearia{" +
-                "nomeDoNegocio='" + nomeDoNegocio + '\'' +
-                ", celular='" + celular + '\'' +
-                ", email='" + email + '\'' +
-                ", cep='" + cep + '\'' +
-                ", logradouro='" + logradouro + '\'' +
-                ", numero='" + numero + '\'' +
-                ", cidade='" + cidade + '\'' +
-                '}';
-    }
-
 }

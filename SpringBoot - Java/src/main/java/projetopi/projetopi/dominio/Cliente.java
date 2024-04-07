@@ -1,43 +1,41 @@
 package projetopi.projetopi.dominio;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 @Entity
 public class Cliente extends Usuario implements iAgendavel {
+    @OneToOne
+    //name: nome da coluna 'fk', referencedColumnName: nome da coluna original da tabela referenciada:
+    @JoinColumn(name = "barbearia_fk_endereco", referencedColumnName = "id_endereco")
+    private Endereco endereco;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    public Cliente() {}
 
-    public Cliente(String nome, String telefone, String email) {
-        super(nome, telefone, email);
+    public Cliente(Integer id, String nome, String email, String senha, String celular, byte[] imgPerfil,
+                   boolean adm, Barbearia barbearia, Endereco endereco) {
+        super(id, nome, email, senha, celular, imgPerfil, adm, barbearia);
+        this.endereco = endereco;
     }
 
     @Override
-    public AgendaAux agendar(Barbearia b, Barbeiro bb, Cliente c, Servico s) {
+    public AgendaAux agendar(Barbearia bb, Barbeiro b, Cliente c, Servico s, Especialidade e, Boolean concluido, Avaliacao avaliacao) {
+        LocalDateTime dataHora = LocalDateTime.now();
 
-        LocalDateTime horario = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH'h'mm");
-
-        AgendaAux a = new AgendaAux(c.getNome(), b.getNomeDoNegocio(), b.getLogradouro(), b.getNumero(), b.getCep(), b.getCidade(), bb.getNome(), s.getNomeDoServico(),s.getTempoEstimado(), s.getPrecoServico(), horario.format(formatter));
+        // Crie um novo objeto AgendaAux usando o construtor apropriado
+        AgendaAux a = new AgendaAux(dataHora, s, b, c, bb, e, concluido, avaliacao);
 
         System.out.println(a);
 
         return a;
-
     }
 
-    public Integer getId() {
-        return id;
+    public Endereco getEndereco() {
+        return endereco;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setEndereco(Endereco endereco) {
+        this.endereco = endereco;
     }
 }

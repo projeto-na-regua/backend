@@ -1,42 +1,45 @@
 package projetopi.projetopi.dominio;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import org.springframework.cglib.core.Local;
+
+import java.time.LocalDateTime;
 
 @Entity
 public class AgendaAux {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="id_agendamento", nullable = false)
     private Integer id;
-    private String nomeCliente;
-    private String nomeBarbearia;
-    private String enderecoBarbearia;
-    private String numeroBarbearia;
-    private String cep;
-    private String cidade;
-    private String nomeBarbeiro;
-    private String nomeServico;
-    private Integer tempoEstimado;
-    private Double precoServico;
-    private String horario;
+    @Column(name="data_hora")
+    private LocalDateTime dataHora;
+    @Column(name="concluido")
+    private Boolean concluido;
+    @Column(name="ag_fk_servico", nullable = false)
+    private Servico servico;
+    @Column(name="ag_fk_barbeiro", nullable = false)
+    private Barbeiro barbeiro;
+    @Column(name="ag_fk_cliente", nullable = false)
+    private Cliente cliente;
+    @Column(name="ag_fk_barbearia", nullable = false)
+    private Barbearia barbearia;
+    @Column(name="ag_fk_especialidade", nullable = false)
+    private Especialidade especialidade;
+    @Column(name="ag_fk_avaliacao", nullable = false)
+    private Avaliacao avaliacao;
 
-    public AgendaAux(String nomeCliente, String nomeBarbearia,
-                     String enderecoBarbearia, String numeroBarbearia, String cep,
-                     String cidade, String nomeBarbeiro, String nomeServico,
-                     Integer tempoEstimado, Double precoServico, String horario) {
-        this.nomeCliente = nomeCliente;
-        this.nomeBarbearia = nomeBarbearia;
-        this.enderecoBarbearia = enderecoBarbearia;
-        this.numeroBarbearia = numeroBarbearia;
-        this.cep = cep;
-        this.cidade = cidade;
-        this.nomeBarbeiro = nomeBarbeiro;
-        this.nomeServico = nomeServico;
-        this.tempoEstimado = tempoEstimado;
-        this.precoServico = precoServico;
-        this.horario = horario;
+    public AgendaAux(){}
+
+    public AgendaAux( LocalDateTime dataHora, Servico servico, Barbeiro barbeiro,
+                     Cliente cliente, Barbearia barbearia, Especialidade especialidade, Boolean concluido, Avaliacao avaliacao) {
+        this.dataHora = dataHora;
+        this.servico = servico;
+        this.barbeiro = barbeiro;
+        this.cliente = cliente;
+        this.barbearia = barbearia;
+        this.especialidade = especialidade;
+        this.concluido = concluido;
+        this.avaliacao = avaliacao;
     }
 
     public Integer getId() {
@@ -47,108 +50,67 @@ public class AgendaAux {
         this.id = id;
     }
 
-    public String getNomeCliente() {
-        return nomeCliente;
+    public LocalDateTime getDataHora() {
+        return dataHora;
     }
 
-    public void setNomeCliente(String nomeCliente) {
-        this.nomeCliente = nomeCliente;
+    public void setDataHora(LocalDateTime dataHora) {
+        this.dataHora = dataHora;
     }
 
-    public String getNomeBarbearia() {
-        return nomeBarbearia;
+    public Servico getServico() {
+        return servico;
     }
 
-    public void setNomeBarbearia(String nomeBarbearia) {
-        this.nomeBarbearia = nomeBarbearia;
+    public void setServico(Servico servico) {
+        this.servico = servico;
     }
 
-    public String getEnderecoBarbearia() {
-        return enderecoBarbearia;
+    public Barbeiro getBarbeiro() {
+        return barbeiro;
     }
 
-    public void setEnderecoBarbearia(String enderecoBarbearia) {
-        this.enderecoBarbearia = enderecoBarbearia;
+    public void setBarbeiro(Barbeiro barbeiro) {
+        this.barbeiro = barbeiro;
     }
 
-    public String getNumeroBarbearia() {
-        return numeroBarbearia;
+    public Cliente getCliente() {
+        return cliente;
     }
 
-    public void setNumeroBarbearia(String numeroBarbearia) {
-        this.numeroBarbearia = numeroBarbearia;
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
     }
 
-    public String getCep() {
-        return cep;
+    public Barbearia getBarbearia() {
+        return barbearia;
     }
 
-    public void setCep(String cep) {
-        this.cep = cep;
+    public void setBarbearia(Barbearia barbearia) {
+        this.barbearia = barbearia;
     }
 
-    public String getCidade() {
-        return cidade;
+    public Especialidade getEspecialidade() {
+        return especialidade;
     }
 
-    public void setCidade(String cidade) {
-        this.cidade = cidade;
+    public void setEspecialidade(Especialidade especialidade) {
+        this.especialidade = especialidade;
     }
 
-    public String getNomeBarbeiro() {
-        return nomeBarbeiro;
+    public Boolean getConcluido() {
+        return concluido;
     }
 
-    public void setNomeBarbeiro(String nomeBarbeiro) {
-        this.nomeBarbeiro = nomeBarbeiro;
+    public void setConcluido(Boolean concluido) {
+        this.concluido = concluido;
     }
 
-    public String getNomeServico() {
-        return nomeServico;
+    public Avaliacao getAvaliacao() {
+        return avaliacao;
     }
 
-    public void setNomeServico(String nomeServico) {
-        this.nomeServico = nomeServico;
-    }
-
-    public Integer getTempoEstimado() {
-        return tempoEstimado;
-    }
-
-    public void setTempoEstimado(Integer tempoEstimado) {
-        this.tempoEstimado = tempoEstimado;
-    }
-
-    public Double getPrecoServico() {
-        return precoServico;
-    }
-
-    public void setPrecoServico(Double precoServico) {
-        this.precoServico = precoServico;
-    }
-
-    public String getHorario() {
-        return horario;
-    }
-
-    public void setHorario(String horario) {
-        this.horario = horario;
-    }
-
-    @Override
-    public String toString() {
-        return """
-                Caro %s, seu agendamento foi realizado!
-                
-                ----------------------
-                
-                Barbearia: %s
-                Endereço: %s, %s - %s - %s
-                Barbeiro: %s
-                Serviço: %s
-                Tempo estimado: %s minutos
-                Preço: R$%.2f
-                Horário: %s
-                """.formatted(nomeCliente, nomeBarbearia, enderecoBarbearia, numeroBarbearia, cep, cidade, nomeBarbeiro, nomeServico, tempoEstimado, precoServico, horario);
+    public void setAvaliacao(Avaliacao avaliacao) {
+        this.avaliacao = avaliacao;
     }
 }

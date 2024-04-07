@@ -43,28 +43,28 @@ public class AgendamentoController{
         return status(404).build();
     }
 
-    @DeleteMapping("{Id}")
-    public ResponseEntity<AgendaAux> deletarAgendamento(@PathVariable Integer Id){
-        if (repository.existsById(Id)) {
-            repository.deleteById(Id);
+    @DeleteMapping("{id}")
+    public ResponseEntity<AgendaAux> deletarAgendamento(@PathVariable Integer id){
+        if (repository.existsById(id)) {
+            repository.deleteById(id);
             return status(204).build();
         }
         return status(404).build();
     }
 
-    @GetMapping("/agenda-barbeiro/{nomeBarbeiro}")
+    @GetMapping("{nomeBarbeiro}")
     public ResponseEntity<List<AgendaAux>> agendamentosPorBarbeiro(@PathVariable String nomeBarbeiro){
         var lista = repository.findAllByNomeBarbeiro(nomeBarbeiro);
         return status(200).body(lista);
     }
 
-    @GetMapping("/agenda-cliente/{nomeCliente}")
+    @GetMapping("{nomeCliente}")
     public ResponseEntity<List<AgendaAux>> agendamentosPorCliente(@PathVariable String nomeCliente){
         var lista = repository.findAllByNomeCliente(nomeCliente);
         return status(200).body(lista);
     }
 
-    @GetMapping("/agenda-barbearia/{nomeBarbearia}")
+    @GetMapping("{nomeBarbearia}")
     public ResponseEntity<List<AgendaAux>> agendamentosPorBarbearia(@PathVariable String nomeBarbearia){
         var lista = repository.findAllByNomeBarbearia(nomeBarbearia);
         return status(200).body(lista);
