@@ -1,42 +1,27 @@
 package projetopi.projetopi.dominio;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import projetopi.projetopi.dominio.Usuario;
+import jakarta.persistence.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Entity
-public class Barbeiro extends Usuario {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-    private Boolean administrador;
+public class Barbeiro extends Usuario implements iAgendavel {
+    public Barbeiro(){}
 
-    private List<Servico> servicos;
-
-    public Barbeiro(String nome, String telefone, String email, Boolean administrador) {
-        super(nome, telefone, email);
-        this.administrador = administrador;
-        List<Servico> servicos = new ArrayList<>();
+    public Barbeiro(Integer id, String nome, String email, String senha, String celular, byte[] imgPerfil,
+                    boolean adm, Barbearia barbearia) {
+        super(id, nome, email, senha, celular, imgPerfil, adm, barbearia);
     }
 
-    public Boolean getAdministrador() {
-        return administrador;
-    }
+    @Override
+    public AgendaAux agendar(Barbearia bb, Barbeiro b, Cliente c, Servico s, Especialidade e, Boolean concluido, Avaliacao avaliacao) {
+        LocalDateTime dataHora = LocalDateTime.now();
 
-    public void setAdministrador(Boolean administrador) {
-        this.administrador = administrador;
-    }
+        // Crie um novo objeto AgendaAux usando o construtor apropriado
+        AgendaAux a = new AgendaAux(dataHora, s, b, c, bb, e, concluido, avaliacao);
 
-    public List<Servico> getServicos() {
-        return servicos;
-    }
+        System.out.println(a);
 
-    public void setServicos(List<Servico> servicos) {
-        this.servicos = servicos;
+        return a;
     }
 }
