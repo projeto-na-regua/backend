@@ -14,7 +14,9 @@ public class Financa {
     private Double valor;
     @Column(name="dt_lancamento")
     private LocalDateTime dtLancamento;
-    @Column(name="financeiro_fk_barberia")
+
+    @OneToOne
+    @PrimaryKeyJoinColumn(name="financeiro_fk_barberia")
     private Barbearia barbearia;
 
     public Financa(Integer id, Double valor, LocalDateTime dtLancamento, Barbearia barbearia) {

@@ -1,12 +1,11 @@
 package projetopi.projetopi.dominio;
 
 import jakarta.persistence.*;
-import org.springframework.cglib.core.Local;
 
 import java.time.LocalDateTime;
 
 @Entity
-public class AgendaAux {
+public class Agendamento {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id_agendamento", nullable = false)
@@ -15,23 +14,35 @@ public class AgendaAux {
     private LocalDateTime dataHora;
     @Column(name="concluido")
     private Boolean concluido;
-    @Column(name="ag_fk_servico", nullable = false)
+
+    @ManyToOne
+    @PrimaryKeyJoinColumn(name="ag_fk_servico")
     private Servico servico;
-    @Column(name="ag_fk_barbeiro", nullable = false)
+
+    @ManyToOne
+    @PrimaryKeyJoinColumn(name="ag_fk_barbeiro")
     private Barbeiro barbeiro;
-    @Column(name="ag_fk_cliente", nullable = false)
+
+    @ManyToOne
+    @PrimaryKeyJoinColumn(name="ag_fk_cliente")
     private Cliente cliente;
-    @Column(name="ag_fk_barbearia", nullable = false)
+
+    @ManyToOne
+    @PrimaryKeyJoinColumn(name="ag_fk_barbearia")
     private Barbearia barbearia;
-    @Column(name="ag_fk_especialidade", nullable = false)
+
+    @ManyToOne
+    @PrimaryKeyJoinColumn(name="ag_fk_especialidade")
     private Especialidade especialidade;
-    @Column(name="ag_fk_avaliacao", nullable = false)
+
+    @OneToOne
+    @PrimaryKeyJoinColumn(name="ag_fk_avaliacao")
     private Avaliacao avaliacao;
 
-    public AgendaAux(){}
+    public Agendamento(){}
 
-    public AgendaAux( LocalDateTime dataHora, Servico servico, Barbeiro barbeiro,
-                     Cliente cliente, Barbearia barbearia, Especialidade especialidade, Boolean concluido, Avaliacao avaliacao) {
+    public Agendamento(LocalDateTime dataHora, Servico servico, Barbeiro barbeiro,
+                       Cliente cliente, Barbearia barbearia, Especialidade especialidade, Boolean concluido, Avaliacao avaliacao) {
         this.dataHora = dataHora;
         this.servico = servico;
         this.barbeiro = barbeiro;

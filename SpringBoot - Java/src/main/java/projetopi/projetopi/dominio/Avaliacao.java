@@ -9,10 +9,11 @@ import java.math.BigDecimal;
 @Table(name="avaliacao")
 public class Avaliacao {
     @Id
+    @PrimaryKeyJoinColumn
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id_avaliacao", nullable = false)
     private Integer id;
-    @Column(name="resultado_avaliacao", columnDefinition = "DECIMAL(5,2)")
+    @Column(name="resultado_avaliacao", columnDefinition = "DECIMAL(3,2)")
     private BigDecimal resultadoAvaliacao;
 
     public Avaliacao(Integer id, BigDecimal resultadoAvaliacao) {
