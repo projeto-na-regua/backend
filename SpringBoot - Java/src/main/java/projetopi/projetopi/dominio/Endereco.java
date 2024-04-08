@@ -1,13 +1,17 @@
 package projetopi.projetopi.dominio;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 @Entity
 public class Endereco {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_endereco", unique = true, nullable = false)
+    @Column(name = "id_endereco", nullable = false)
     private Integer id;
+
+    @Size(max = 9)
     @Column(name = "cep")
     private String cep;
     @Column(name = "logradouro")
@@ -20,16 +24,6 @@ public class Endereco {
     private String cidade;
     @Column(name = "estado")
     private String estado;
-
-    public Endereco(Integer id, String cep, String logradouro, Integer numero, String complemento, String cidade, String estado) {
-        this.id = id;
-        this.cep = cep;
-        this.logradouro = logradouro;
-        this.numero = numero;
-        this.complemento = complemento;
-        this.cidade = cidade;
-        this.estado = estado;
-    }
 
     public Integer getId() {
         return id;

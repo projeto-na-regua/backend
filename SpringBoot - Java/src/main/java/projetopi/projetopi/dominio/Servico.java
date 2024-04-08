@@ -23,7 +23,7 @@ public class Servico {
     @JoinColumn(name="servico_fk_cliente", nullable = false)
     private Cliente cliente;
     @ManyToOne
-    @JoinColumn(name="servico_fk_barbearia", nullable = false)
+    @PrimaryKeyJoinColumn(name="servico_fk_barbearia")
     private Barbearia barbearia;
     @ManyToOne
     @JoinColumn(name="servico_fk_especialidade", nullable = false)

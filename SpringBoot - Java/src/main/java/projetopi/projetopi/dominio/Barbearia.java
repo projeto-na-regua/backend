@@ -8,29 +8,20 @@ import jakarta.persistence.*;
 public class Barbearia {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id_barbearia",unique = true, nullable = false)
+    @Column(name="id_barbearia")
     private Integer id;
-    @Column(name="nome_negocio", unique = true, nullable = false)
+    @Column(name="nome_negocio")
     private String nomeDoNegocio;
-    @Column(name="celular", unique = true, nullable = false)
+    @Column(name="celular")
     private String celular;
-    @Column(name="email", unique = true, nullable = false)
+    @Column(name="email")
     private String email;
     @JsonIgnore
     @Column(name="img_perfil")
     private byte[] imgPerfil;
-    @OneToOne(cascade = CascadeType.ALL)
-    //name: nome da coluna 'fk', referencedColumnName: nome da coluna original da tabela referenciada:
-    @JoinColumn(name = "barbearia_fk_endereco", referencedColumnName = "id_endereco")
+    @ManyToOne()
+    @JoinColumn(name = "barbearia_fk_endereco", nullable = true)
     private Endereco endereco;
-
-    public Barbearia(String nomeDoNegocio, String celular, String email, byte[] imgPerfil, Endereco endereco) {
-        this.nomeDoNegocio = nomeDoNegocio;
-        this.celular = celular;
-        this.email = email;
-        this.imgPerfil = imgPerfil;
-        this.endereco = endereco;
-    }
 
     public Integer getId() {
         return id;

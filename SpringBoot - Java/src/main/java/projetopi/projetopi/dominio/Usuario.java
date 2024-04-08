@@ -2,40 +2,50 @@ package projetopi.projetopi.dominio;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 @Entity
 public abstract class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id_usuario", unique = true, nullable = false)
+    @Column(name="id_usuario", nullable = false)
     private Integer id;
+
+    @NotBlank
+    @Size(min = 5, max = 120)
     @Column(name="nome", nullable = false)
     private String nome;
+
+    @Email
+    @NotBlank
+    @Size(min = 0, max = 250)
     @Column(name="email")
     private String email;
+
+    @Size(min = 8, max = 12)
+    @NotBlank
     @Column(name="senha")
     private String senha;
+
+    @NotBlank
+    @Size(max = 15)
     @Column(name="celular")
     private String celular;
     @JsonIgnore
-    @Column(name="imgPerfil")
+    @Column(name="img_perfil")
     private byte[] imgPerfil;
-    @Column(name="user_admin")
-    private boolean adm;
-    @Column(name="user_fk_barbearia")
-    private Barbearia barbearia;
 
     public Usuario(){}
 
-    public Usuario(Integer id, String nome, String email, String senha, String celular, byte[] imgPerfil, boolean adm, Barbearia barbearia) {
+    public Usuario(Integer id, String nome, String email, String senha, String celular, byte[] imgPerfil) {
         this.id = id;
         this.nome = nome;
         this.email = email;
         this.senha = senha;
         this.celular = celular;
         this.imgPerfil = imgPerfil;
-        this.adm = adm;
-        this.barbearia = barbearia;
     }
 
     public Integer getId() {
@@ -84,21 +94,5 @@ public abstract class Usuario {
 
     public void setImgPerfil(byte[] imgPerfil) {
         this.imgPerfil = imgPerfil;
-    }
-
-    public boolean isAdm() {
-        return adm;
-    }
-
-    public void setAdm(boolean adm) {
-        this.adm = adm;
-    }
-
-    public Barbearia getBarbearia() {
-        return barbearia;
-    }
-
-    public void setBarbearia(Barbearia barbearia) {
-        this.barbearia = barbearia;
     }
 }
