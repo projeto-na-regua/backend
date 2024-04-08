@@ -1,8 +1,10 @@
 package projetopi.projetopi.dominio;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Entity
 public class Barbeiro extends Usuario implements iAgendavel {
@@ -10,8 +12,9 @@ public class Barbeiro extends Usuario implements iAgendavel {
     @Column(name="usuario_admin")
     private boolean adm;
 
+    @JsonIgnore
     @ManyToOne
-    @JoinColumn(name="usuario_fk_barbearia", nullable = true)
+    @JoinColumn(name="usuario_fk_barbearia")
     private Barbearia barbearia;
 
 
@@ -42,4 +45,5 @@ public class Barbeiro extends Usuario implements iAgendavel {
     public void setBarbearia(Barbearia barbearia) {
         this.barbearia = barbearia;
     }
+
 }

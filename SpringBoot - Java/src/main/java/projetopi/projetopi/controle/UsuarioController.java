@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import projetopi.projetopi.dominio.*;
 import projetopi.projetopi.repositorio.*;
+import projetopi.projetopi.util.CadastroBarbearia;
 
 import java.util.List;
 
@@ -27,30 +28,37 @@ public class UsuarioController {
     @Autowired
     private BarbeariasRepository barbeariasRepository;
 
-    @PostMapping() // CADASTRO CLIENTE
+    @PostMapping("/cadastro") // CADASTRO CLIENTE
     private ResponseEntity<Cliente> cadastrarCliente(@Valid @RequestBody Cliente c){
-        enderecoRepository.save(c.getEndereco());
+        Integer idEdereco = enderecoRepository.save(c.getEndereco()).getId();
+        c.setEndereco(enderecoRepository.getReferenceById(idEdereco));
         clienteRepository.save(c);
         return status(201).body(c);
     }
 
-    @PostMapping("/barbeiros") // CADASTRO BARBEIRO
-    private ResponseEntity<Barbeiro> cadastrarBarbeiro(@Valid @RequestBody Barbeiro nvBarberio){
+    @PostMapping("/cadastro-barbearia") // CADASTRO BARBEIRO
+    private ResponseEntity<CadastroBarbearia> cadastrarBarbeiro(@Valid @RequestBody CadastroBarbearia nvBarbearia){
 
-        var barbearias = barbeariasRepository.findAll();
+        Endereco endereco = nvBarbearia.getBarbearia().getEndereco();
+        Barbearia barbearia = nvBarbearia.getBarbearia();
+        Barbeiro barbeiro = nvBarbearia.getBarbeiro();
 
-        for (Barbearia b: barbearias) {
+        Integer idEndereco = enderecoRepository.save(endereco).getId();
 
-            if(barbearias.equals(nvBarberio.getBarbearia())){
-                barbeiroRepository.save(nvBarberio);
-            }
+        barbearia.setEndereco(enderecoRepository.getReferenceById(idEndereco));
 
-        }
+        Integer idBarbearia = barbeariasRepository.save(barbearia).getId();
 
-        enderecoRepository.save(nvBarberio.getBarbearia().getEndereco());
-        barbeariasRepository.save(nvBarberio.getBarbearia());
-        barbeiroRepository.save(nvBarberio);
-        return status(201).body(nvBarberio);
+
+        barbeiro.setBarbearia(barbeariasRepository.getReferenceById(idBarbearia));
+        barbeiro.setAdm(true);
+
+        barbeiroRepository.save(barbeiro);
+
+        return status(201).body(nvBarbearia);
+
     }
+
+    //LOGIN E LOGAUT AQUI
 
 }
