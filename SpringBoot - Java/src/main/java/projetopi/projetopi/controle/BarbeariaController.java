@@ -37,15 +37,12 @@ public class BarbeariaController {
         @PostMapping("/funcionarios/{fk}")
         public ResponseEntity<Barbeiro> postBarberiro(@PathVariable Integer fk, @Valid @RequestBody Barbeiro nvBarbeiro){
 
-            if(barbeariasRepository.findById(fk).isEmpty()){
-                return status(404).build();
-            }
-
-            nvBarbeiro.setBarbearia(barbeariasRepository.findById(fk).get());
+            nvBarbeiro.setBarbearia(barbeariasRepository.getReferenceById(fk));
             barbeiroRepository.save(nvBarbeiro);
             return status(201).body(nvBarbeiro);
 
         }
+
 
 
 }
