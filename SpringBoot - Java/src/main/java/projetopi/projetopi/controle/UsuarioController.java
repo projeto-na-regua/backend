@@ -59,6 +59,6 @@ public class UsuarioController {
 
     }
 
-    //LOGIN E LOGAUT AQUI
+    //LOGIN E LOGOUT AQUI
 
 }

@@ -2,7 +2,13 @@ package projetopi.projetopi.dominio;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Size;
+import org.hibernate.validator.constraints.br.CNPJ;
+import org.hibernate.validator.constraints.br.CPF;
+import projetopi.projetopi.util.Dia;
 
+import java.time.LocalTime;
 import java.util.Optional;
 
 @Entity
@@ -17,6 +23,22 @@ public class Barbearia {
     @JsonIgnore
     @Column(name="img_perfil")
     private byte[] imgPerfil;
+
+    @Column(name = "email_negocio", nullable = true)
+    @Email
+    private String emailNegocio;
+
+    @Size(max = 15)
+    @Column(name = "celular_negocio", nullable = true)
+    private String celularNegocio;
+
+    @Column(name = "cnpj", nullable = true)
+    @CNPJ
+    private String cnpj;
+
+    @Column(name = "cpf", nullable = true)
+    @CPF
+    private String cpf;
 
     @ManyToOne()
     @JoinColumn(name = "barbearia_fk_endereco", nullable = false)
