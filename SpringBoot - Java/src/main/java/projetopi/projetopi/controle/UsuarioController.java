@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import projetopi.projetopi.dominio.*;
+import projetopi.projetopi.dto.request.CadastroCliente;
 import projetopi.projetopi.repositorio.*;
 import projetopi.projetopi.dto.request.CadastroBarbearia;
 
@@ -30,11 +31,14 @@ public class UsuarioController {
     private DiaSemanaRepository diaSemanaRepository;
 
     @PostMapping("/cadastro") // CADASTRO CLIENTE
-    private ResponseEntity<Cliente> cadastrarCliente(@Valid @RequestBody Cliente c){
-        Integer idEdereco = enderecoRepository.save(c.getEndereco()).getId();
-        c.setEndereco(enderecoRepository.getReferenceById(idEdereco));
-        clienteRepository.save(c);
-        return status(201).body(c);
+    private ResponseEntity<Cliente> cadastrarCliente(@Valid @RequestBody CadastroCliente c){
+        Integer idEdereco = enderecoRepository.save(c.gerarEndereco()).getId();
+        Cliente cliente = c.gerarCliente();
+
+        cliente.setEndereco(enderecoRepository.getReferenceById(idEdereco));
+        clienteRepository.save(cliente);
+
+        return status(201).body(cliente);
     }
 
     @PostMapping("/cadastro-barbearia") // CADASTRO BARBEIRO
