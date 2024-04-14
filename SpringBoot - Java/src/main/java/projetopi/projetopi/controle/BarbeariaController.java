@@ -64,36 +64,37 @@ public class BarbeariaController {
         return status(200).body(diaSemanaRepository.findByBarbeariaId(id));
     }
 
-    @PutMapping("/perfil/endereco/{id}")
-    public ResponseEntity<Barbearia> editarPefil(@PathVariable Integer id, @Valid @RequestBody Endereco end){
+
+    @PutMapping("/perfil/info/{id}")
+    public ResponseEntity<InfoBarbearia> editarPerfilInfo(@PathVariable Integer id, @Valid @RequestBody InfoBarbearia nvBarbearia){
 
         if (!barbeariasRepository.existsById(id)){
             return status(404).build();
         }
 
-        Barbearia b = barbeariasRepository.findById(id).get();
-        Integer idEnd = b.getEndereco().getId();
-
-        end.setId(idEnd);
-        enderecoRepository.save(end);
-        return status(200).body(b);
-
+        Barbearia b = nvBarbearia.gerarBarbearia();
+        b.setEndereco(barbeariasRepository.getReferenceById(id).getEndereco());
+        b.setId(id);
+        barbeariasRepository.save(b);
+        return status(200).body(nvBarbearia);
     }
 
-
-
-    @PutMapping("/perfil/{id}")
-    public ResponseEntity<Barbearia> editarPerfilInfo(@PathVariable Integer id, @Valid @RequestBody Barbearia nvBarbearia){
+    @PutMapping("/perfil/endereco/{id}")
+    public ResponseEntity<InfoEndereco> editarPefil(@PathVariable Integer id, @Valid @RequestBody InfoEndereco nvEndereco){
 
         if (!barbeariasRepository.existsById(id)){
             return status(404).build();
         }
 
-        Barbearia b = barbeariasRepository.findById(id).get();
-        nvBarbearia.setEndereco(b.getEndereco());
-        nvBarbearia.setId(id);
-        barbeariasRepository.save(nvBarbearia);
-        return status(200).body(nvBarbearia);
+        Barbearia b = barbeariasRepository.getReferenceById(id);
+        Endereco endereco = nvEndereco.gerarEndereco();
+
+        endereco.setId(b.getEndereco().getId());
+        enderecoRepository.save(endereco);
+
+
+        return status(200).body(nvEndereco);
+
     }
 
     @PutMapping("perfil/horario-comercial/{id}")

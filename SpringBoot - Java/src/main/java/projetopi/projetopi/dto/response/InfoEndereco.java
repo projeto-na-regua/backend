@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.validation.constraints.Size;
 import projetopi.projetopi.dominio.Barbearia;
 import projetopi.projetopi.dominio.Cliente;
+import projetopi.projetopi.dominio.Endereco;
 
 public class InfoEndereco {
 
@@ -39,6 +40,10 @@ public class InfoEndereco {
         this.complemento = cliente.getEndereco().getComplemento();
         this.cidade = cliente.getEndereco().getCidade();
         this.estado = cliente.getEndereco().getEstado();
+    }
+
+    public Endereco gerarEndereco(){
+        return new Endereco(cep, logradouro, numero, complemento, cidade, estado);
     }
 
 
