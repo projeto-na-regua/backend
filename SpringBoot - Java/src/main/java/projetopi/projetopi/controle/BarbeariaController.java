@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.*;
 import projetopi.projetopi.dominio.Barbearia;
 import projetopi.projetopi.dominio.DiaSemana;
 import projetopi.projetopi.dominio.Endereco;
+import projetopi.projetopi.dto.response.InfoBarbearia;
+import projetopi.projetopi.dto.response.InfoEndereco;
 import projetopi.projetopi.repositorio.BarbeariasRepository;
 import projetopi.projetopi.repositorio.DiaSemanaRepository;
 import projetopi.projetopi.repositorio.EnderecoRepository;
@@ -30,9 +32,36 @@ public class BarbeariaController {
     @Autowired
     private EnderecoRepository enderecoRepository;
 
-    @GetMapping("/perfil/{id}")
-    public ResponseEntity<Barbearia> getPerfil(@PathVariable Integer id){
-        return of(barbeariasRepository.findById(id));
+
+    @GetMapping("/perfil/info/{id}")
+    public ResponseEntity<List<InfoBarbearia>> getPerfil(@PathVariable Integer id){
+
+        if (!barbeariasRepository.existsById(id)){
+            return status(404).build();
+        }
+
+        return status(200).body(barbeariasRepository.findByInfoBarbearia(id));
+    }
+
+
+    @GetMapping("/perfil/endereco/{id}")
+    public ResponseEntity<List<InfoEndereco>> getEndereco(@PathVariable Integer id){
+
+        if (!barbeariasRepository.existsById(id)){
+            return status(404).build();
+        }
+
+        return status(200).body(barbeariasRepository.findByInfoEndereco(id));
+    }
+
+    @GetMapping("/perfil/horario-comercial/{id}")
+    public ResponseEntity<DiaSemana[]> getSemana(@PathVariable Integer id){
+
+        if (!barbeariasRepository.existsById(id)){
+            return status(404).build();
+        }
+
+        return status(200).body(diaSemanaRepository.findByBarbeariaId(id));
     }
 
     @PutMapping("/perfil/endereco/{id}")
@@ -51,7 +80,9 @@ public class BarbeariaController {
 
     }
 
-    @PutMapping("/perfil/info/{id}")
+
+
+    @PutMapping("/perfil/{id}")
     public ResponseEntity<Barbearia> editarPerfilInfo(@PathVariable Integer id, @Valid @RequestBody Barbearia nvBarbearia){
 
         if (!barbeariasRepository.existsById(id)){

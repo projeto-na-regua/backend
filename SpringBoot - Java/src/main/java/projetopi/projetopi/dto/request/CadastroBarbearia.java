@@ -71,7 +71,7 @@ public class CadastroBarbearia {
 
        Barbearia barbearia = new Barbearia();
 
-       barbearia.setNomeDoNegocio(nomeDoNegocio);
+       barbearia.setNomeNegocio(nomeDoNegocio);
 
        if (cnpj.isEmpty()){
            barbearia.setCpf(cpf);
