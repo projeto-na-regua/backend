@@ -6,9 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import projetopi.projetopi.dominio.*;
 import projetopi.projetopi.repositorio.*;
-import projetopi.projetopi.util.CadastroBarbearia;
-
-import java.util.List;
+import projetopi.projetopi.dto.request.CadastroBarbearia;
 
 import static org.springframework.http.ResponseEntity.status;
 
@@ -28,6 +26,9 @@ public class UsuarioController {
     @Autowired
     private BarbeariasRepository barbeariasRepository;
 
+    @Autowired
+    private DiaSemanaRepository diaSemanaRepository;
+
     @PostMapping("/cadastro") // CADASTRO CLIENTE
     private ResponseEntity<Cliente> cadastrarCliente(@Valid @RequestBody Cliente c){
         Integer idEdereco = enderecoRepository.save(c.getEndereco()).getId();
@@ -39,9 +40,10 @@ public class UsuarioController {
     @PostMapping("/cadastro-barbearia") // CADASTRO BARBEIRO
     private ResponseEntity<CadastroBarbearia> cadastrarBarbeiro(@Valid @RequestBody CadastroBarbearia nvBarbearia){
 
-        Endereco endereco = nvBarbearia.getBarbearia().getEndereco();
-        Barbearia barbearia = nvBarbearia.getBarbearia();
-        Barbeiro barbeiro = nvBarbearia.getBarbeiro();
+        Endereco endereco = nvBarbearia.gerarEndereco();
+        Barbearia barbearia = nvBarbearia.gerarBarbearia();
+        Barbeiro barbeiro = nvBarbearia.gerarBarbeiro();
+        DiaSemana[] diaSemana = nvBarbearia.gerarSemena();
 
         Integer idEndereco = enderecoRepository.save(endereco).getId();
 
@@ -49,14 +51,16 @@ public class UsuarioController {
 
         Integer idBarbearia = barbeariasRepository.save(barbearia).getId();
 
-
         barbeiro.setBarbearia(barbeariasRepository.getReferenceById(idBarbearia));
-        barbeiro.setAdm(true);
 
         barbeiroRepository.save(barbeiro);
 
-        return status(201).body(nvBarbearia);
+        for (DiaSemana d: diaSemana){
+            d.setBarbearia(barbeariasRepository.getReferenceById(idBarbearia));
+            diaSemanaRepository.save(d);
+        }
 
+        return status(201).body(nvBarbearia);
     }
 
     //LOGIN E LOGOUT AQUI

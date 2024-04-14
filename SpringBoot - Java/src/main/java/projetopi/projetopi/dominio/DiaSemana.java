@@ -2,6 +2,8 @@ package projetopi.projetopi.dominio;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import org.hibernate.id.IntegralDataTypeHolder;
+import org.yaml.snakeyaml.scanner.ScannerImpl;
 import projetopi.projetopi.util.Dia;
 
 import java.time.LocalTime;
@@ -9,12 +11,12 @@ import java.time.LocalTime;
 @Entity
 public class DiaSemana {
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id_usuario", nullable = false)
+    @Column(name="id_dia_semana", nullable = false)
     private Integer id;
 
+    @Enumerated(EnumType.STRING)
     private Dia nome;
 
     private LocalTime horaAbertura;
@@ -22,8 +24,16 @@ public class DiaSemana {
 
     @JsonIgnore
     @ManyToOne
-    @JoinColumn(name="ds_id_barbearia")
+    @JoinColumn(name = "ds_id_barbearia")
     private Barbearia barbearia;
+
+    public DiaSemana() {
+    }
+
+    public DiaSemana(Dia nome) {
+        this.nome = nome;
+    }
+
 
 
     public Integer getId() {

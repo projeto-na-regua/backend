@@ -25,6 +25,9 @@ public class Endereco {
     @Column(name = "estado")
     private String estado;
 
+    public Endereco() {
+    }
+
     public Integer getId() {
         return id;
     }
