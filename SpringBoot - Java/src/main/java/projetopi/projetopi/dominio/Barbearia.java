@@ -59,6 +59,12 @@ public class Barbearia {
         this.descricao = descricao;
     }
 
+    public Barbearia(String nomeNegocio, String emailNegocio, String celularNegocio, String descricao) {
+        this.nomeNegocio = nomeNegocio;
+        this.emailNegocio = emailNegocio;
+        this.celularNegocio = celularNegocio;
+        this.descricao = descricao;
+    }
 
     public Integer getId() {
         return id;

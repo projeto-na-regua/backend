@@ -37,6 +37,11 @@ public class InfoBarbearia {
         this.descricao = barbearia.getDescricao();
     }
 
+
+    public Barbearia gerarBarbearia(){
+      return new Barbearia(nomeNegocio, emailNegocio, celularNegocio, descricao);
+    }
+
     public String getNomeNegocio() {
         return nomeNegocio;
     }
