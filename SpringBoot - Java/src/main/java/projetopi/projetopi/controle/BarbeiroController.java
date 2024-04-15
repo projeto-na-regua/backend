@@ -37,6 +37,11 @@ public class BarbeiroController {
             return barbeiros.isEmpty() ? status(204).build() : status(200).body(barbeiros);
         }
 
+        @GetMapping("/especifico/{id}")
+        public ResponseEntity<Barbeiro> getFuncionario(@PathVariable Integer id){
+            return of(barbeiroRepository.findById(id));
+        }
+
         @PostMapping("/{fk}")
         public ResponseEntity<Barbeiro> postBarberiro(@PathVariable Integer fk, @Valid @RequestBody Barbeiro nvBarbeiro){
 

@@ -10,6 +10,14 @@ public class Cliente extends Usuario implements iAgendavel {
     @JoinColumn(name = "usuario_fk_endereco", nullable = true)
     private Endereco endereco;
 
+
+    public Cliente(String nome, String email, String celular) {
+        super(nome, email, celular);
+    }
+
+    public Cliente() {
+    }
+
     @Override
     public Agendamento agendar(Barbearia bb, Barbeiro b, Cliente c, Servico s, Especialidade e, Boolean concluido, Avaliacao avaliacao) {
         LocalDateTime dataHora = LocalDateTime.now();

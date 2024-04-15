@@ -43,6 +43,9 @@ public class Barbearia {
     @JoinColumn(name = "barbearia_fk_endereco", nullable = false)
     private Endereco endereco;
 
+
+
+
     public Barbearia() {
     }
 
