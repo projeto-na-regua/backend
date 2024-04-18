@@ -14,7 +14,7 @@ public class Barbearia {
     private Integer id;
 
     @Column(name="nome_negocio")
-    private String nomeDoNegocio;
+    private String nomeNegocio;
 
     @JsonIgnore
     @Column(name="img_perfil")
@@ -43,20 +43,31 @@ public class Barbearia {
     @JoinColumn(name = "barbearia_fk_endereco", nullable = false)
     private Endereco endereco;
 
+
+
+
     public Barbearia() {
     }
 
-    public Barbearia(String nomeDoNegocio, String emailNegocio, String celularNegocio, String cnpj, String cpf, String descricao, Endereco endereco) {
-        this.nomeDoNegocio = nomeDoNegocio;
+    public Barbearia(Endereco endereco) {
+        this.endereco = endereco;
+    }
+
+    public Barbearia(String nomeNegocio, String emailNegocio, String celularNegocio, String cnpj, String cpf, String descricao) {
+        this.nomeNegocio = nomeNegocio;
         this.emailNegocio = emailNegocio;
         this.celularNegocio = celularNegocio;
         this.cnpj = cnpj;
         this.cpf = cpf;
         this.descricao = descricao;
-        this.endereco = endereco;
     }
 
-
+    public Barbearia(String nomeNegocio, String emailNegocio, String celularNegocio, String descricao) {
+        this.nomeNegocio = nomeNegocio;
+        this.emailNegocio = emailNegocio;
+        this.celularNegocio = celularNegocio;
+        this.descricao = descricao;
+    }
 
     public Integer getId() {
         return id;
@@ -66,13 +77,6 @@ public class Barbearia {
         this.id = id;
     }
 
-    public String getNomeDoNegocio() {
-        return nomeDoNegocio;
-    }
-
-    public void setNomeDoNegocio(String nomeDoNegocio) {
-        this.nomeDoNegocio = nomeDoNegocio;
-    }
 
     public byte[] getImgPerfil() {
         return imgPerfil;
@@ -128,5 +132,13 @@ public class Barbearia {
 
     public void setEndereco(Endereco endereco) {
         this.endereco = endereco;
+    }
+
+    public String getNomeNegocio() {
+        return nomeNegocio;
+    }
+
+    public void setNomeNegocio(String nomeNegocio) {
+        this.nomeNegocio = nomeNegocio;
     }
 }
