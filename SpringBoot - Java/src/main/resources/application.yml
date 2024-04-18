@@ -1,0 +1,24 @@
+spring:
+  h2:
+    console:
+      enabled: false
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/db_naregua
+    username: aluno
+    password: sptech
+
+  jpa:
+    defer-datasource-initialization: true
+    properties:
+      hibernate.format_sql: true
+    show-sql: true
+
+server:
+  error:
+    include-message: always
+    include-binding-errors: always
+
+
+
