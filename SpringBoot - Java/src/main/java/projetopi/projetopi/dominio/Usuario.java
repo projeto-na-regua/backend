@@ -33,9 +33,25 @@ public abstract class Usuario {
     @Size(max = 15)
     @Column(name="celular")
     private String celular;
+
     @JsonIgnore
     @Column(name="img_perfil")
     private byte[] imgPerfil;
+
+    @JsonIgnore
+    @Column(name = "dtype", insertable = false, updatable = false)
+    private String dtype;
+
+
+    public Usuario(String nome, String email, String celular) {
+        this.nome = nome;
+        this.email = email;
+        this.celular = celular;
+    }
+
+    public Usuario(String nome) {
+        this.nome = nome;
+    }
 
     public Usuario(){}
 
@@ -94,5 +110,13 @@ public abstract class Usuario {
 
     public void setImgPerfil(byte[] imgPerfil) {
         this.imgPerfil = imgPerfil;
+    }
+
+    public String getDtype() {
+        return dtype;
+    }
+
+    public void setDtype(String dtype) {
+        this.dtype = dtype;
     }
 }

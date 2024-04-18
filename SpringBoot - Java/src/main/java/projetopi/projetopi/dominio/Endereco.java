@@ -28,6 +28,15 @@ public class Endereco {
     public Endereco() {
     }
 
+    public Endereco(String cep, String logradouro, Integer numero, String complemento, String cidade, String estado) {
+        this.cep = cep;
+        this.logradouro = logradouro;
+        this.numero = numero;
+        this.complemento = complemento;
+        this.cidade = cidade;
+        this.estado = estado;
+    }
+
     public Integer getId() {
         return id;
     }

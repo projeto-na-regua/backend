@@ -18,6 +18,21 @@ public class Barbeiro extends Usuario implements iAgendavel {
     private Barbearia barbearia;
 
 
+    @ManyToOne
+    @JoinColumn(name="barbeiro_fk_especialidade", nullable = false)
+    private Especialidade especialidade;
+
+    public Barbeiro(String nome, String email, String celular) {
+        super(nome, email, celular);
+    }
+
+    public Barbeiro() {
+    }
+
+    public Barbeiro(String nome) {
+        super(nome);
+    }
+
     @Override
     public Agendamento agendar(Barbearia bb, Barbeiro b, Cliente c, Servico s, Especialidade e, Boolean concluido, Avaliacao avaliacao) {
         LocalDateTime dataHora = LocalDateTime.now();
@@ -46,4 +61,11 @@ public class Barbeiro extends Usuario implements iAgendavel {
         this.barbearia = barbearia;
     }
 
+    public Especialidade getEspecialidade() {
+        return especialidade;
+    }
+
+    public void setEspecialidade(Especialidade especialidade) {
+        this.especialidade = especialidade;
+    }
 }

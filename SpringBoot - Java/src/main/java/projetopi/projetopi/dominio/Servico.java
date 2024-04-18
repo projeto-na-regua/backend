@@ -20,29 +20,30 @@ public class Servico {
     @JoinColumn(name="servico_fk_barbeiro", nullable = false)
     private Barbeiro barbeiro;
     @ManyToOne
-    @JoinColumn(name="servico_fk_cliente", nullable = false)
-    private Cliente cliente;
-    @ManyToOne
-    @PrimaryKeyJoinColumn(name="servico_fk_barbearia")
+    @JoinColumn(name="servico_fk_barbearia")
     private Barbearia barbearia;
-    @ManyToOne
-    @JoinColumn(name="servico_fk_especialidade", nullable = false)
-    private Especialidade especialidade;
 
-    public Servico() {}
+    private String nomeBarbeiro;
 
-    public Servico(Integer id, Double preco, String descricao, String tipoServico, Integer tempoEstimado,
-                   Barbeiro barbeiro, Cliente cliente, Barbearia barbearia, Especialidade especialidade) {
+    public Servico(Integer id, Double preco, String descricao, String tipoServico, Integer tempoEstimado, Barbeiro barbeiro, Barbearia barbearia) {
         this.id = id;
         this.preco = preco;
         this.descricao = descricao;
         this.tipoServico = tipoServico;
         this.tempoEstimado = tempoEstimado;
         this.barbeiro = barbeiro;
-        this.cliente = cliente;
         this.barbearia = barbearia;
-        this.especialidade = especialidade;
     }
+
+    public Servico(Double preco, String descricao, String tipoServico, Integer tempoEstimado, String nomebarbeiro) {
+        this.preco = preco;
+        this.descricao = descricao;
+        this.tipoServico = tipoServico;
+        this.tempoEstimado = tempoEstimado;
+        this.barbeiro = new Barbeiro(nomebarbeiro);
+    }
+
+    public Servico() {}
 
     public Integer getId() {
         return id;
@@ -92,13 +93,6 @@ public class Servico {
         this.barbeiro = barbeiro;
     }
 
-    public Cliente getCliente() {
-        return cliente;
-    }
-
-    public void setCliente(Cliente cliente) {
-        this.cliente = cliente;
-    }
 
     public Barbearia getBarbearia() {
         return barbearia;
@@ -108,11 +102,4 @@ public class Servico {
         this.barbearia = barbearia;
     }
 
-    public Especialidade getEspecialidade() {
-        return especialidade;
-    }
-
-    public void setEspecialidade(Especialidade especialidade) {
-        this.especialidade = especialidade;
-    }
 }
