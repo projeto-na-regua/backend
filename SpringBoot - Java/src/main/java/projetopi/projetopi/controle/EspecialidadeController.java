@@ -11,7 +11,7 @@ import java.util.List;
 
 import static org.springframework.http.ResponseEntity.*;
 
-
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/especialidades")
 public class EspecialidadeController {
