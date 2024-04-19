@@ -2,15 +2,15 @@ spring:
   datasource:
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
     url: jdbc:sqlserver://naregua-server.database.windows.net:1433;databaseName=db_naregua
-    username: admin-dba
-    password: SPTECHnaregua2024
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
     auto-commit: false
     connection-properties: encrypt=true;trustServerCertificate=false;
   jpa:
     database-platform: org.hibernate.dialect.SQLServer2012Dialect
     show-sql: true
     hibernate:
-      ddl-auto: update # Modifique conforme necessário, dependendo do seu ambiente e do ciclo de vida do aplicativo
+      ddl-auto: update # Modifique conforme necessï¿½rio, dependendo do seu ambiente e do ciclo de vida do aplicativo
     properties:
       hibernate:
         format_sql: true

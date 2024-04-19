@@ -10,6 +10,7 @@ import java.util.List;
 
 import static org.springframework.http.ResponseEntity.status;
 
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/agendamentos")
 public class AgendamentoController{

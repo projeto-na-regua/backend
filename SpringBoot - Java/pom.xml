@@ -29,11 +29,13 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/com.microsoft.sqlserver/mssql-jdbc -->
 		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<version>8.0.28</version> <!-- Use a versão mais recente, se disponível -->
+			<groupId>com.microsoft.sqlserver</groupId>
+			<artifactId>mssql-jdbc</artifactId>
+			<version>12.3.0.jre17-preview</version>
 		</dependency>
+
 
 		<dependency>
 			<groupId>org.springdoc</groupId>
@@ -64,6 +66,12 @@
 			<version>2.38.0</version>
 		</dependency>
 
+		<dependency>
+			<groupId>com.azure.resourcemanager</groupId>
+			<artifactId>azure-resourcemanager-sql</artifactId>
+			<version>2.38.0</version>
+		</dependency>
+
 
 	</dependencies>
 
@@ -75,15 +83,6 @@
 				<version>2.6.3</version> <!-- Versão correspondente ao Spring Boot -->
 			</plugin>
 
-<!--			<plugin>-->
-<!--				<groupId>org.apache.maven.plugins</groupId>-->
-<!--				<artifactId>maven-surefire-plugin</artifactId>-->
-<!--				<version>3.0.0-M5</version>-->
-<!--				<configuration>-->
-<!--					<encoding>UTF-8</encoding> &lt;!&ndash; Especifica a codificação &ndash;&gt;-->
-<!--					<reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>-->
-<!--				</configuration>-->
-<!--			</plugin>-->
 		</plugins>
 	</build>
 

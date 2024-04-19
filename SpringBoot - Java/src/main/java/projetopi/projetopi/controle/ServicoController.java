@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.springframework.http.ResponseEntity.*;
-
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/servicos")
 public class ServicoController {
