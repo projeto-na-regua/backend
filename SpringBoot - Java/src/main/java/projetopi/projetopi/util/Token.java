@@ -6,8 +6,9 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.stereotype.Component;
 import projetopi.projetopi.dominio.Usuario;
-
+@Component
 public class Token {
 
     String token;
