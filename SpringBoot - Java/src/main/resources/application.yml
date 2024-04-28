@@ -4,10 +4,11 @@ spring:
       enabled: false
 
   datasource:
+    initialization-mode: always
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/db_naregua
-    username: aluno
-    password: sptech
+    username: root
+    password: root
 
   jpa:
     defer-datasource-initialization: true
