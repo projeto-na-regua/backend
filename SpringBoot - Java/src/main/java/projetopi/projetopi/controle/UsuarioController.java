@@ -38,6 +38,7 @@ public class UsuarioController {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+
     @PostMapping("/cadastro") // CADASTRO CLIENTE
     private ResponseEntity<Cliente> cadastrarCliente(@Valid @RequestBody CadastroCliente c){
         Integer idEdereco = enderecoRepository.save(c.gerarEndereco()).getId();
@@ -114,8 +115,6 @@ public class UsuarioController {
         }
 
     }
-
-
 
     //LOGIN E LOGOUT AQUI
 
