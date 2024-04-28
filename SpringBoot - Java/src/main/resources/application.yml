@@ -10,7 +10,7 @@ spring:
     database-platform: org.hibernate.dialect.SQLServer2012Dialect
     show-sql: true
     hibernate:
-      ddl-auto: update # Modifique conforme necess�rio, dependendo do seu ambiente e do ciclo de vida do aplicativo
+      ddl-auto: update
     properties:
       hibernate:
         format_sql: true
