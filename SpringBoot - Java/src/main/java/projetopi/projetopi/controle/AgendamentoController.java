@@ -1,15 +1,19 @@
 package projetopi.projetopi.controle;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestClient;
 import projetopi.projetopi.dominio.Agendamento;
-import projetopi.projetopi.dto.request.ParametrosApi;
+import projetopi.projetopi.dto.response.api.Dado;
 import projetopi.projetopi.dto.response.api.Previsao;
 import projetopi.projetopi.repositorio.AgendaRepository;
 
@@ -26,44 +30,44 @@ public class AgendamentoController{
     private AgendaRepository repository;
 
 
-    private static final Logger log = LoggerFactory.getLogger(AgendamentoController.class);
-    @GetMapping("/previsao")
-    @Operation(summary = "Buscar dados de temperatura", description = """
-      # Busca os dados de um endereço a partir do CEP utilizando uma API externa
-      ---
-      Retorna os dados de endereço retornados da API.
-      """)
-    public ResponseEntity<Previsao> buscarEndereco() {
 
+    private static final Logger log = LoggerFactory.getLogger(AgendamentoController.class);
+
+    @GetMapping("/previsao")
+    @Operation(summary = "Listar bancos", description = """
+            # Listar todos os bancos utilizando uma API externa
+            ---
+            Retorna uma lista com todos os bancos disponíveis na API.
+            """)
+    @ApiResponse(responseCode = "200", description = "Lista de bancos")
+
+
+    public ResponseEntity<Previsao> getpRevisao(@RequestParam(name = "lat") Double lat, @RequestParam(name = "lon") Double lon) {
         RestClient client = RestClient.builder()
-                .baseUrl("https://api.openweathermap.org/data/2.5/forecast?lat=-9.8517&lon=100.6738&appid=ce698585477f529bd7a1914dd7cd7bb6")
+                .baseUrl("https://api.openweathermap.org/data/2.5/")
                 .messageConverters(httpMessageConverters -> httpMessageConverters.add(new MappingJackson2HttpMessageConverter()))
                 .build();
 
         String raw = client.get()
-                .uri("")
+                .uri("forecast?" + lat + lon + "&appid=ce698585477f529bd7a1914dd7cd7bb6")
                 .retrieve()
                 .body(String.class);
 
         log.info("Resposta da API: " + raw);
 
         Previsao previsao = client.get()
-                .uri("")
+                .uri("weather" + lat + lon + "&appid=ce698585477f529bd7a1914dd7cd7bb6")
                 .retrieve()
-                .body(Previsao.class);
+                .body(new ParameterizedTypeReference<>() {
+                });
 
         if (previsao == null) {
             return ResponseEntity.noContent().build();
         }
 
-//        EnderecoDto resposta = new EnderecoDto();
-//        resposta.setBairro(endereco.getBairro());
-//        resposta.setCep(endereco.getCep());
-//        resposta.setCidade(endereco.getCidade());
-//        resposta.setEstado(endereco.getEstado());
-//        resposta.setRua(endereco.getRua());
 
         return ResponseEntity.ok(previsao);
+
     }
 
     @PostMapping

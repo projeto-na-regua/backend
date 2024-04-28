@@ -1,18 +1,18 @@
 package projetopi.projetopi.dto.response.api;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.time.LocalDate;
 import java.util.List;
-
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Previsao {
 
 
 
    @JsonProperty(value = "list")
-   private Dado data;
+   private List<Dado> dados;
 
-    public Dado getData() {
-        return data;
+    public List<Dado> getDados() {
+        return dados;
     }
 }
