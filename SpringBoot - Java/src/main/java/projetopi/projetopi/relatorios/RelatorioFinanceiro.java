@@ -26,13 +26,13 @@ public class RelatorioFinanceiro {
             System.exit(1);
         }
             //Cabeçalho:
-            saida.format("%-20s;%-12s;%12s\n", "NOME_BARBEARIA","DT_LANÇAMENTO","VALOR");
+            saida.format("%s;%s;%s\n", "NOME_BARBEARIA","DT_LANÇAMENTO","VALOR");
 
         try {
             for (int i = 0; i < lista.size(); i++) {
                 //Recupere um elemento da lista e formate aqui:
                 Financa financa = lista.get(i);
-                saida.format("%-20s;%-12s;%12.2f\n", financa.getBarbearia().getNomeNegocio(), financa.getDtLancamento(), financa.getValor());
+                saida.format("%s;%s;%.2f\n", financa.getBarbearia().getNomeNegocio(), financa.getDtLancamento(), financa.getValor());
             }
         } catch (FormatterClosedException erro) {
             System.out.println("Erro ao gravar o arquivo");
