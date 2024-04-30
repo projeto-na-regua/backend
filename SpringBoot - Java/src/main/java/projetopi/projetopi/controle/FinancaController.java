@@ -1,6 +1,5 @@
 package projetopi.projetopi.controle;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
@@ -17,9 +16,11 @@ import projetopi.projetopi.repositorio.FinanceiroRepository;
 
 import java.util.List;
 import java.util.Optional;
-
+import org.springframework.web.bind.annotation.CrossOrigin;
 import static org.springframework.http.ResponseEntity.status;
 
+
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/financas")
 public class FinancaController {

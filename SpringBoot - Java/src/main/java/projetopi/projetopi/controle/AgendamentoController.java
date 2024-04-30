@@ -10,12 +10,17 @@ import java.util.List;
 
 import static org.springframework.http.ResponseEntity.status;
 
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/agendamentos")
 public class AgendamentoController{
 
     @Autowired
     private AgendaRepository repository;
+
+
+
+
 
     @PostMapping
     public ResponseEntity<Agendamento> adicionarAgendamento(@RequestBody Agendamento a){
