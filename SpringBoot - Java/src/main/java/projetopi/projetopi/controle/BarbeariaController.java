@@ -17,7 +17,7 @@ import projetopi.projetopi.repositorio.EnderecoRepository;
 import java.util.List;
 
 import static org.springframework.http.ResponseEntity.*;
-
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/barbearia")
 public class BarbeariaController {

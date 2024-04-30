@@ -10,12 +10,13 @@ import projetopi.projetopi.dto.response.InfoBarbearia;
 import projetopi.projetopi.dto.response.InfoUsuario;
 import projetopi.projetopi.repositorio.*;
 import projetopi.projetopi.dto.request.CadastroBarbearia;
+import projetopi.projetopi.util.Token;
 
 import java.util.List;
 
 import static org.springframework.http.ResponseEntity.of;
 import static org.springframework.http.ResponseEntity.status;
-
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/usuarios")
 public class UsuarioController {
@@ -38,6 +39,7 @@ public class UsuarioController {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    private Token token;
 
     @PostMapping("/cadastro") // CADASTRO CLIENTE
     private ResponseEntity<Cliente> cadastrarCliente(@Valid @RequestBody CadastroCliente c){
@@ -117,5 +119,29 @@ public class UsuarioController {
     }
 
     //LOGIN E LOGOUT AQUI
+
+    @PostMapping("/gerar-token")
+    public ResponseEntity<Usuario> post(@RequestBody Usuario usuario){
+        usuarioRepository.save(usuario);
+        return status(201).body(usuario);
+    }
+
+    @GetMapping("/get-token/{nome}")
+    public ResponseEntity<String> getTokenPeloUserName(@PathVariable String nome){
+        var user = usuarioRepository.findByNome(nome);
+
+
+        return user.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(token.getToken(user.get(0)));
+    }
+
+    @GetMapping("/get-id-by-token/{token}")
+    public ResponseEntity<Integer> getIdByToken(@PathVariable String tokenString){
+
+        var idUser = token.getUserIdByToken(tokenString);
+        var user = usuarioRepository.findById(idUser);
+
+
+        return user.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(token.getUserIdByToken(tokenString));
+    }
 
 }
