@@ -27,13 +27,13 @@ public class RelatorioBarbeiro {
             System.exit(1);
         }
             //Cabeçalho:
-            saida.format("%-20s;%-12s;%12s;%8s\n", "NOME_BARBEIRO","CELULAR","E-MAIL","ADMINISTRADOR");
+            saida.format("%s;%s;%s;%s\n", "NOME_BARBEIRO","CELULAR","E-MAIL","ADMINISTRADOR");
 
         try {
             for (int i = 0; i < lista.size(); i++) {
                 //Recupere um elemento da lista e formate aqui:
                 Barbeiro b = lista.get(i);
-                saida.format("%-20s;%-12s;%-12s;%8b\n", b.getNome(), b.getCelular(), b.getEmail(),b.isAdm() ? "Sim" : "Não");
+                saida.format("%s;%s;%s;%b\n", b.getNome(), b.getCelular(), b.getEmail(),b.isAdm() ? "Sim" : "Não");
             }
         } catch (FormatterClosedException erro) {
             System.out.println("Erro ao gravar o arquivo");
