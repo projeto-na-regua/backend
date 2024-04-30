@@ -1,4 +1,4 @@
-package projetopi.projetopi.dto.response.api;
+package projetopi.projetopi.dominio.api;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -6,33 +6,24 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.util.StdConverter;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Dado {
 
-
-    @JsonProperty(value = "dt_txt")
+    @JsonProperty(value = "date")
     @JsonDeserialize(converter = Dado.LocalDateTimeDeserializer.class)
-    private LocalDateTime data;
+    private LocalDateTime dataHora;
 
-    @JsonProperty(value = "pop")
-    private Double precipitacao;
+    @JsonProperty(value = "value")
+    private Double valor;
 
-    @JsonProperty(value = "main")
-    private Temperatura temperatura;
-
-    public LocalDateTime getData() {
-        return data;
+    public LocalDateTime getDataHora() {
+        return dataHora;
     }
 
-    public Double getPrecipitacao() {
-        return precipitacao;
-    }
-
-    public Temperatura getTemperatura() {
-        return temperatura;
+    public Double getValor() {
+        return valor;
     }
 
     public static class LocalDateTimeDeserializer extends StdConverter<String, LocalDateTime> {
