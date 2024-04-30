@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/NaRegua-Backend.iml" filepath="$PROJECT_DIR$/.idea/NaRegua-Backend.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SpringBoot - Java/projetopi.iml" filepath="$PROJECT_DIR$/SpringBoot - Java/projetopi.iml" />
     </modules>
   </component>
 </project>
