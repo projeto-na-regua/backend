@@ -5,7 +5,7 @@ target/
 !**/src/test/**/target/
 
 idea/
-out/
+/out/artifacts/projetopi_jar/projetopi.jar
 
 ### STS ###
 .apt_generated
