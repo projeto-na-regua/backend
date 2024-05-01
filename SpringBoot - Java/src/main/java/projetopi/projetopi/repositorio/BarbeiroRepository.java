@@ -16,4 +16,5 @@ public interface BarbeiroRepository extends JpaRepository<Barbeiro, Integer> {
 
     @Query("select new Barbeiro(b.nome, b.email, b.celular) from Barbeiro b where b.id = :id")
     List<InfoUsuario> findByInfoUsuario(@Param("id") Integer id);
+
 }
