@@ -9,7 +9,17 @@ public class PrevisaoMapper {
 
     public PrevisaoApi[] toDto(Temperatura t, Precipitacao p){
 
-        PrevisaoApi[] dto = new PrevisaoApi[t.getTemperatura().size()];
+        int tamanhoVetor = 0;
+
+        if (t.getTemperatura().size() <= p.getPrecipitacao().size()){
+            tamanhoVetor = t.getTemperatura().size();
+        }
+
+        if (t.getTemperatura().size() > p.getPrecipitacao().size()){
+            tamanhoVetor = p.getPrecipitacao().size();
+        }
+
+        PrevisaoApi[] dto = new PrevisaoApi[tamanhoVetor];
 
         for (int i = 0; i < dto.length; i++) {
             dto[i] = new PrevisaoApi(t, p, i);
