@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import projetopi.projetopi.dominio.Barbeiro;
+import projetopi.projetopi.relatorios.RelatorioBarbeiro;
+import projetopi.projetopi.relatorios.RelatorioFinanceiro;
 import projetopi.projetopi.repositorio.BarbeariasRepository;
 import projetopi.projetopi.repositorio.BarbeiroRepository;
 import projetopi.projetopi.repositorio.EnderecoRepository;
@@ -98,11 +100,17 @@ public class BarbeiroController {
             return status(200).build();
         }
 
+        @GetMapping("/relatorio/{fk}")
+        public void gerarRelatorioBarbeiro(@PathVariable Integer fk){
+            var barbeiros = barbeiroRepository.findByBarbeariaId(fk);
 
+            if(barbeiros.isEmpty()){
+                status(204).build();
+            }
 
-
-
-
+            RelatorioBarbeiro.gravarRelatorioFinanceiro(barbeiros,"relatório_barbeiros");
+            status(200);
+        }
 
 
 }
