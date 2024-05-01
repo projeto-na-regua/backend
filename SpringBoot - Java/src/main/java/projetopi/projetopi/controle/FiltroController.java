@@ -100,7 +100,7 @@ public class FiltroController {
     }
 
     @GetMapping("/horario-precipitacao-baixa")
-    @Operation(summary = "Previsão de tempo próximos 7 dias", description = """
+    @Operation(summary = "Previsão da precipitação dos próximos 7 dias", description = """
             # Listar o horario e data, precipitação e temperatura utilizando uma API externa
             ---
             Retorna um vetor com a precipitação e temperatura das próximas 168 horas.

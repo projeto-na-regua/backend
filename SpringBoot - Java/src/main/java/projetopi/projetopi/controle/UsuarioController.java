@@ -39,7 +39,7 @@ public class UsuarioController {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-
+    @Autowired
     private Token token;
 
     @PostMapping("/cadastro") // CADASTRO CLIENTE
@@ -118,8 +118,6 @@ public class UsuarioController {
         }
 
     }
-
-
 
     //LOGIN E LOGOUT AQUI
 
