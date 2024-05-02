@@ -33,6 +33,12 @@ public class Barbeiro extends Usuario implements iAgendavel {
         super(nome);
     }
 
+    public Barbeiro(String nome, String email, String celular, boolean adm, Barbearia barbearia) {
+        super(nome, email, celular);
+        this.adm = adm;
+        this.barbearia = barbearia;
+    }
+
     @Override
     public Agendamento agendar(Barbearia bb, Barbeiro b, Cliente c, Servico s, Especialidade e, Boolean concluido, Avaliacao avaliacao) {
         LocalDateTime dataHora = LocalDateTime.now();
