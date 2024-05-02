@@ -49,6 +49,8 @@ public abstract class Usuario {
         this.celular = celular;
     }
 
+
+
     public Usuario(String nome) {
         this.nome = nome;
     }
