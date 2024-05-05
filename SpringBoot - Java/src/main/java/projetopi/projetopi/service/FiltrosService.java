@@ -28,10 +28,7 @@ public class FiltrosService {
     private String token;
 
     // Constructor
-    public FiltrosService() {
-        // No construtor, você não terá acesso ao Environment injetado ainda,
-        // portanto, você não pode inicializar 'token' aqui
-    }
+    public FiltrosService() {}
 
 
     public String getToken() {
