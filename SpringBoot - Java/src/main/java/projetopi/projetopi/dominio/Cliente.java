@@ -18,6 +18,11 @@ public class Cliente extends Usuario implements iAgendavel {
     public Cliente() {
     }
 
+    public Cliente(String nome, String email, String celular, Endereco endereco) {
+        super(nome, email, celular);
+        this.endereco = endereco;
+    }
+
     @Override
     public Agendamento agendar(Barbearia bb, Barbeiro b, Cliente c, Servico s, Especialidade e, Boolean concluido, Avaliacao avaliacao) {
         LocalDateTime dataHora = LocalDateTime.now();

@@ -2,6 +2,7 @@ package projetopi.projetopi.dominio;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -31,6 +32,12 @@ public class Barbeiro extends Usuario implements iAgendavel {
 
     public Barbeiro(String nome) {
         super(nome);
+    }
+
+    public Barbeiro(String nome, String email, String celular, boolean adm, Barbearia barbearia) {
+        super(nome, email, celular);
+        this.adm = adm;
+        this.barbearia = barbearia;
     }
 
     @Override
