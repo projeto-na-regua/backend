@@ -14,6 +14,7 @@ import projetopi.projetopi.repositorio.BarbeariasRepository;
 import projetopi.projetopi.repositorio.DiaSemanaRepository;
 import projetopi.projetopi.repositorio.EnderecoRepository;
 
+import java.nio.file.Path;
 import java.util.List;
 
 import static org.springframework.http.ResponseEntity.*;

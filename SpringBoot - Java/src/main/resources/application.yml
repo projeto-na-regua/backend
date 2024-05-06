@@ -14,3 +14,11 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
+    cloud:
+      azure:
+        storage:
+          blob:
+            endpoint: https://upload0naregua.blob.core.windows.net/
+            account-name: upload0naregua
+

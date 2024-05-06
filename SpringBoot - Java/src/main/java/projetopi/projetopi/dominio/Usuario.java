@@ -5,7 +5,11 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Entity
 public abstract class Usuario {
     @Id
@@ -36,7 +40,7 @@ public abstract class Usuario {
 
     @JsonIgnore
     @Column(name="img_perfil")
-    private byte[] imgPerfil;
+    private String imgPerfil;
 
     @JsonIgnore
     @Column(name = "dtype", insertable = false, updatable = false)
@@ -57,7 +61,7 @@ public abstract class Usuario {
 
     public Usuario(){}
 
-    public Usuario(Integer id, String nome, String email, String senha, String celular, byte[] imgPerfil) {
+    public Usuario(Integer id, String nome, String email, String senha, String celular, String imgPerfil) {
         this.id = id;
         this.nome = nome;
         this.email = email;
@@ -66,59 +70,5 @@ public abstract class Usuario {
         this.imgPerfil = imgPerfil;
     }
 
-    public Integer getId() {
-        return id;
-    }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getSenha() {
-        return senha;
-    }
-
-    public void setSenha(String senha) {
-        this.senha = senha;
-    }
-
-    public String getCelular() {
-        return celular;
-    }
-
-    public void setCelular(String celular) {
-        this.celular = celular;
-    }
-
-    public byte[] getImgPerfil() {
-        return imgPerfil;
-    }
-
-    public void setImgPerfil(byte[] imgPerfil) {
-        this.imgPerfil = imgPerfil;
-    }
-
-    public String getDtype() {
-        return dtype;
-    }
-
-    public void setDtype(String dtype) {
-        this.dtype = dtype;
-    }
 }

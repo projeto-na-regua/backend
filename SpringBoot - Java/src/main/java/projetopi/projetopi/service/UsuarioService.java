@@ -3,15 +3,28 @@ package projetopi.projetopi.service;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.multipart.MultipartFile;
 import projetopi.projetopi.dominio.*;
 import projetopi.projetopi.dto.request.CadastroBarbearia;
 import projetopi.projetopi.dto.request.CadastroCliente;
 import projetopi.projetopi.dto.request.LoginUsuario;
+import projetopi.projetopi.dto.response.ImgConsulta;
 import projetopi.projetopi.dto.response.UsuarioConsulta;
 import projetopi.projetopi.repositorio.*;
 import projetopi.projetopi.util.Token;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.List;
 
 import static org.springframework.http.ResponseEntity.ok;
@@ -43,6 +56,14 @@ public class UsuarioService {
 
     @Autowired
     public ModelMapper mapper;
+
+    @Autowired
+    private final AzureStorageService azureStorageService;
+
+    public UsuarioService(AzureStorageService azureStorageService) {
+        this.azureStorageService = azureStorageService;
+    }
+
 
     // CADASTRO CLIENTE
     public String cadastrarCliente(CadastroCliente c){
@@ -138,6 +159,50 @@ public class UsuarioService {
             return barbeiroRepository.findByInfoUsuario(id);
         }
 
+    }
+
+    public boolean usuarioExiste(String token){
+        return usuarioRepository.existsById(getUserId(token));
+    }
+
+    public ResponseEntity<ImgConsulta> editarImgPerfil(String t, MultipartFile file){
+        try {
+            String imageUrl = azureStorageService.uploadImage(file);
+            Usuario usuario = usuarioRepository.findById(getUserId(t)).get();
+            usuario.setImgPerfil(imageUrl);
+            usuario.setId(getUserId(t));
+            usuarioRepository.save(usuario);
+            return ResponseEntity.ok().body(new ImgConsulta(usuarioRepository.findById(getUserId(t)).get().getImgPerfil()));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    public ResponseEntity<ByteArrayResource> getImage(String t) {
+        try {
+            String imageName = usuarioRepository.findById(getUserId(t)).get().getImgPerfil();
+            byte[] blobBytes = azureStorageService.getBlob(imageName);
+
+            BufferedImage image = ImageIO.read(new ByteArrayInputStream(blobBytes));
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ImageIO.write(image, "png", baos);
+            byte[] imageBytes = baos.toByteArray();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.IMAGE_PNG);
+
+            ByteArrayResource resource = new ByteArrayResource(imageBytes);
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .contentLength(imageBytes.length)
+                    .body(resource);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 
 
