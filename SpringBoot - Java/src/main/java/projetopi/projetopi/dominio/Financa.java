@@ -1,6 +1,7 @@
 package projetopi.projetopi.dominio;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
 
@@ -12,30 +13,39 @@ public class Financa {
     @Column(name = "id_financeiro")
     private Integer id;
 
+    @NotNull
     @Column(name = "valor")
     private Double valor;
+
+    @Column(name = "saldo")
+    private Double saldo;
+
+    @Column(name = "despesas")
+    private Double despesas;
 
     @Column(name = "dt_lancamento")
     private LocalDateTime dtLancamento;
 
-    @ManyToOne
-    @JoinColumn(name = "financeiro_fk_barberia") // nome da coluna de chave estrangeira corrigido
-    private Barbearia barbearia;
+    @Column(name = "financeiro_fk_barbearia")
+    private Integer barbeariaId;
 
     public Financa() {
     }
 
-    public Financa(Integer id, Double valor, LocalDateTime dtLancamento, Barbearia barbearia) {
-        this.id = id;
+    public Financa(Integer barbeariaId, Double valor) {
+        this.barbeariaId = barbeariaId;
         this.valor = valor;
-        this.dtLancamento = dtLancamento;
-        this.barbearia = barbearia;
+        this.dtLancamento = LocalDateTime.now();
+        calcularDespesas();
+        this.saldo = calcularSaldoInicial(valor);
     }
 
-    public Financa(Barbearia barbearia, LocalDateTime dtLancamento, Double valor) {
-        this.barbearia = barbearia;
-        this.dtLancamento = dtLancamento;
-        this.valor = valor;
+    private Double calcularSaldoInicial(Double valor) {
+        return valor - despesas;
+    }
+
+    private void calcularDespesas() {
+        this.despesas = saldo >= 0 ? 0.0 : -saldo;
     }
 
     public Integer getId() {
@@ -62,11 +72,25 @@ public class Financa {
         this.dtLancamento = dtLancamento;
     }
 
-    public Barbearia getBarbearia() {
-        return barbearia;
+    public Integer getBarbeariaId() {
+        return barbeariaId;
     }
 
-    public void setBarbearia(Barbearia barbearia) {
-        this.barbearia = barbearia;
+    public void setBarbeariaId(Integer barbeariaId) {
+        this.barbeariaId = barbeariaId;
+    }
+
+    public Double getDespesas() {return despesas;}
+
+    public void setDespesas(Double despesas) {this.despesas = despesas;}
+
+    public Double getSaldo() {return saldo;}
+
+    public void setSaldo(Double saldo) {this.saldo = saldo;}
+
+    public Double getLucro() {
+        Double saldo = this.saldo != null ? this.saldo : 0.0;
+        Double despesas = this.despesas != null ? this.despesas : 0.0;
+        return saldo - despesas;
     }
 }

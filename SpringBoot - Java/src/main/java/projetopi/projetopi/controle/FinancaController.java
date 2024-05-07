@@ -1,22 +1,22 @@
 package projetopi.projetopi.controle;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import projetopi.projetopi.dominio.Financa;
 import projetopi.projetopi.relatorios.RelatorioFinanceiro;
 import projetopi.projetopi.repositorio.BarbeariasRepository;
 import projetopi.projetopi.repositorio.FinanceiroRepository;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import org.springframework.web.bind.annotation.CrossOrigin;
+
 import static org.springframework.http.ResponseEntity.status;
 
 
@@ -30,6 +30,16 @@ public class FinancaController {
 
     @Autowired
     private BarbeariasRepository barbeariaRepository;
+
+    @PostMapping("/lancamento")
+    public ResponseEntity<Financa> criarLancamentoFinanceiro(@Valid @RequestBody Financa lancamento) {
+        if (!barbeariaRepository.existsById(lancamento.getBarbeariaId())) {
+            return ResponseEntity.status(404).build();
+        }
+
+        Financa novoLancamento = financeiroRepository.save(lancamento);
+        return ResponseEntity.status(201).body(novoLancamento);
+    }
 
     @GetMapping("/{fk}")
     public ResponseEntity<List<Financa>> getFinancasPorBarbearia(@PathVariable Integer fk){
