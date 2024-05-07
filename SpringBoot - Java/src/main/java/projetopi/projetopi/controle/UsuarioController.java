@@ -3,21 +3,18 @@ package projetopi.projetopi.controle;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import projetopi.projetopi.dominio.*;
+import org.springframework.web.multipart.MultipartFile;
 import projetopi.projetopi.dto.request.CadastroCliente;
 import projetopi.projetopi.dto.request.LoginUsuario;
-import projetopi.projetopi.dto.response.InfoBarbearia;
-import projetopi.projetopi.dto.response.InfoUsuario;
+import projetopi.projetopi.dto.response.DtypeConsulta;
+import projetopi.projetopi.dto.response.ImgConsulta;
+import projetopi.projetopi.dto.response.UsuarioConsulta;
 import projetopi.projetopi.dto.response.TokenConsulta;
-import projetopi.projetopi.repositorio.*;
 import projetopi.projetopi.dto.request.CadastroBarbearia;
 import projetopi.projetopi.service.UsuarioService;
-import projetopi.projetopi.util.Token;
 
-import java.io.IOException;
 import java.util.List;
 
 import static org.springframework.http.ResponseEntity.*;
@@ -34,13 +31,13 @@ public class UsuarioController {
 
 
     @PostMapping
-    private ResponseEntity<TokenConsulta> login(@Valid @RequestBody LoginUsuario loginUsuario){
-        TokenConsulta token = service.loginIsValid(loginUsuario);
+    private ResponseEntity<String> login(@Valid @RequestBody LoginUsuario loginUsuario){
+        String token = service.loginIsValid(loginUsuario);
         return token == null ? status(404).build() : status(200).body(token);
     }
 
     @PostMapping("/cadastro") // CADASTRO CLIENTE
-    private ResponseEntity<TokenConsulta> cadastrarCliente(@Valid @RequestBody CadastroCliente c){
+    private ResponseEntity<String> cadastrarCliente(@Valid @RequestBody CadastroCliente c){
 
         if(service.usuarioExistsByEmail(c.getEmail())){
             return status(409).build();
@@ -50,7 +47,7 @@ public class UsuarioController {
     }
 
     @PostMapping("/cadastro-barbearia") // CADASTRO BARBEIRO
-    private ResponseEntity<TokenConsulta> cadastrarBarbeiro(@Valid @RequestBody CadastroBarbearia nvBarbearia){
+    private ResponseEntity<String> cadastrarBarbeiro(@Valid @RequestBody CadastroBarbearia nvBarbearia){
         if(service.usuarioExistsByEmail(nvBarbearia.getEmail())){
             return status(409).build();
 
@@ -84,9 +81,16 @@ public class UsuarioController {
 
 
     @GetMapping("/perfil")
-    private ResponseEntity<List<InfoUsuario>> getUsuario(@RequestHeader("Authorization") String token){
+    private ResponseEntity<UsuarioConsulta> getUsuario(@RequestHeader("Authorization") String token){
+        return ok(service.getPerfil(token));
+    }
+
+    @GetMapping("/user")
+    private ResponseEntity<DtypeConsulta> getUserById(@RequestHeader("Authorization") String token){
         return ok(service.getUsuario(token));
     }
+
+
 
 
 

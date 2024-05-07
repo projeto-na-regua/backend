@@ -28,7 +28,7 @@ public abstract class Usuario {
     @Column(name="email")
     private String email;
 
-    @Size(min = 8, max = 12)
+    @Size(min = 8)
     @NotBlank
     @Column(name="senha")
     private String senha;

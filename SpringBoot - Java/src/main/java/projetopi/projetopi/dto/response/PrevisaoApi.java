@@ -2,6 +2,7 @@ package projetopi.projetopi.dto.response;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.util.StdConverter;
+import lombok.Getter;
 import projetopi.projetopi.dominio.api.Dado;
 import projetopi.projetopi.dominio.api.Precipitacao;
 import projetopi.projetopi.dominio.api.Temperatura;
@@ -9,6 +10,8 @@ import projetopi.projetopi.dominio.api.Temperatura;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+
+@Getter
 public class PrevisaoApi {
 
     @JsonDeserialize(converter = Dado.LocalDateTimeDeserializer.class)
@@ -24,17 +27,6 @@ public class PrevisaoApi {
         this.precipitacao = p.getPrecipitacao().get(index).getValor();
     }
 
-    public LocalDateTime getDataHora() {
-        return dataHora;
-    }
-
-    public Double getTemperatura() {
-        return temperatura;
-    }
-
-    public Double getPrecipitacao() {
-        return precipitacao;
-    }
 
     public static class LocalDateTimeDeserializer extends StdConverter<String, LocalDateTime> {
         @Override
@@ -42,4 +34,9 @@ public class PrevisaoApi {
             return LocalDateTime.parse(value, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         }
     }
+
+
+
+
+
 }
