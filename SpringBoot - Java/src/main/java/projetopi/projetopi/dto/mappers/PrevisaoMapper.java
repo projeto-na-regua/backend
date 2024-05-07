@@ -4,10 +4,11 @@ import projetopi.projetopi.dominio.api.Dado;
 import projetopi.projetopi.dominio.api.Precipitacao;
 import projetopi.projetopi.dominio.api.Temperatura;
 import projetopi.projetopi.dto.response.PrevisaoApi;
+import projetopi.projetopi.util.ListaObj;
 
 public class PrevisaoMapper {
 
-    public PrevisaoApi[] toDto(Temperatura t, Precipitacao p){
+    public ListaObj<PrevisaoApi> toDto(Temperatura t, Precipitacao p){
 
         int tamanhoVetor = 0;
 
@@ -19,10 +20,10 @@ public class PrevisaoMapper {
             tamanhoVetor = p.getPrecipitacao().size();
         }
 
-        PrevisaoApi[] dto = new PrevisaoApi[tamanhoVetor];
+        ListaObj<PrevisaoApi> dto = new ListaObj<>(tamanhoVetor);
 
-        for (int i = 0; i < dto.length; i++) {
-            dto[i] = new PrevisaoApi(t, p, i);
+        for (int i = 0; i < dto.getTamanho(); i++) {
+            dto.adiciona(new PrevisaoApi(t, p, i));
         }
 
         return dto;

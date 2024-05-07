@@ -1,14 +1,12 @@
 package projetopi.projetopi.service;
 
 import com.azure.storage.blob.BlobClient;
-import com.azure.storage.blob.BlobClientBuilder;
 import com.azure.storage.blob.BlobContainerClient;
-import com.azure.storage.blob.BlobServiceClient;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
-import projetopi.projetopi.util.AzureStorageManager;
+import projetopi.projetopi.AzureStorageManager;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;

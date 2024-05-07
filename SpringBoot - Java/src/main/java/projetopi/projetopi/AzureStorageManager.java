@@ -1,24 +1,33 @@
-package projetopi.projetopi.util;
+package projetopi.projetopi;
 
-import com.azure.resourcemanager.storage.models.StorageAccountMicrosoftEndpoints;
-import com.azure.spring.cloud.autoconfigure.implementation.storage.AzureStorageConfiguration;
 import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobClientBuilder;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
-import java.io.InputStream;
 import java.util.UUID;
 
 
 @Component
 public class AzureStorageManager {
 
-    private String conectionString = "DefaultEndpointsProtocol=https;AccountName=upload0naregua;AccountKey=pjZHirndf8IoR10ThS02jU+yC7JHN55QtIdPkv4XnK+SfDD8MhLf/2tZgwt1/51vlhivKMzsXwr4+AStG7Jsiw==;EndpointSuffix=core.windows.net";
+    @Autowired
+    private Environment env;
 
-    private String blobContainerName = "upload";
+    private String conectionString;
 
-    private String blobName = "upload0naregua";
+    private String blobContainerName;
+
+    private String blobName;
+
+    @Autowired // Optionally, you can use constructor injection instead of field injection
+    public AzureStorageManager(Environment env) {
+        this.env = env; // Optional if you're using constructor injection
+        conectionString = env.getProperty("CONECTION_SPRING");
+        blobContainerName = env.getProperty("BLOB_CONTAINER");
+        blobName = env.getProperty("BLOB");
+    }
 
 
     public String uploadFileToBlobStorage(String fileName, String filePath) {

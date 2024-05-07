@@ -11,6 +11,7 @@ import projetopi.projetopi.dto.request.LoginUsuario;
 import projetopi.projetopi.dto.response.DtypeConsulta;
 import projetopi.projetopi.dto.response.ImgConsulta;
 import projetopi.projetopi.dto.response.UsuarioConsulta;
+import projetopi.projetopi.dto.response.TokenConsulta;
 import projetopi.projetopi.dto.request.CadastroBarbearia;
 import projetopi.projetopi.service.UsuarioService;
 

@@ -1,6 +1,9 @@
 package projetopi.projetopi.dto.response;
 
 import lombok.Getter;
+import projetopi.projetopi.dominio.Barbeiro;
+import projetopi.projetopi.dominio.Cliente;
+
 
 @Getter
 public class UsuarioConsulta {
@@ -9,5 +12,9 @@ public class UsuarioConsulta {
 
     private String email;
 
-    private byte[] imgPerfil;
+    private String celular;
+
+    private String imgPerfil;
+
+
 }

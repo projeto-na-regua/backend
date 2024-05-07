@@ -111,6 +111,30 @@ public class ListaObj <T> {
         }
     }
 
+    public void insereNaPosicao(T elemento, int posicao) {
+        // Verifica se a posição fornecida é válida
+        if (posicao < 0 || posicao > nroElem) {
+            throw new IllegalArgumentException("Posição inválida");
+        }
+
+        // Verifica se há espaço para inserir um novo elemento
+        if (nroElem >= vetor.length) {
+            throw new IllegalStateException("Lista cheia");
+        }
+
+        // Desloca os elementos à direita da posição especificada
+        for (int i = nroElem; i > posicao; i--) {
+            vetor[i] = vetor[i - 1];
+        }
+
+        // Insere o novo elemento na posição especificada
+        vetor[posicao] = elemento;
+
+        // Atualiza o contador de elementos
+        nroElem++;
+    }
+
+
     // Get do vetor
     // Não retirar, é usado nos testes
     public T[] getVetor() {

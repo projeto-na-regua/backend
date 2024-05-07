@@ -42,7 +42,7 @@ public class CadastroBarbearia {
     @Email
     private String email;
 
-    @Size(min = 8, max = 12)
+    @Size(min = 8)
     @NotBlank
     private String senha;
 

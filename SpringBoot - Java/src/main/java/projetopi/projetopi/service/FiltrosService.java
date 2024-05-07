@@ -15,6 +15,7 @@ import projetopi.projetopi.controle.FiltroController;
 import projetopi.projetopi.dominio.api.Precipitacao;
 import projetopi.projetopi.dominio.api.Temperatura;
 import projetopi.projetopi.dto.response.PrevisaoApi;
+import projetopi.projetopi.util.ListaObj;
 
 @Component
 @PropertySource("classpath:application.properties")
@@ -28,7 +29,10 @@ public class FiltrosService {
     private String token;
 
     // Constructor
-    public FiltrosService() {}
+    public FiltrosService() {
+        // No construtor, você não terá acesso ao Environment injetado ainda,
+        // portanto, você não pode inicializar 'token' aqui
+    }
 
 
     public String getToken() {
@@ -91,29 +95,28 @@ public class FiltrosService {
         return precipitacao;
     }
 
-    public void ordenarPorTemperaturasBaixas(PrevisaoApi[] v, int indInicio, int indFim){
+    public void ordenarPorTemperaturasBaixas(ListaObj<PrevisaoApi> v, int indInicio, int indFim){
 
-        if (v == null || v.length == 0 || indInicio >= indFim) {
+        if (v == null || v.getTamanho() == 0 || indInicio >= indFim) {
             return;
         }
         int i = indInicio;
         int j = indFim;
-        double pivo = v[(indInicio + indFim) / 2].getTemperatura();
+        double pivo = v.getElemento((indInicio + indFim) / 2).getTemperatura();
 
         while (i <= j) {
-            while (v[i].getTemperatura() < pivo) {
+            while (v.getElemento(i).getTemperatura() < pivo) {
                 i++;
             }
 
-            while (v[j].getTemperatura() > pivo) {
+            while (v.getElemento(j).getTemperatura() > pivo) {
                 j--;
             }
 
             if (i <= j) {
-                PrevisaoApi aux = v[i];
-                v[i] = v[j];
-                v[j] = aux;
-
+                PrevisaoApi aux = v.getElemento(i);
+                v.insereNaPosicao(v.getElemento(j), i);
+                v.insereNaPosicao(aux, j);
                 i++;
                 j--;
             }
@@ -128,28 +131,31 @@ public class FiltrosService {
         }
     }
 
-    public void ordenarPorTemperaturasAltas(PrevisaoApi[] v, int indInicio, int indFim) {
-        if (v == null || v.length == 0 || indInicio >= indFim) {
+    public void ordenarPorTemperaturasAltas(ListaObj<PrevisaoApi> v, int indInicio, int indFim, boolean desc, String tipo) {
+        if (v == null || v.getTamanho() == 0 || indInicio >= indFim) {
             return;
         }
 
         int i = indInicio;
         int j = indFim;
-        double pivo = v[(indInicio + indFim) / 2].getTemperatura();
+
+        double pivo = tipo == "t" ? v.getElemento((indInicio + indFim) / 2).getTemperatura() : v.getElemento((indInicio + indFim) / 2).getPrecipitacao();
+        double elementoInicio = tipo == "t" ? v.getElemento(i).getTemperatura() : v.getElemento(i).getPrecipitacao();
+        double elementoFim = tipo == "t" ? v.getElemento(j).getTemperatura() : v.getElemento(j).getPrecipitacao();
 
         while (i <= j) {
-            while (v[i].getTemperatura() > pivo) {
+            while (desc ? elementoInicio > pivo : elementoInicio < pivo) {
                 i++;
             }
 
-            while (v[j].getTemperatura() < pivo) {
+            while (desc ? elementoFim < pivo : elementoFim > pivo) {
                 j--;
             }
 
             if (i <= j) {
-                PrevisaoApi aux = v[i];
-                v[i] = v[j];
-                v[j] = aux;
+                PrevisaoApi aux = v.getElemento(i);
+                v.insereNaPosicao(v.getElemento(j), i);
+                v.insereNaPosicao(aux, j);
 
                 i++;
                 j--;
@@ -157,11 +163,11 @@ public class FiltrosService {
         }
 
         if (indInicio < j) {
-            ordenarPorTemperaturasAltas(v, indInicio, j);
+            ordenarPorTemperaturasAltas(v, indInicio, j, desc, tipo);
         }
 
         if (i < indFim) {
-            ordenarPorTemperaturasAltas(v, i, indFim);
+            ordenarPorTemperaturasAltas(v, i, indFim, desc, tipo);
         }
     }
 

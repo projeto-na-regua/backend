@@ -36,5 +36,5 @@ build/
 .vscode/
 
 
-/src/main/resources/application.properties
+/SpringBoot - Java/src/main/resources/application.properties
 /.azure/

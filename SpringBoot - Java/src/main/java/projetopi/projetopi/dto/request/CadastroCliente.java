@@ -18,7 +18,7 @@ public class CadastroCliente {
     @Column(name="email")
     private String email;
 
-    @Size(min = 8, max = 12)
+    @Size(min = 8)
     @NotBlank
     private String senha;
 
