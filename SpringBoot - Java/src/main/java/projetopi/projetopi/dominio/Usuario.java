@@ -36,7 +36,7 @@ public abstract class Usuario {
 
     @JsonIgnore
     @Column(name="img_perfil")
-    private byte[] imgPerfil;
+    private String imgPerfil;
 
     @JsonIgnore
     @Column(name = "dtype", insertable = false, updatable = false)
@@ -57,7 +57,7 @@ public abstract class Usuario {
 
     public Usuario(){}
 
-    public Usuario(Integer id, String nome, String email, String senha, String celular, byte[] imgPerfil) {
+    public Usuario(Integer id, String nome, String email, String senha, String celular, String imgPerfil) {
         this.id = id;
         this.nome = nome;
         this.email = email;
@@ -106,11 +106,11 @@ public abstract class Usuario {
         this.celular = celular;
     }
 
-    public byte[] getImgPerfil() {
+    public String getImgPerfil() {
         return imgPerfil;
     }
 
-    public void setImgPerfil(byte[] imgPerfil) {
+    public void setImgPerfil(String imgPerfil) {
         this.imgPerfil = imgPerfil;
     }
 
