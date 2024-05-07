@@ -3,7 +3,6 @@ package projetopi.projetopi.util;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import jakarta.servlet.http.Cookie;
@@ -33,11 +32,10 @@ public class Token {
     }
 
     public String getUserIdByToken(String token) {
+        JWTVerifier verifier = JWT.require(Algorithm.HMAC256(tokenSecretKey)).build();
+        DecodedJWT decodedJWT = verifier.verify(token);
 
-            JWTVerifier verifier = JWT.require(Algorithm.HMAC256(tokenSecretKey)).build();
-            DecodedJWT decodedJWT = verifier.verify(token);
-            return decodedJWT.getClaim("id").asString();
-
+        return decodedJWT.getClaims().get("id").asString();
 
     }
 

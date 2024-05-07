@@ -1,7 +1,9 @@
 package projetopi.projetopi.service;
 
 
-import org.modelmapper.ModelMapper;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.validation.Valid;
+import org.aspectj.weaver.patterns.IToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
 import projetopi.projetopi.dominio.*;
+import projetopi.projetopi.dto.mappers.UsuarioMapper;
 import projetopi.projetopi.dto.request.CadastroBarbearia;
 import projetopi.projetopi.dto.request.CadastroCliente;
 import projetopi.projetopi.dto.request.LoginUsuario;
@@ -26,7 +29,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
+import static org.springframework.http.ResponseEntity.*;
 import static org.springframework.http.ResponseEntity.ok;
 
 @Service
@@ -66,7 +71,7 @@ public class UsuarioService {
 
 
     // CADASTRO CLIENTE
-    public String cadastrarCliente(CadastroCliente c){
+    public TokenConsulta cadastrarCliente(CadastroCliente c){
 
         Integer idEdereco = enderecoRepository.save(c.gerarEndereco()).getId();
         Cliente cliente = c.gerarCliente();
@@ -74,16 +79,18 @@ public class UsuarioService {
 
         cliente.setEndereco(enderecoRepository.getReferenceById(idEdereco));
         clienteRepository.save(cliente);
-        return token.getToken(cliente);
+        String tk = token.getToken(cliente);
+        return new TokenConsulta( UsuarioMapper.toEntity(c), tk);
     }
 
     // CADASTRO BARBEIRO
-    public String cadastrarBarbeiro(CadastroBarbearia nvBarbearia){
+    public TokenConsulta cadastrarBarbeiro(CadastroBarbearia nvBarbearia){
 
         Endereco endereco = nvBarbearia.gerarEndereco();
         Barbearia barbearia = nvBarbearia.gerarBarbearia();
         Barbeiro barbeiro = nvBarbearia.gerarBarbeiro();
         DiaSemana[] diaSemana = nvBarbearia.gerarSemena();
+        String tk = token.getToken(barbeiro);
 
         Integer idEndereco = enderecoRepository.save(endereco).getId();
 
@@ -100,22 +107,22 @@ public class UsuarioService {
             diaSemanaRepository.save(d);
         }
 
-        return token.getToken(barbeiro);
+        return new TokenConsulta(barbeiro, tk);
     }
 
 
-    public UsuarioConsulta editarUsuario(Integer id, UsuarioConsulta nvUsuario){
+    public InfoUsuario editarUsuario(Integer id, InfoUsuario nvUsuario){
 
 
         if(usuarioRepository.getReferenceById(id).getDtype().equals("Cliente")){
-            Cliente usuario = mapper.map(nvUsuario, Cliente.class);
+            Cliente usuario = nvUsuario.gerarCliente();
             usuario.setId(clienteRepository.getReferenceById(id).getId());
             usuario.setSenha(usuarioRepository.getReferenceById(id).getSenha());
             usuarioRepository.save(usuario);
             return nvUsuario;
 
         }else{
-            Barbeiro usuario = mapper.map(nvUsuario, Barbeiro.class);
+            Barbeiro usuario = nvUsuario.gerarBarberiro();
             usuario.setId(usuarioRepository.getReferenceById(id).getId());
             usuario.setSenha(usuarioRepository.getReferenceById(id).getSenha());
             usuarioRepository.save(usuario);
@@ -136,19 +143,26 @@ public class UsuarioService {
     }
 
 
-    public String loginIsValid(LoginUsuario user){
+    public TokenConsulta loginIsValid(LoginUsuario user){
 
         Usuario u = usuarioRepository.findByEmailAndSenha(user.getEmail(), user.getSenha());
 
         if (u != null){
-            return token.getToken(u);
+
+            String tk = token.getToken(u);
+
+            if (u instanceof Cliente) {
+                return new TokenConsulta((Cliente) u, tk);
+            } else if (u instanceof Barbeiro) {
+                return new TokenConsulta((Barbeiro) u, tk);
+            }
         }
 
         return null;
     }
 
 
-    public List<UsuarioConsulta> getUsuario(String t){
+    public List<InfoUsuario> getUsuario(String t){
 
         Integer id = Integer.valueOf(token.getUserIdByToken(t));
 
