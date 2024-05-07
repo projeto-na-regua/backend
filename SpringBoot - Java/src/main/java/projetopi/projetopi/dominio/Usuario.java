@@ -35,6 +35,10 @@ public abstract class Usuario {
     private String celular;
 
     @JsonIgnore
+    @Column(name="img_perfil")
+    private byte[] imgPerfil;
+
+    @JsonIgnore
     @Column(name = "dtype", insertable = false, updatable = false)
     private String dtype;
 
@@ -53,12 +57,13 @@ public abstract class Usuario {
 
     public Usuario(){}
 
-    public Usuario(Integer id, String nome, String email, String senha, String celular) {
+    public Usuario(Integer id, String nome, String email, String senha, String celular, byte[] imgPerfil) {
         this.id = id;
         this.nome = nome;
         this.email = email;
         this.senha = senha;
         this.celular = celular;
+        this.imgPerfil = imgPerfil;
     }
 
     public Integer getId() {
@@ -99,6 +104,14 @@ public abstract class Usuario {
 
     public void setCelular(String celular) {
         this.celular = celular;
+    }
+
+    public byte[] getImgPerfil() {
+        return imgPerfil;
+    }
+
+    public void setImgPerfil(byte[] imgPerfil) {
+        this.imgPerfil = imgPerfil;
     }
 
     public String getDtype() {

@@ -1,5 +1,10 @@
 package projetopi.projetopi.dto.response;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import projetopi.projetopi.dominio.Barbearia;
 import projetopi.projetopi.dominio.Financa;
 
 import java.time.LocalDateTime;
@@ -15,7 +20,7 @@ public class InfoFinanca {
     public InfoFinanca() {}
 
     public InfoFinanca(Financa financa) {
-        this.barbeariaId = financa.getBarbeariaId();
+        this.barbeariaId = financa.getBarbearia().getId();
         this.dtLancamento = financa.getDtLancamento();
         this.valor = financa.getValor();
     }
