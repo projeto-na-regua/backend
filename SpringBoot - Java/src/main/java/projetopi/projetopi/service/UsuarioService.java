@@ -9,12 +9,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
 import projetopi.projetopi.dominio.*;
+import projetopi.projetopi.dto.mappers.UsuarioMapper;
 import projetopi.projetopi.dto.request.CadastroBarbearia;
 import projetopi.projetopi.dto.request.CadastroCliente;
 import projetopi.projetopi.dto.request.LoginUsuario;
+import projetopi.projetopi.dto.response.DtypeConsulta;
 import projetopi.projetopi.dto.response.ImgConsulta;
 import projetopi.projetopi.dto.response.UsuarioConsulta;
 import projetopi.projetopi.repositorio.*;
@@ -74,7 +75,8 @@ public class UsuarioService {
 
         cliente.setEndereco(enderecoRepository.getReferenceById(idEdereco));
         clienteRepository.save(cliente);
-        return token.getToken(cliente);
+        String tk = token.getToken(cliente);
+        return tk;
     }
 
     // CADASTRO BARBEIRO
@@ -84,6 +86,7 @@ public class UsuarioService {
         Barbearia barbearia = nvBarbearia.gerarBarbearia();
         Barbeiro barbeiro = nvBarbearia.gerarBarbeiro();
         DiaSemana[] diaSemana = nvBarbearia.gerarSemena();
+        String tk = token.getToken(barbeiro);
 
         Integer idEndereco = enderecoRepository.save(endereco).getId();
 
@@ -100,7 +103,7 @@ public class UsuarioService {
             diaSemanaRepository.save(d);
         }
 
-        return token.getToken(barbeiro);
+        return tk;
     }
 
 
@@ -124,7 +127,7 @@ public class UsuarioService {
     }
 
     public Integer getUserId(String t){
-       return Integer.valueOf(token.getUserIdByToken(t));
+        return Integer.valueOf(token.getUserIdByToken(t));
     }
 
     public boolean usuarioExistsById(Integer id){
@@ -141,25 +144,36 @@ public class UsuarioService {
         Usuario u = usuarioRepository.findByEmailAndSenha(user.getEmail(), user.getSenha());
 
         if (u != null){
-            return token.getToken(u);
+
+            String tk = token.getToken(u);
+            return tk;
         }
 
         return null;
     }
 
 
-    public List<UsuarioConsulta> getUsuario(String t){
+    public UsuarioConsulta getPerfil(String t){
 
         Integer id = Integer.valueOf(token.getUserIdByToken(t));
 
         if(usuarioRepository.getReferenceById(id).getDtype().equals("Cliente")){
-            return clienteRepository.findByInfoUsuario(id);
+            return clienteRepository.findByInfoUsuario(id).get(0);
 
         }else{
-            return barbeiroRepository.findByInfoUsuario(id);
+            return barbeiroRepository.findByInfoUsuario(id).get(0);
         }
 
     }
+
+    public DtypeConsulta getUsuario(String t){
+
+        Integer id = Integer.valueOf(token.getUserIdByToken(t));
+
+        return mapper.map(usuarioRepository.findById(id), DtypeConsulta.class);
+
+    }
+
 
     public boolean usuarioExiste(String token){
         return usuarioRepository.existsById(getUserId(token));

@@ -3,18 +3,17 @@ package projetopi.projetopi.controle;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import projetopi.projetopi.dto.request.CadastroCliente;
 import projetopi.projetopi.dto.request.LoginUsuario;
+import projetopi.projetopi.dto.response.DtypeConsulta;
 import projetopi.projetopi.dto.response.ImgConsulta;
 import projetopi.projetopi.dto.response.UsuarioConsulta;
 import projetopi.projetopi.dto.request.CadastroBarbearia;
 import projetopi.projetopi.service.UsuarioService;
 
-import java.io.IOException;
 import java.util.List;
 
 import static org.springframework.http.ResponseEntity.*;
@@ -81,7 +80,17 @@ public class UsuarioController {
 
 
     @GetMapping("/perfil")
-    private ResponseEntity<List<UsuarioConsulta>> getUsuario(@RequestHeader("Authorization") String token){
+    private ResponseEntity<UsuarioConsulta> getUsuario(@RequestHeader("Authorization") String token){
+        return ok(service.getPerfil(token));
+    }
+
+    @GetMapping("/user")
+    private ResponseEntity<DtypeConsulta> getUserById(@RequestHeader("Authorization") String token){
         return ok(service.getUsuario(token));
     }
+
+
+
+
+
 }
