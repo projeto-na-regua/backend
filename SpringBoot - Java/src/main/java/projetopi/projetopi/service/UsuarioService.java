@@ -15,6 +15,7 @@ import projetopi.projetopi.dominio.*;
 import projetopi.projetopi.dto.request.CadastroBarbearia;
 import projetopi.projetopi.dto.request.CadastroCliente;
 import projetopi.projetopi.dto.request.LoginUsuario;
+import projetopi.projetopi.dto.response.DtypeConsulta;
 import projetopi.projetopi.dto.response.ImgConsulta;
 import projetopi.projetopi.dto.response.UsuarioConsulta;
 import projetopi.projetopi.repositorio.*;
@@ -148,17 +149,21 @@ public class UsuarioService {
     }
 
 
-    public List<UsuarioConsulta> getUsuario(String t){
-
+    public UsuarioConsulta getPerfil(String t){
         Integer id = Integer.valueOf(token.getUserIdByToken(t));
 
         if(usuarioRepository.getReferenceById(id).getDtype().equals("Cliente")){
-            return clienteRepository.findByInfoUsuario(id);
+            return clienteRepository.findByInfoUsuario(id).get(0);
 
         }else{
-            return barbeiroRepository.findByInfoUsuario(id);
+            return barbeiroRepository.findByInfoUsuario(id).get(0);
         }
 
+    }
+
+    public DtypeConsulta getUsuario(String t){
+        Integer id = Integer.valueOf(token.getUserIdByToken(t));
+        return mapper.map(usuarioRepository.findById(id), DtypeConsulta.class);
     }
 
     public boolean usuarioExiste(String token){
