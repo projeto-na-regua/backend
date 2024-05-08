@@ -111,8 +111,4 @@ public class FuncionarioService {
         barbeiroRepository.atualizarBarbeiroParaCliente(barbeiroRepository.findByEmail(email).getId());
     }
 
-
-    public void gerarRelatorioBarbeiro(String token, List<Barbeiro> barbeiros){
-        RelatorioBarbeiro.gravarRelatorioFinanceiro(barbeiros,"relatório_barbeiros");
-    }
 }
