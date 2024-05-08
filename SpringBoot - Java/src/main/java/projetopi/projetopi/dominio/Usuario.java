@@ -46,6 +46,9 @@ public abstract class Usuario {
     @Column(name = "dtype", insertable = false, updatable = false)
     private String dtype;
 
+    @OneToOne
+    @JoinColumn(name = "usuario_fk_endereco", nullable = true)
+    private Endereco endereco;
 
     public Usuario(String nome, String email, String celular) {
         this.nome = nome;
@@ -61,14 +64,14 @@ public abstract class Usuario {
 
     public Usuario(){}
 
-    public Usuario(Integer id, String nome, String email, String senha, String celular, String imgPerfil) {
+    public Usuario(Integer id, String nome, String email, String senha, String celular, String imgPerfil, String dtype, Endereco endereco) {
         this.id = id;
         this.nome = nome;
         this.email = email;
         this.senha = senha;
         this.celular = celular;
         this.imgPerfil = imgPerfil;
+        this.dtype = dtype;
+        this.endereco = endereco;
     }
-
-
 }

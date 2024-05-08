@@ -6,21 +6,12 @@ import java.time.LocalDateTime;
 
 @Entity
 public class Cliente extends Usuario implements iAgendavel {
-    @OneToOne
-    @JoinColumn(name = "usuario_fk_endereco", nullable = true)
-    private Endereco endereco;
-
 
     public Cliente(String nome, String email, String celular) {
         super(nome, email, celular);
     }
 
     public Cliente() {
-    }
-
-    public Cliente(String nome, String email, String celular, Endereco endereco) {
-        super(nome, email, celular);
-        this.endereco = endereco;
     }
 
     @Override
@@ -35,11 +26,4 @@ public class Cliente extends Usuario implements iAgendavel {
         return a;
     }
 
-    public Endereco getEndereco() {
-        return endereco;
-    }
-
-    public void setEndereco(Endereco endereco) {
-        this.endereco = endereco;
-    }
 }

@@ -9,5 +9,8 @@ public class UsuarioConsulta {
 
     private String email;
 
-    private byte[] imgPerfil;
+    private String celular;
+
+    private String imgPerfil;
+
 }

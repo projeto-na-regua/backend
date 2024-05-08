@@ -17,6 +17,7 @@ import projetopi.projetopi.dto.request.CadastroCliente;
 import projetopi.projetopi.dto.request.LoginUsuario;
 import projetopi.projetopi.dto.response.DtypeConsulta;
 import projetopi.projetopi.dto.response.ImgConsulta;
+import projetopi.projetopi.dto.response.PerfilUsuarioConsulta;
 import projetopi.projetopi.dto.response.UsuarioConsulta;
 import projetopi.projetopi.repositorio.*;
 import projetopi.projetopi.util.Token;
@@ -70,7 +71,7 @@ public class UsuarioService {
     public String cadastrarCliente(CadastroCliente c){
 
         Integer idEdereco = enderecoRepository.save(c.gerarEndereco()).getId();
-        Cliente cliente = c.gerarCliente();
+        Cliente cliente = c.gerarUsuario();
 
 
         cliente.setEndereco(enderecoRepository.getReferenceById(idEdereco));
@@ -149,15 +150,9 @@ public class UsuarioService {
     }
 
 
-    public UsuarioConsulta getPerfil(String t){
+    public PerfilUsuarioConsulta getPerfil(String t){
         Integer id = Integer.valueOf(token.getUserIdByToken(t));
-
-        if(usuarioRepository.getReferenceById(id).getDtype().equals("Cliente")){
-            return clienteRepository.findByInfoUsuario(id).get(0);
-
-        }else{
-            return barbeiroRepository.findByInfoUsuario(id).get(0);
-        }
+        return new PerfilUsuarioConsulta(usuarioRepository.findById(id).get());
 
     }
 
