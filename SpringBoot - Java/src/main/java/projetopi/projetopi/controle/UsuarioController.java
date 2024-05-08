@@ -48,7 +48,7 @@ public class UsuarioController {
     }
 
     @PostMapping("/cadastro-barbearia") // CADASTRO BARBEIRO
-    private ResponseEntity<String> cadastrarBarbeiro(@Valid @RequestBody CadastroBarbearia nvBarbearia){
+    private ResponseEntity<String> cadastrarBarbeiro(@RequestHeader("Authorization") String token, @Valid @RequestBody CadastroBarbearia nvBarbearia){
         if(service.usuarioExistsByEmail(nvBarbearia.getEmail())){
             return status(409).build();
 

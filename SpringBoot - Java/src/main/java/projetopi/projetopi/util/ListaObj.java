@@ -111,6 +111,16 @@ public class ListaObj <T> {
         }
     }
 
+    public void insereNaPosicao(T elemento, int posicao) {
+        // Verifica se a posição fornecida é válida
+        if (posicao < 0 || posicao >= nroElem) {
+            throw new IllegalArgumentException("Posição inválida");
+        }
+
+        // Substitui o elemento na posição especificada
+        vetor[posicao] = elemento;
+    }
+
     // Get do vetor
     // Não retirar, é usado nos testes
     public T[] getVetor() {
