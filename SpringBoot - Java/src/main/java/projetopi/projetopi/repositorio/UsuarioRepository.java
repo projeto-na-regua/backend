@@ -21,6 +21,6 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
 
     Usuario findByEmailAndSenha(String email, String senha);
 
-
-
+    @Query("select u.barbearia from Usuario u WHERE u.id = ?1")
+    Usuario getBarbearia(Integer id);
 }
