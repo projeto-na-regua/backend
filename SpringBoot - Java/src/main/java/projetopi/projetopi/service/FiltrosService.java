@@ -15,6 +15,11 @@ import projetopi.projetopi.controle.FiltroController;
 import projetopi.projetopi.dominio.api.Precipitacao;
 import projetopi.projetopi.dominio.api.Temperatura;
 import projetopi.projetopi.dto.response.PrevisaoApi;
+import projetopi.projetopi.util.ListaObj;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @Component
 @PropertySource("classpath:application.properties")
@@ -91,28 +96,40 @@ public class FiltrosService {
         return precipitacao;
     }
 
-    public void ordenarPorTemperaturasBaixas(PrevisaoApi[] v, int indInicio, int indFim){
 
-        if (v == null || v.length == 0 || indInicio >= indFim) {
+    public void ordenarPrevisao(ListaObj<PrevisaoApi> v, int indInicio, int indFim, boolean desc, String tipo) {
+        if (v == null || v.getTamanho() == 0 || indInicio >= indFim) {
             return;
         }
+
         int i = indInicio;
         int j = indFim;
-        double pivo = v[(indInicio + indFim) / 2].getTemperatura();
 
         while (i <= j) {
-            while (v[i].getTemperatura() < pivo) {
+            double pivo = tipo.equals("t") ? v.getElemento((indInicio + indFim) / 2).getTemperatura() : v.getElemento((indInicio + indFim) / 2).getPrecipitacao();
+            double elementoInicio = tipo.equals("t") ? v.getElemento(i).getTemperatura() : v.getElemento(i).getPrecipitacao();
+            double elementoFim = tipo.equals("t") ? v.getElemento(j).getTemperatura() : v.getElemento(j).getPrecipitacao();
+
+            while (desc ? elementoInicio > pivo : elementoInicio < pivo) {
                 i++;
+                if (i >= v.getTamanho()) {
+                    break; // Saída do loop se o índice ultrapassar o tamanho da lista
+                }
+                elementoInicio = tipo.equals("t") ? v.getElemento(i).getTemperatura() : v.getElemento(i).getPrecipitacao();
             }
 
-            while (v[j].getTemperatura() > pivo) {
+            while (desc ? elementoFim < pivo : elementoFim > pivo) {
                 j--;
+                if (j < 0) {
+                    break; // Saída do loop se o índice ficar negativo
+                }
+                elementoFim = tipo.equals("t") ? v.getElemento(j).getTemperatura() : v.getElemento(j).getPrecipitacao();
             }
 
             if (i <= j) {
-                PrevisaoApi aux = v[i];
-                v[i] = v[j];
-                v[j] = aux;
+                PrevisaoApi aux = v.getElemento(i);
+                v.insereNaPosicao(v.getElemento(j), i); // Esta linha está causando o erro
+                v.insereNaPosicao(aux, j);
 
                 i++;
                 j--;
@@ -120,87 +137,41 @@ public class FiltrosService {
         }
 
         if (indInicio < j) {
-            ordenarPorTemperaturasBaixas(v, indInicio, j);
+            ordenarPrevisao(v, indInicio, j, desc, tipo);
         }
 
         if (i < indFim) {
-            ordenarPorTemperaturasBaixas(v, i, indFim);
-        }
-    }
-
-    public void ordenarPorTemperaturasAltas(PrevisaoApi[] v, int indInicio, int indFim) {
-        if (v == null || v.length == 0 || indInicio >= indFim) {
-            return;
-        }
-
-        int i = indInicio;
-        int j = indFim;
-        double pivo = v[(indInicio + indFim) / 2].getTemperatura();
-
-        while (i <= j) {
-            while (v[i].getTemperatura() > pivo) {
-                i++;
-            }
-
-            while (v[j].getTemperatura() < pivo) {
-                j--;
-            }
-
-            if (i <= j) {
-                PrevisaoApi aux = v[i];
-                v[i] = v[j];
-                v[j] = aux;
-
-                i++;
-                j--;
-            }
-        }
-
-        if (indInicio < j) {
-            ordenarPorTemperaturasAltas(v, indInicio, j);
-        }
-
-        if (i < indFim) {
-            ordenarPorTemperaturasAltas(v, i, indFim);
+            ordenarPrevisao(v, i, indFim, desc, tipo);
         }
     }
 
 
-    public void ordenarPorPrecipitacao(PrevisaoApi[] v, int indInicio, int indFim){
+    public  int pesquisaBinaria(ListaObj<PrevisaoApi> vetor, LocalDateTime valor) {
+        int inicio = 0;
+        int fim = vetor.getTamanho() - 1;
 
-        if (v == null || v.length == 0 || indInicio >= indFim) {
-            return; // Não há elementos para ordenar ou o intervalo é inválido
-        }
+        while (inicio <= fim) {
+            int meio = (inicio + fim) / 2;
+            LocalDateTime dataHoraMeio =  vetor.getElemento(meio).getDataHora();
 
-        int i = indInicio;
-        int j = indFim;
-        double pivo = v[(indInicio + indFim) / 2].getPrecipitacao();
 
-        while (i <= j) {
-            while (v[i].getPrecipitacao() > pivo) {
-                i++;
+            int comparacao = dataHoraMeio.compareTo(valor);
+
+            // Se a data e hora na posição do meio for igual ao valor buscado, retorna o índice
+            if (comparacao == 0) {
+                return meio;
             }
-
-            while (v[j].getPrecipitacao() < pivo) {
-                j--;
+            // Se a data e hora na posição do meio for menor que o valor buscado, ajusta o início
+            else if (comparacao < 0) {
+                inicio = meio + 1;
             }
-
-            if (i <= j) {
-                PrevisaoApi aux = v[i];
-                v[i] = v[j];
-                v[j] = aux;
-
-                i++;
-                j--;
+            // Se a data e hora na posição do meio for maior que o valor buscado, ajusta o fim
+            else {
+                fim = meio - 1;
             }
         }
 
-        if (indInicio > j) {
-            ordenarPorPrecipitacao(v, indInicio, j);
-        }
-
-        if (i > indFim) {
-            ordenarPorPrecipitacao(v, i, indFim);
-        }
+        // Se não encontrar a data e hora na lista, retorna -1
+        return -1;
     }
 }
