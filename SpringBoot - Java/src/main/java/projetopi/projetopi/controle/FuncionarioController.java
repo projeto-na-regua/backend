@@ -3,6 +3,9 @@ package projetopi.projetopi.controle;
 
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import projetopi.projetopi.dominio.Barbeiro;
@@ -10,8 +13,10 @@ import projetopi.projetopi.dto.request.BarbeiroCriacao;
 import projetopi.projetopi.dto.response.BarbeiroConsulta;
 import projetopi.projetopi.dto.response.UsuarioConsulta;
 import projetopi.projetopi.relatorios.RelatorioBarbeiro;
+import projetopi.projetopi.repositorio.BarbeiroRepository;
 import projetopi.projetopi.service.FuncionarioService;
 
+import java.io.ByteArrayOutputStream;
 import java.util.List;
 
 import static org.springframework.http.ResponseEntity.*;
@@ -22,7 +27,6 @@ public class FuncionarioController {
 
         @Autowired
         private FuncionarioService service;
-
 
         @GetMapping
         public ResponseEntity<List<BarbeiroConsulta>> getFuncionarios(@RequestHeader("Authorization") String token){
@@ -82,16 +86,26 @@ public class FuncionarioController {
         }
 
 
-        @GetMapping("/relatorio")
-        public ResponseEntity<Barbeiro> gerarRelatorioBarbeiro(@RequestHeader("Authorization") String token){
+    @GetMapping("/relatorio")
+    public ResponseEntity<byte[]> gerarRelatorioBarbeiro(@RequestHeader("Authorization") String token) {
 
-            if (!service.validarPermissioes(token)) return status(403).build();
+        if (!service.validarPermissioes(token)) return status(403).build();
+        List<Barbeiro> barbeiros = service.mapper.map(service.getFuncionarios(token), new TypeToken<List<Barbeiro>>(){}.getType());
+        if (barbeiros.isEmpty()) return ResponseEntity.noContent().build();
 
-            List<Barbeiro> barbeiros = service.mapper.map(service.getFuncionarios(token), new TypeToken<List<Barbeiro>>(){}.getType());
-            RelatorioBarbeiro.gravarRelatorioFinanceiro(barbeiros,"relatório_barbeiros");
-            return status(204).build();
-        }
+        // Criar o nome do arquivo
+        String nomeArquivo = "relatório_barbeiros.csv";
 
+        // Gerar o arquivo CSV
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        RelatorioBarbeiro.gravarRelatorioFinanceiro(barbeiros, outputStream);
 
+        // Configurar os headers para o download do arquivo
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.setContentDispositionFormData(nomeArquivo, nomeArquivo);
+
+        return new ResponseEntity<>(outputStream.toByteArray(), headers, HttpStatus.OK);
+    }
 }
 
