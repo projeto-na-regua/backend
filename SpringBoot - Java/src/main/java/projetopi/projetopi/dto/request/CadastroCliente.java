@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import projetopi.projetopi.dominio.Cliente;
 import projetopi.projetopi.dominio.Endereco;
+import projetopi.projetopi.dominio.Usuario;
 
 public class CadastroCliente {
 
@@ -67,7 +68,7 @@ public class CadastroCliente {
         return endereco;
     }
 
-    public Cliente gerarCliente(){
+    public Cliente gerarUsuario(){
 
         Cliente cliente = new Cliente();
 

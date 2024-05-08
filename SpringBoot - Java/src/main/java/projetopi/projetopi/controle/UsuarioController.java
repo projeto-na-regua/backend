@@ -11,6 +11,7 @@ import projetopi.projetopi.dto.request.CadastroCliente;
 import projetopi.projetopi.dto.request.LoginUsuario;
 import projetopi.projetopi.dto.response.DtypeConsulta;
 import projetopi.projetopi.dto.response.ImgConsulta;
+import projetopi.projetopi.dto.response.PerfilUsuarioConsulta;
 import projetopi.projetopi.dto.response.UsuarioConsulta;
 import projetopi.projetopi.dto.request.CadastroBarbearia;
 import projetopi.projetopi.service.UsuarioService;
@@ -82,7 +83,7 @@ public class UsuarioController {
 
 
     @GetMapping("/perfil")
-    private ResponseEntity<UsuarioConsulta> getUsuario(@RequestHeader("Authorization") String token){
+    private ResponseEntity<PerfilUsuarioConsulta> getUsuario(@RequestHeader("Authorization") String token){
         return ok(service.getPerfil(token));
     }
 
