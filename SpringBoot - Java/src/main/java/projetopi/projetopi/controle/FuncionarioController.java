@@ -87,7 +87,7 @@ public class FuncionarioController {
 
 
     @GetMapping("/relatorio")
-    public ResponseEntity<byte[]> gerarRelatorioBarbeiro(@RequestHeader("Authorization") String token, @PathVariable Integer fk) {
+    public ResponseEntity<byte[]> gerarRelatorioBarbeiro(@RequestHeader("Authorization") String token) {
 
         if (!service.validarPermissioes(token)) return status(403).build();
         List<Barbeiro> barbeiros = service.mapper.map(service.getFuncionarios(token), new TypeToken<List<Barbeiro>>(){}.getType());
