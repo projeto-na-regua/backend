@@ -23,7 +23,7 @@ public interface BarbeariasRepository extends JpaRepository<Barbearia, Integer> 
       @Query("SELECT new Barbearia(b.endereco) FROM Barbearia b WHERE b.id = :id")
       List<InfoEndereco> findByInfoEndereco(@Param("id") Integer id);
 
-
+      Barbearia findByCpf(String cpf);
 
 
 }

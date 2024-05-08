@@ -28,6 +28,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 import static org.springframework.http.ResponseEntity.ok;
 
@@ -79,12 +80,29 @@ public class UsuarioService {
         return token.getToken(cliente);
     }
 
+
+    public boolean cpfExist(String cpf){
+        return barbeariasRepository.findByCpf(cpf) == null;
+    }
+
+    public boolean usuarioPossuiBarbearia(String tk){
+        Usuario u = usuarioRepository.findById(getUserId(tk)).get();
+        List<Barbeiro> barbeiros = barbeiroRepository.findAll();
+        for (Barbeiro b: barbeiros){
+            if(b.getId() == u.getId()){
+                return b.getBarbearia() != null;
+            }
+        }
+        return false;
+    }
+
     // CADASTRO BARBEIRO
-    public String cadastrarBarbeiro(CadastroBarbearia nvBarbearia){
+    public Barbearia cadastrarBarbeiro(CadastroBarbearia nvBarbearia, String tk){
+
+        Integer id = Integer.valueOf(token.getUserIdByToken(tk));
 
         Endereco endereco = nvBarbearia.gerarEndereco();
         Barbearia barbearia = nvBarbearia.gerarBarbearia();
-        Barbeiro barbeiro = nvBarbearia.gerarBarbeiro();
         DiaSemana[] diaSemana = nvBarbearia.gerarSemena();
 
         Integer idEndereco = enderecoRepository.save(endereco).getId();
@@ -93,17 +111,19 @@ public class UsuarioService {
 
         Integer idBarbearia = barbeariasRepository.save(barbearia).getId();
 
-        barbeiro.setBarbearia(barbeariasRepository.getReferenceById(idBarbearia));
+        clienteRepository.atualizarClienteParaBarbeiro(id, barbearia, true);
 
-        barbeiroRepository.save(barbeiro);
 
         for (DiaSemana d: diaSemana){
             d.setBarbearia(barbeariasRepository.getReferenceById(idBarbearia));
             diaSemanaRepository.save(d);
         }
 
-        return token.getToken(barbeiro);
+        return barbearia;
+
     }
+
+
 
 
     public UsuarioConsulta editarUsuario(Integer id, UsuarioConsulta nvUsuario){

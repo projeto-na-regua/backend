@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import projetopi.projetopi.dominio.Barbearia;
 import projetopi.projetopi.dto.request.CadastroCliente;
 import projetopi.projetopi.dto.request.LoginUsuario;
 import projetopi.projetopi.dto.response.DtypeConsulta;
@@ -49,12 +50,12 @@ public class UsuarioController {
     }
 
     @PostMapping("/cadastro-barbearia") // CADASTRO BARBEIRO
-    private ResponseEntity<String> cadastrarBarbeiro(@RequestHeader("Authorization") String token, @Valid @RequestBody CadastroBarbearia nvBarbearia){
-        if(service.usuarioExistsByEmail(nvBarbearia.getEmail())){
+    private ResponseEntity<Barbearia> cadastrarBarbeiro(@RequestHeader("Authorization") String token, @Valid @RequestBody CadastroBarbearia nvBarbearia){
+        if(!service.cpfExist(nvBarbearia.getCpf()) || service.usuarioPossuiBarbearia(token)){
             return status(409).build();
-
         }
-        return status(201).body(service.cadastrarBarbeiro(nvBarbearia));
+
+        return status(201).body(service.cadastrarBarbeiro(nvBarbearia, token));
     }
 
 
