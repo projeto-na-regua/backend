@@ -1,8 +1,8 @@
 package projetopi.projetopi.dto.response;
 
 import lombok.Getter;
-import projetopi.projetopi.dominio.Endereco;
-import projetopi.projetopi.dominio.Usuario;
+import projetopi.projetopi.entity.Endereco;
+import projetopi.projetopi.entity.Usuario;
 
 @Getter
 public class PerfilUsuarioConsulta {

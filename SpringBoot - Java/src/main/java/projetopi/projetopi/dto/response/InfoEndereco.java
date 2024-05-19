@@ -1,10 +1,9 @@
 package projetopi.projetopi.dto.response;
 
-import jakarta.persistence.Column;
 import jakarta.validation.constraints.Size;
-import projetopi.projetopi.dominio.Barbearia;
-import projetopi.projetopi.dominio.Cliente;
-import projetopi.projetopi.dominio.Endereco;
+import projetopi.projetopi.entity.Barbearia;
+import projetopi.projetopi.entity.Cliente;
+import projetopi.projetopi.entity.Endereco;
 
 public class InfoEndereco {
 

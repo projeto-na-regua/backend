@@ -3,19 +3,25 @@ package projetopi.projetopi.util;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import projetopi.projetopi.dominio.Usuario;
+import projetopi.projetopi.entity.Barbearia;
+import projetopi.projetopi.entity.Barbeiro;
+import projetopi.projetopi.entity.Usuario;
+import projetopi.projetopi.repository.BarbeiroRepository;
+
 @Component
 public class Token {
 
     private String token;
 
     private final  String  tokenSecretKey = "R2x5q8tBwEzHcTfWjYn3r6u9x$B&E)H@McQfTjWnZr4t7w!z%C*F-JaNdRgUkXp";
+
+    @Autowired
+    private BarbeiroRepository barbeiroRepository;
 
 
     public  String getToken(Usuario usuario) {

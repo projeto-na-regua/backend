@@ -4,10 +4,11 @@ import jakarta.persistence.Column;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import projetopi.projetopi.dominio.Cliente;
-import projetopi.projetopi.dominio.Endereco;
-import projetopi.projetopi.dominio.Usuario;
+import lombok.Getter;
+import projetopi.projetopi.entity.Cliente;
+import projetopi.projetopi.entity.Endereco;
 
+@Getter
 public class CadastroCliente {
 
     @NotBlank
@@ -16,10 +17,10 @@ public class CadastroCliente {
 
     @Email
     @NotBlank
-    @Column(name="email")
+    @Column(name = "email")
     private String email;
 
-    @Size(min = 8, max = 12)
+    @Size(min = 8)
     @NotBlank
     private String senha;
 
@@ -55,69 +56,4 @@ public class CadastroCliente {
         this.estado = estado;
     }
 
-    public Endereco gerarEndereco(){
-        Endereco endereco = new Endereco();
-
-        endereco.setCep(cep);
-        endereco.setLogradouro(logradouro);
-        endereco.setNumero(numero);
-        endereco.setComplemento(complemento);
-        endereco.setEstado(estado);
-        endereco.setCidade(cidade);
-
-        return endereco;
-    }
-
-    public Cliente gerarUsuario(){
-
-        Cliente cliente = new Cliente();
-
-        cliente.setNome(nome);
-        cliente.setEmail(email);
-        cliente.setSenha(senha);
-        cliente.setCelular(celular);
-
-
-        return cliente;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getSenha() {
-        return senha;
-    }
-
-    public String getCelular() {
-        return celular;
-    }
-
-    public String getCep() {
-        return cep;
-    }
-
-    public String getLogradouro() {
-        return logradouro;
-    }
-
-    public Integer getNumero() {
-        return numero;
-    }
-
-    public String getComplemento() {
-        return complemento;
-    }
-
-    public String getCidade() {
-        return cidade;
-    }
-
-    public String getEstado() {
-        return estado;
-    }
 }

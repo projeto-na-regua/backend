@@ -9,9 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
-import projetopi.projetopi.dominio.*;
+import projetopi.projetopi.dto.mappers.UsuarioMapper;
+import projetopi.projetopi.entity.*;
 import projetopi.projetopi.dto.request.CadastroBarbearia;
 import projetopi.projetopi.dto.request.CadastroCliente;
 import projetopi.projetopi.dto.request.LoginUsuario;
@@ -19,7 +19,9 @@ import projetopi.projetopi.dto.response.DtypeConsulta;
 import projetopi.projetopi.dto.response.ImgConsulta;
 import projetopi.projetopi.dto.response.PerfilUsuarioConsulta;
 import projetopi.projetopi.dto.response.UsuarioConsulta;
-import projetopi.projetopi.repositorio.*;
+import projetopi.projetopi.exception.ConflitoException;
+import projetopi.projetopi.exception.RecursoNaoEncontradoException;
+import projetopi.projetopi.repository.*;
 import projetopi.projetopi.util.Token;
 
 import javax.imageio.ImageIO;
@@ -28,7 +30,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
 import static org.springframework.http.ResponseEntity.ok;
 
@@ -61,43 +62,30 @@ public class UsuarioService {
     public ModelMapper mapper;
 
     @Autowired
-    private final AzureStorageService azureStorageService;
+    private final StorageService azureStorageService;
 
-    public UsuarioService(AzureStorageService azureStorageService) {
+    public UsuarioService(StorageService azureStorageService) {
         this.azureStorageService = azureStorageService;
     }
 
 
-    // CADASTRO CLIENTE
-    public String cadastrarCliente(CadastroCliente c){
 
-        Integer idEdereco = enderecoRepository.save(c.gerarEndereco()).getId();
-        Cliente cliente = c.gerarUsuario();
-
-
-        cliente.setEndereco(enderecoRepository.getReferenceById(idEdereco));
+    public String cadastrarCliente(CadastroCliente nvCliente){
+        validarEmail(nvCliente.getEmail());
+        Integer idEdereco = enderecoRepository.save(UsuarioMapper.toDtoEndereco(nvCliente)).getId();
+        Cliente cliente = UsuarioMapper.toDto(nvCliente);
+        cliente.getEndereco().setId(idEdereco);
         clienteRepository.save(cliente);
         return token.getToken(cliente);
     }
 
 
-    public boolean cpfExist(String cpf){
-        return barbeariasRepository.findByCpf(cpf) == null;
-    }
 
-    public boolean usuarioPossuiBarbearia(String tk){
-        Usuario u = usuarioRepository.findById(getUserId(tk)).get();
-        List<Barbeiro> barbeiros = barbeiroRepository.findAll();
-        for (Barbeiro b: barbeiros){
-            if(b.getId() == u.getId()){
-                return b.getBarbearia() != null;
-            }
-        }
-        return false;
-    }
 
     // CADASTRO BARBEIRO
     public Barbearia cadastrarBarbeiro(CadastroBarbearia nvBarbearia, String tk){
+        validarCpf(nvBarbearia.getCpf());
+        validarSeUsuarioPossuiBarbearia(tk);
 
         Integer id = Integer.valueOf(token.getUserIdByToken(tk));
 
@@ -126,8 +114,10 @@ public class UsuarioService {
 
 
 
-    public UsuarioConsulta editarUsuario(Integer id, UsuarioConsulta nvUsuario){
+    public UsuarioConsulta editarUsuario(String tk, UsuarioConsulta nvUsuario){
 
+        Integer id = Integer.valueOf(token.getUserIdByToken(tk));
+        validarUsuarioExiste(id);
 
         if(usuarioRepository.getReferenceById(id).getDtype().equals("Cliente")){
             Cliente usuario = mapper.map(nvUsuario, Cliente.class);
@@ -145,63 +135,53 @@ public class UsuarioService {
         }
     }
 
-    public Integer getUserId(String t){
-       return Integer.valueOf(token.getUserIdByToken(t));
-    }
-
-    public boolean usuarioExistsById(Integer id){
-        return usuarioRepository.existsById(id);
-    }
-
-    public boolean usuarioExistsByEmail(String email){
-        return usuarioRepository.findByEmail(email) != null;
-    }
 
 
     public String loginIsValid(LoginUsuario user){
-
         Usuario u = usuarioRepository.findByEmailAndSenha(user.getEmail(), user.getSenha());
-
-        if (u != null){
-            return token.getToken(u);
-        }
-
-        return null;
+        String tk = token.getToken(u);
+        validarToken(tk);
+        return token.getToken(u);
     }
 
 
     public PerfilUsuarioConsulta getPerfil(String t){
         Integer id = Integer.valueOf(token.getUserIdByToken(t));
+        validarUsuarioExiste(id);
         return new PerfilUsuarioConsulta(usuarioRepository.findById(id).get());
 
     }
 
     public DtypeConsulta getUsuario(String t){
         Integer id = Integer.valueOf(token.getUserIdByToken(t));
+        validarUsuarioExiste(id);
         return mapper.map(usuarioRepository.findById(id), DtypeConsulta.class);
     }
 
-    public boolean usuarioExiste(String token){
-        return usuarioRepository.existsById(getUserId(token));
-    }
 
-    public ResponseEntity<ImgConsulta> editarImgPerfil(String t, MultipartFile file){
+    public ResponseEntity<ImgConsulta> editarImgPerfil(String tk, MultipartFile file){
+
+        Integer id = Integer.valueOf(token.getUserIdByToken(tk));
+        validarUsuarioExiste(id);
+
         try {
             String imageUrl = azureStorageService.uploadImage(file);
-            Usuario usuario = usuarioRepository.findById(getUserId(t)).get();
+            Usuario usuario = usuarioRepository.findById(id).get();
             usuario.setImgPerfil(imageUrl);
-            usuario.setId(getUserId(t));
+            usuario.setId(id);
             usuarioRepository.save(usuario);
-            return ResponseEntity.ok().body(new ImgConsulta(usuarioRepository.findById(getUserId(t)).get().getImgPerfil()));
+            return ResponseEntity.ok().body(new ImgConsulta(usuarioRepository.findById(id).get().getImgPerfil()));
         } catch (IOException e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
-    public ResponseEntity<ByteArrayResource> getImage(String t) {
+    public ResponseEntity<ByteArrayResource> getImage(String tk) {
+        Integer id = Integer.valueOf(token.getUserIdByToken(tk));
+        validarUsuarioExiste(id);
         try {
-            String imageName = usuarioRepository.findById(getUserId(t)).get().getImgPerfil();
+            String imageName = usuarioRepository.findById(id).get().getImgPerfil();
             byte[] blobBytes = azureStorageService.getBlob(imageName);
 
             BufferedImage image = ImageIO.read(new ByteArrayInputStream(blobBytes));
@@ -224,6 +204,44 @@ public class UsuarioService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
+
+    void validarEmail(String email){
+        if (usuarioRepository.findByEmail(email) != null){
+            throw new ConflitoException("Usuário", email);
+        }
+    }
+
+    void validarToken(String token){
+        if (token == null) throw new RecursoNaoEncontradoException("Usuário", token);
+    }
+
+
+    void validarCpf(String cpf){
+        if (barbeariasRepository.findByCpf(cpf) != null){
+            throw new ConflitoException("Usuário", cpf);
+        }
+    }
+
+
+    void validarSeUsuarioPossuiBarbearia(String tk){
+        Integer id = Integer.valueOf(token.getUserIdByToken(tk));
+        Usuario u = usuarioRepository.findById(id).get();
+        List<Barbeiro> barbeiros = barbeiroRepository.findAll();
+        for (Barbeiro b: barbeiros){
+            if(b.getId() == u.getId()){
+                if(b.getBarbearia() != null){
+                    throw new ConflitoException("Barbearia", u);
+                };
+            }
+        }
+    }
+
+    void validarUsuarioExiste(Integer id){
+         if (usuarioRepository.existsById(id)){
+             throw new RecursoNaoEncontradoException("Usuário", id);
+         };
+    }
+
 
 
 }

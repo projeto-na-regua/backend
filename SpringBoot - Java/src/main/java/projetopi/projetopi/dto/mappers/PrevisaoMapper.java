@@ -1,8 +1,7 @@
 package projetopi.projetopi.dto.mappers;
 
-import projetopi.projetopi.dominio.api.Dado;
-import projetopi.projetopi.dominio.api.Precipitacao;
-import projetopi.projetopi.dominio.api.Temperatura;
+import projetopi.projetopi.entity.api.Precipitacao;
+import projetopi.projetopi.entity.api.Temperatura;
 import projetopi.projetopi.dto.response.PrevisaoApi;
 import projetopi.projetopi.util.ListaObj;
 
