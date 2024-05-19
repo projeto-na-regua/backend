@@ -6,20 +6,17 @@ import org.springframework.core.env.Environment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
-import projetopi.projetopi.controle.FiltroController;
-import projetopi.projetopi.dominio.api.Precipitacao;
-import projetopi.projetopi.dominio.api.Temperatura;
+import projetopi.projetopi.controller.FiltroController;
+import projetopi.projetopi.entity.api.Precipitacao;
+import projetopi.projetopi.entity.api.Temperatura;
 import projetopi.projetopi.dto.response.PrevisaoApi;
 import projetopi.projetopi.util.ListaObj;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
 
 @Component
 @PropertySource("classpath:application.properties")
@@ -101,19 +98,23 @@ public class FiltrosService {
         if (v == null || v.getTamanho() == 0 || indInicio >= indFim) {
             return;
         }
-
         int i = indInicio;
         int j = indFim;
 
         while (i <= j) {
-            double pivo = tipo.equals("t") ? v.getElemento((indInicio + indFim) / 2).getTemperatura() : v.getElemento((indInicio + indFim) / 2).getPrecipitacao();
-            double elementoInicio = tipo.equals("t") ? v.getElemento(i).getTemperatura() : v.getElemento(i).getPrecipitacao();
-            double elementoFim = tipo.equals("t") ? v.getElemento(j).getTemperatura() : v.getElemento(j).getPrecipitacao();
+            double pivo = tipo.equals("t") ? v.getElemento((indInicio + indFim) / 2).getTemperatura() :
+                    v.getElemento((indInicio + indFim) / 2).getPrecipitacao();
+
+            double elementoInicio = tipo.equals("t") ? v.getElemento(i).getTemperatura() :
+                    v.getElemento(i).getPrecipitacao();
+
+            double elementoFim = tipo.equals("t") ? v.getElemento(j).getTemperatura() :
+                    v.getElemento(j).getPrecipitacao();
 
             while (desc ? elementoInicio > pivo : elementoInicio < pivo) {
                 i++;
                 if (i >= v.getTamanho()) {
-                    break; // Saída do loop se o índice ultrapassar o tamanho da lista
+                    break; 
                 }
                 elementoInicio = tipo.equals("t") ? v.getElemento(i).getTemperatura() : v.getElemento(i).getPrecipitacao();
             }

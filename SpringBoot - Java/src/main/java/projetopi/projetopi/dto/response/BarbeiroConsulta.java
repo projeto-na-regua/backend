@@ -1,8 +1,6 @@
 package projetopi.projetopi.dto.response;
 
 import lombok.Getter;
-import projetopi.projetopi.dominio.Barbeiro;
-import projetopi.projetopi.dominio.Especialidade;
 
 @Getter
 public class BarbeiroConsulta {

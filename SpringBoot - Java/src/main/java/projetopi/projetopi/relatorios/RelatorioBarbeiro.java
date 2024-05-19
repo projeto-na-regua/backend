@@ -1,7 +1,6 @@
 package projetopi.projetopi.relatorios;
 
-import projetopi.projetopi.dominio.Barbeiro;
-import projetopi.projetopi.dominio.Usuario;
+import projetopi.projetopi.entity.Barbeiro;
 
 import java.io.*;
 import java.util.*;

@@ -1,10 +1,9 @@
 package projetopi.projetopi.dto.response;
 
-import jakarta.persistence.Column;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
 import org.hibernate.validator.constraints.br.CPF;
-import projetopi.projetopi.dominio.Barbearia;
+import projetopi.projetopi.entity.Barbearia;
 
 public class InfoBarbearia {
 

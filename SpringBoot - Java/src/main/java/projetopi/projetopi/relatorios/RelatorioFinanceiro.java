@@ -1,6 +1,6 @@
 package projetopi.projetopi.relatorios;
 
-import projetopi.projetopi.dominio.Financa;
+import projetopi.projetopi.entity.Financa;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;

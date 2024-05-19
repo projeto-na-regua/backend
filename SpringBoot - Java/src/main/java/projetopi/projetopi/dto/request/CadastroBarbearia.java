@@ -1,20 +1,13 @@
 package projetopi.projetopi.dto.request;
 
-import jakarta.persistence.Column;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
-import org.hibernate.validator.constraints.br.CNPJ;
 import org.hibernate.validator.constraints.br.CPF;
-import projetopi.projetopi.dominio.Barbearia;
-import projetopi.projetopi.dominio.Barbeiro;
-import projetopi.projetopi.dominio.DiaSemana;
-import projetopi.projetopi.dominio.Endereco;
+import projetopi.projetopi.entity.Barbearia;
+import projetopi.projetopi.entity.DiaSemana;
+import projetopi.projetopi.entity.Endereco;
 import projetopi.projetopi.util.Dia;
 
-import java.security.cert.TrustAnchor;
 @Getter
 public class CadastroBarbearia {
 

@@ -2,9 +2,9 @@ package projetopi.projetopi.dto.response;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.util.StdConverter;
-import projetopi.projetopi.dominio.api.Dado;
-import projetopi.projetopi.dominio.api.Precipitacao;
-import projetopi.projetopi.dominio.api.Temperatura;
+import projetopi.projetopi.entity.api.Dado;
+import projetopi.projetopi.entity.api.Precipitacao;
+import projetopi.projetopi.entity.api.Temperatura;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
