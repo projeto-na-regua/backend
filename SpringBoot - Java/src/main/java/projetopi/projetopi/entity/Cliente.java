@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
+@DiscriminatorValue("Cliente")
 public class Cliente extends Usuario implements iAgendavel {
 
     public Cliente(String nome, String email, String celular) {
@@ -23,7 +24,7 @@ public class Cliente extends Usuario implements iAgendavel {
         LocalDateTime dataHora = LocalDateTime.now();
 
         // Crie um novo objeto AgendaAux usando o construtor apropriado
-        Agendamento a = new Agendamento(dataHora, s, b, c, bb, e, concluido, avaliacao);
+        Agendamento a = new Agendamento();
 
         System.out.println(a);
 

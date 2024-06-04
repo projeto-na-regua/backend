@@ -4,9 +4,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.validator.constraints.br.CPF;
 
 @Entity
+@Getter
+@Setter
 public class Barbearia {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -70,76 +74,5 @@ public class Barbearia {
         this.descricao = descricao;
     }
 
-    public Integer getId() {
-        return id;
-    }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-
-    public byte[] getImgPerfil() {
-        return imgPerfil;
-    }
-
-    public void setImgPerfil(byte[] imgPerfil) {
-        this.imgPerfil = imgPerfil;
-    }
-
-    public String getEmailNegocio() {
-        return emailNegocio;
-    }
-
-    public void setEmailNegocio(String emailNegocio) {
-        this.emailNegocio = emailNegocio;
-    }
-
-    public String getCelularNegocio() {
-        return celularNegocio;
-    }
-
-    public void setCelularNegocio(String celularNegocio) {
-        this.celularNegocio = celularNegocio;
-    }
-
-    public String getCnpj() {
-        return cnpj;
-    }
-
-    public void setCnpj(String cnpj) {
-        this.cnpj = cnpj;
-    }
-
-    public String getCpf() {
-        return cpf;
-    }
-
-    public void setCpf(String cpf) {
-        this.cpf = cpf;
-    }
-
-    public String getDescricao() {
-        return descricao;
-    }
-
-    public void setDescricao(String descricao) {
-        this.descricao = descricao;
-    }
-
-    public Endereco getEndereco() {
-        return endereco;
-    }
-
-    public void setEndereco(Endereco endereco) {
-        this.endereco = endereco;
-    }
-
-    public String getNomeNegocio() {
-        return nomeNegocio;
-    }
-
-    public void setNomeNegocio(String nomeNegocio) {
-        this.nomeNegocio = nomeNegocio;
-    }
 }

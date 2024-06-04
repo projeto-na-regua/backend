@@ -11,14 +11,13 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: update
-    properties:
-      hibernate:
-        format_sql: true
+      show-sql: true
+      properties:
+        hibernate:
+          dialect: org.hibernate.dialect.SQLServerDialect
 
-    cloud:
-      azure:
-        storage:
-          blob:
-            endpoint: https://upload0naregua.blob.core.windows.net/
-            account-name: upload0naregua
-
+azure:
+  storage:
+    blob:
+      endpoint: https://upload0naregua.blob.core.windows.net/
+      account-name: upload0naregua

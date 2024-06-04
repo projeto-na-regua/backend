@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import projetopi.projetopi.dto.mappers.UsuarioMapper;
 import projetopi.projetopi.entity.Barbearia;
 import projetopi.projetopi.entity.Barbeiro;
 import projetopi.projetopi.dto.request.BarbeiroCriacao;
@@ -62,7 +63,7 @@ public class FuncionarioService {
             throw new ResponseStatusException(HttpStatusCode.valueOf(204));
         }
 
-        return mapper.map(barbeiros, new TypeToken<List<BarbeiroConsulta>>(){}.getType());
+        return UsuarioMapper.toDto(barbeiros);
     }
 
     public BarbeiroConsulta getFuncionarioEspecifico(String email, String token){

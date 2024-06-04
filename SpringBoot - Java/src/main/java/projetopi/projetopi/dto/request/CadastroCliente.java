@@ -4,11 +4,17 @@ import jakarta.persistence.Column;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import projetopi.projetopi.entity.Cliente;
 import projetopi.projetopi.entity.Endereco;
 
 @Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class CadastroCliente {
 
     @NotBlank
@@ -30,7 +36,9 @@ public class CadastroCliente {
 
     @Size(max = 9)
     private String cep;
+
     private String logradouro;
+
     private Integer numero;
 
     private String complemento;
@@ -38,22 +46,5 @@ public class CadastroCliente {
     private String cidade;
 
     private String estado;
-
-
-    public CadastroCliente() {
-    }
-
-    public CadastroCliente(String nome, String email, String senha, String celular, String cep, String logradouro, Integer numero, String complemento, String cidade, String estado) {
-        this.nome = nome;
-        this.email = email;
-        this.senha = senha;
-        this.celular = celular;
-        this.cep = cep;
-        this.logradouro = logradouro;
-        this.numero = numero;
-        this.complemento = complemento;
-        this.cidade = cidade;
-        this.estado = estado;
-    }
 
 }

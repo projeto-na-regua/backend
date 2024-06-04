@@ -12,17 +12,12 @@ import org.springframework.web.server.ResponseStatusException;
 import projetopi.projetopi.dto.mappers.ServicoMapper;
 import projetopi.projetopi.dto.request.ServicoCriacao;
 import projetopi.projetopi.dto.response.ServicoConsulta;
-import projetopi.projetopi.entity.Barbearia;
-import projetopi.projetopi.entity.Barbeiro;
-import projetopi.projetopi.entity.Servico;
-import projetopi.projetopi.entity.Usuario;
+import projetopi.projetopi.entity.*;
 import projetopi.projetopi.exception.RecursoNaoEncontradoException;
-import projetopi.projetopi.repository.BarbeariasRepository;
-import projetopi.projetopi.repository.BarbeiroRepository;
-import projetopi.projetopi.repository.ServicoRepository;
-import projetopi.projetopi.repository.UsuarioRepository;
+import projetopi.projetopi.repository.*;
 import projetopi.projetopi.util.Token;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.http.ResponseEntity.status;
@@ -50,17 +45,20 @@ public class ServicoService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    @Autowired
+    private BarbeiroServicoRepository barbeiroServicoRepository;
+
 
     public List<ServicoConsulta> getAllServicos(String token){
         validarBarbearia(token);
-        List<ServicoConsulta> servicos = servicoRepository.findByInfoServicoBarbearia(getIdBarbearia(token));
+        List<ServicoConsulta> servicos = new ArrayList<>();
 
         if (servicos.isEmpty()) {
             throw new ResponseStatusException(HttpStatusCode.valueOf(204));
         }
+
         return servicos;
     }
-
 
     public ServicoConsulta getServico(String token, Integer idServico){
         validarBarbearia(token);
@@ -70,20 +68,23 @@ public class ServicoService {
     }
 
 
-
     public ServicoConsulta criar(String token, ServicoCriacao nvServico){
         validarBarbearia(token);
-        validaBarbeiro(nvServico.getBarbeiro());
 
+        Integer id = getIdBarbearia(token);
         Servico servico = ServicoMapper.toEntity(nvServico);
-        servico.setBarbearia(barbeariasRepository.getReferenceById(getIdBarbearia(token)));
-        return new ServicoConsulta(servicoRepository.save(servico));
+        servico.setBarbearia(barbeariasRepository.findById(id).get());
+        Integer servicoId = servicoRepository.save(servico).getId();
+
+        for (int i = 0; i < nvServico.getBarbeirosIds().size(); i++) {
+            relacionarSericoBarbeiro(token, nvServico.getBarbeirosIds().get(i), servicoId);
+        }
+        return new ServicoConsulta(servicoRepository.findById(servicoId).get());
     }
 
 
     public ServicoConsulta atualizar(String token, Integer idServico, ServicoCriacao nvServico){
         validarBarbearia(token);
-        validaBarbeiro(nvServico.getBarbeiro());
         validarServico(idServico);
 
         Servico servico = ServicoMapper.toEntity(nvServico);
@@ -100,6 +101,17 @@ public class ServicoService {
 
     public Integer getIdBarbearia(String token){
         return getBarbeariaByToken(token).getId();
+    }
+
+    public BarbeiroServico relacionarSericoBarbeiro(String token, Integer barberiroId, Integer servicoId){
+        Barbeiro barbeiro = barbeiroRepository.findById(barberiroId).get();
+        Servico servico = servicoRepository.findById(servicoId).get();
+        Barbearia barbearia = barbeariasRepository.findById(getIdBarbearia(token)).get();
+        BarbeiroServico barbeiroServico = new BarbeiroServico();
+        barbeiroServico.setBarbeiro(barbeiro);
+        barbeiroServico.setServico(servico);
+        barbeiroServico.setBarbearia(barbearia);
+        return barbeiroServicoRepository.save(barbeiroServico);
     }
 
     void validarBarbearia(String token){

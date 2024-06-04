@@ -4,10 +4,11 @@ import lombok.Getter;
 import projetopi.projetopi.entity.Barbeiro;
 import projetopi.projetopi.entity.Servico;
 
+import java.util.List;
+
 
 @Getter
 public class ServicoCriacao {
-
 
     private Double preco;
 
@@ -17,7 +18,7 @@ public class ServicoCriacao {
 
     private Integer tempoEstimado;
 
-    private Integer barbeiro;
+    private List<Integer> barbeirosIds;
 
 }
 
