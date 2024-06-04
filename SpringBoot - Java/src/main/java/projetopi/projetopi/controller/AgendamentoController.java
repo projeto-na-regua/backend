@@ -1,10 +1,20 @@
 package projetopi.projetopi.controller;
 
+import jakarta.validation.Valid;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import projetopi.projetopi.entity.Agendamento;
+import projetopi.projetopi.dto.mappers.ServicoMapper;
+import projetopi.projetopi.dto.request.AgendamentoCriacao;
+import projetopi.projetopi.dto.response.AgendamentoConsulta;
+import projetopi.projetopi.dto.response.ServicoConsulta;
+import projetopi.projetopi.entity.*;
 import projetopi.projetopi.repository.AgendaRepository;
+import projetopi.projetopi.repository.BarbeiroServicoRepository;
+import projetopi.projetopi.repository.ServicoRepository;
+import projetopi.projetopi.service.AgendamentoService;
 
 import java.util.List;
 
@@ -18,20 +28,21 @@ public class AgendamentoController{
     @Autowired
     private AgendaRepository repository;
 
+    @Autowired
+    private AgendamentoService service;
+
+
 
     @PostMapping
-    public ResponseEntity<Agendamento> adicionarAgendamento(@RequestBody Agendamento a){
-        repository.save(a);
-        return ResponseEntity.status(201).body(a);
+    public ResponseEntity<AgendamentoConsulta> adicionarAgendamento(@Valid  @RequestBody AgendamentoCriacao nvAgendamento){
+        return status(201).body(service.adicionarAgendamento(nvAgendamento));
     }
 
     @GetMapping
-    public ResponseEntity<List<Agendamento>> getAgendamento(){
-        var lista = repository.findAll();
-        return lista.isEmpty()
-                ? status(204).build()
-                : status(200).body(lista);
+    public ResponseEntity<List<AgendamentoConsulta>> getAgendamento(){
+        return status(200).body(service.getAgendamento());
     }
+
 
     @PutMapping("/{id}")
     public ResponseEntity<Agendamento> atualizarAgendamento(@RequestBody Agendamento a,

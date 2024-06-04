@@ -1,8 +1,13 @@
 package projetopi.projetopi.dto.mappers;
 
 import projetopi.projetopi.dto.request.CadastroCliente;
+import projetopi.projetopi.dto.response.BarbeiroConsulta;
+import projetopi.projetopi.entity.Barbeiro;
 import projetopi.projetopi.entity.Cliente;
 import projetopi.projetopi.entity.Endereco;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class UsuarioMapper {
 
@@ -15,7 +20,6 @@ public class UsuarioMapper {
             c.getEstado(),
             c.getCidade()
         );
-
     }
 
     public static Cliente toDto(CadastroCliente c) {
@@ -27,5 +31,14 @@ public class UsuarioMapper {
                 toDtoEndereco(c)
         );
 
+    }
+
+    public static List<BarbeiroConsulta> toDto(List<Barbeiro> barbeiros){
+
+        List<BarbeiroConsulta> dtos = new ArrayList<>();
+        for (Barbeiro b: barbeiros){
+            dtos.add(new BarbeiroConsulta(b));
+        }
+        return dtos;
     }
 }

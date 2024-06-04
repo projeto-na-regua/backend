@@ -4,6 +4,10 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 
 @Entity
 @Getter
@@ -22,20 +26,18 @@ public class Servico {
     @Column(name="tempo_estimado", nullable = false)
     private Integer tempoEstimado;
     @ManyToOne
-    @JoinColumn(name="servico_fk_usuario", nullable = false)
-    private Barbeiro barbeiro;
-    @ManyToOne
     @JoinColumn(name="servico_fk_barbearia")
     private Barbearia barbearia;
+    @OneToMany(mappedBy = "servico")
+    private Set<BarbeiroServico> barbeiroServicos = new HashSet<>();
 
 
-    public Servico(Integer id, Double preco, String descricao, String tipoServico, Integer tempoEstimado, Barbeiro barbeiro, Barbearia barbearia) {
+    public Servico(Integer id, Double preco, String descricao, String tipoServico, Integer tempoEstimado, Barbearia barbearia) {
         this.id = id;
         this.preco = preco;
         this.descricao = descricao;
         this.tipoServico = tipoServico;
         this.tempoEstimado = tempoEstimado;
-        this.barbeiro = barbeiro;
         this.barbearia = barbearia;
     }
 
@@ -45,10 +47,16 @@ public class Servico {
         this.descricao = descricao;
         this.tipoServico = tipoServico;
         this.tempoEstimado = tempoEstimado;
-        this.barbeiro = new Barbeiro(nomebarbeiro);
     }
 
     public Servico() {}
 
-
+    public Set<Barbeiro> getBarbeiros() {
+        if (barbeiroServicos == null) {
+            return new HashSet<>();
+        }
+        return barbeiroServicos.stream()
+                .map(BarbeiroServico::getBarbeiro)
+                .collect(Collectors.toSet());
+    }
 }

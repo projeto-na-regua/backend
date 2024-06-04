@@ -3,9 +3,12 @@ package projetopi.projetopi.controller;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import projetopi.projetopi.dto.request.EditarSenha;
 import projetopi.projetopi.entity.Barbearia;
 import projetopi.projetopi.dto.request.CadastroCliente;
 import projetopi.projetopi.dto.request.LoginUsuario;
@@ -40,7 +43,7 @@ public class UsuarioController {
     @PostMapping("/cadastro-barbearia") // CADASTRO BARBEIRO
     private ResponseEntity<Barbearia> cadastrarBarbeiro(@RequestHeader("Authorization") String token,
                                                         @Valid @RequestBody CadastroBarbearia nvBarbearia){
-        return status(201).body(service.cadastrarBarbeiro(nvBarbearia, token));
+        return status(201).body(service.cadastrarBarbeariaByDto(nvBarbearia, token));
     }
 
 
@@ -53,12 +56,17 @@ public class UsuarioController {
     @PutMapping("/editar-img-perfil")
     public ResponseEntity<ImgConsulta> uploadFile(@RequestHeader("Authorization") String token,
                                                   @RequestParam("file") MultipartFile file) {
-        return service.editarImgPerfil(token, file);
+        return status(200).body(service.editarImgPerfil(token, file));
     }
 
     @GetMapping("/get-image")
     public ResponseEntity<ByteArrayResource> getImage(@RequestHeader("Authorization") String token){
-        return service.getImage(token);
+        ByteArrayResource resource = service.getImage(token);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.IMAGE_PNG);
+
+        return ResponseEntity.ok().headers(headers).contentLength(resource.contentLength()).body(resource);
     }
 
     @GetMapping("/perfil")

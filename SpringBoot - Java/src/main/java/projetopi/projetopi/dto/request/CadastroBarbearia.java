@@ -2,6 +2,7 @@ package projetopi.projetopi.dto.request;
 
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.validator.constraints.br.CPF;
 import projetopi.projetopi.entity.Barbearia;
 import projetopi.projetopi.entity.DiaSemana;
@@ -9,6 +10,7 @@ import projetopi.projetopi.entity.Endereco;
 import projetopi.projetopi.util.Dia;
 
 @Getter
+@Setter
 public class CadastroBarbearia {
 
 
@@ -64,10 +66,8 @@ public class CadastroBarbearia {
        endereco.setNumero(numero);
        endereco.setCidade(cidade);
        endereco.setEstado(estado);
+       endereco.setComplemento(complemento);
 
-       if (!complemento.isEmpty()){
-           endereco.setComplemento(complemento);
-       }
 
        return endereco;
    }

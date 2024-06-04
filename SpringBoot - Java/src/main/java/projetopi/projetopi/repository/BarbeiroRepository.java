@@ -39,4 +39,7 @@ public interface BarbeiroRepository extends JpaRepository<Barbeiro, Integer> {
 
     Barbeiro findByEmail(String email);
 
+
+
+
 }

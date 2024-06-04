@@ -1,7 +1,12 @@
 package projetopi.projetopi.dto.response;
 
 import lombok.Getter;
+import projetopi.projetopi.entity.Barbeiro;
 import projetopi.projetopi.entity.Servico;
+
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Getter
 public class ServicoConsulta {
@@ -16,7 +21,7 @@ public class ServicoConsulta {
 
     private Integer tempoEstimado;
 
-    private String nomeBarbeiro;
+    private Set<String> barbeiros;
 
     public ServicoConsulta() {
     }
@@ -27,7 +32,8 @@ public class ServicoConsulta {
         this.descricao = servico.getDescricao();
         this.tipoServico = servico.getTipoServico();
         this.tempoEstimado = servico.getTempoEstimado();
-        this.nomeBarbeiro = servico.getBarbeiro().getNome();
+        this.barbeiros = servico.getBarbeiros().stream()
+                .map(Barbeiro::getNome)
+                .collect(Collectors.toSet());
     }
-
 }

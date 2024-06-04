@@ -14,7 +14,6 @@ import java.util.Properties;
 
 @Configuration
 @SpringBootApplication
-@ComponentScan(basePackages = {"projetopi.projetopi.service", "projetopi.projetopi"})
 public class ProjetopiApplication {
 
 

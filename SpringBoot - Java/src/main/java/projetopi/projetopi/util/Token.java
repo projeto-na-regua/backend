@@ -3,6 +3,8 @@ package projetopi.projetopi.util;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTCreationException;
+import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,33 +26,44 @@ public class Token {
     private BarbeiroRepository barbeiroRepository;
 
 
-    public  String getToken(Usuario usuario) {
-        long exp = System.currentTimeMillis() + (15 * 60 * 1000);
+    public String getToken(Usuario usuario) {
+        try {
+            long exp = System.currentTimeMillis() + (15 * 60 * 1000);
 
-        token = JWT.create()
-                .withClaim("id", usuario.getId().toString())
-                .withClaim("nome", usuario.getNome())
-                .withClaim("senha", usuario.getSenha())
-                .withClaim("email", usuario.getEmail())
-                .withClaim("exp", exp)
-                .sign(Algorithm.HMAC256(tokenSecretKey));
+            String token = JWT.create()
+                    .withClaim("id", usuario.getId().toString())
+                    .withClaim("nome", usuario.getNome())
+                    .withClaim("senha", usuario.getSenha())
+                    .withClaim("email", usuario.getEmail())
+                    .withClaim("exp", exp)
+                    .sign(Algorithm.HMAC256(tokenSecretKey));
 
-        return token;
+            return token;
+        } catch (JWTCreationException exception) {
+            System.err.println("Erro ao criar o token JWT: " + exception.getMessage());
+            throw new RuntimeException("Erro ao gerar o token JWT", exception);
+
+        } catch (Exception exception) {
+            System.err.println("Erro inesperado ao gerar o token: " + exception.getMessage());
+            throw new RuntimeException("Erro inesperado ao gerar o token", exception);
+        }
     }
 
     public String getUserIdByToken(String token) {
 
+        try{
             JWTVerifier verifier = JWT.require(Algorithm.HMAC256(tokenSecretKey)).build();
             DecodedJWT decodedJWT = verifier.verify(token);
             return decodedJWT.getClaim("id").asString();
-
+        }catch (JWTDecodeException e){
+            throw new JWTDecodeException("Erro ao decodificar o tokeN: " +  e.getMessage());
+        }
 
     }
 
     public  String getNomeByToken(String token){
         JWTVerifier verifier = JWT.require(Algorithm.HMAC256(tokenSecretKey)).build();
         DecodedJWT decodedJWT = verifier.verify(token);
-
         return decodedJWT.getClaims().get("nome").asString();
     }
 
@@ -60,8 +73,4 @@ public class Token {
         cookie.setPath("/");
         response.addCookie(cookie);
     }
-
-
-
-
 }

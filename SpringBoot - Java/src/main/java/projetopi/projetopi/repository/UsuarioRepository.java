@@ -15,4 +15,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
 
     @Query("select u.barbearia from Usuario u WHERE u.id = ?1")
     Usuario getBarbearia(Integer id);
+
+    @Query("select u.dtype from Usuario u WHERE u.id = ?1")
+    String getDtypeById(Integer id);
 }

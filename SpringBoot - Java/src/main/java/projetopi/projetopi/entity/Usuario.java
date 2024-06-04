@@ -18,7 +18,7 @@ public abstract class Usuario {
     private Integer id;
 
     @NotBlank
-    @Size(min = 5, max = 120)
+    @Size(min = 5)
     @Column(name="nome", nullable = false)
     private String nome;
 
@@ -49,6 +49,10 @@ public abstract class Usuario {
     @OneToOne
     @JoinColumn(name = "usuario_fk_endereco", nullable = true)
     private Endereco endereco;
+
+    @OneToOne
+    @JoinColumn(name = "usuario_fk_especialidade", nullable = true)
+    private Especialidade especialidade;
 
     public Usuario(String nome, String email, String celular) {
         this.nome = nome;
