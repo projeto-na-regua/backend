@@ -18,7 +18,7 @@ public class ServicoCriacao {
 
     private Integer tempoEstimado;
 
-    private List<Integer> barbeirosIds;
+    private List<String> barbeirosEmails;
 
 }
 

@@ -9,6 +9,8 @@ import projetopi.projetopi.dto.response.ServicoConsulta;
 import java.util.List;
 
 public interface ServicoRepository extends JpaRepository<Servico, Integer> {
+    List<Servico>  findByBarbeariaIdAndStatus(Integer barbeariaId, Boolean status);
+
     List<Servico>  findByBarbeariaId(Integer barbeariaId);
 
 //    @Query("select new Servico(s.id, s.preco, s.descricao, s.tipoServico, s.tempoEstimado, s.barbeiro.nome) from Servico s where s.barbearia.id = ?1")

@@ -21,6 +21,8 @@ public class ServicoConsulta {
 
     private Integer tempoEstimado;
 
+    private Boolean status;
+
     private Set<String> barbeiros;
 
     public ServicoConsulta() {
@@ -32,6 +34,7 @@ public class ServicoConsulta {
         this.descricao = servico.getDescricao();
         this.tipoServico = servico.getTipoServico();
         this.tempoEstimado = servico.getTempoEstimado();
+        this.status = servico.getStatus();
         this.barbeiros = servico.getBarbeiros().stream()
                 .map(Barbeiro::getNome)
                 .collect(Collectors.toSet());

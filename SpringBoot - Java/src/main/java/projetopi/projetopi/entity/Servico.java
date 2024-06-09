@@ -1,7 +1,11 @@
 package projetopi.projetopi.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 
 import java.util.HashSet;
@@ -17,14 +21,25 @@ public class Servico {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id_servico")
     private Integer id;
+
+    @NotNull
     @Column(name="preco")
     private Double preco;
+
     @Column(name="descricao")
     private String descricao;
+
     @Column(name="tipo_servico")
     private String tipoServico;
+
+    @NotNull
+    @Min(10)
     @Column(name="tempo_estimado", nullable = false)
     private Integer tempoEstimado;
+
+    @Column(name="status")
+    private Boolean status;
+
     @ManyToOne
     @JoinColumn(name="servico_fk_barbearia")
     private Barbearia barbearia;

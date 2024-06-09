@@ -1,5 +1,6 @@
 package projetopi.projetopi.service;
 
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,7 @@ import static org.springframework.http.ResponseEntity.of;
 import static org.springframework.http.ResponseEntity.status;
 
 @Service
+@RequiredArgsConstructor
 public class FuncionarioService {
 
     @Autowired
