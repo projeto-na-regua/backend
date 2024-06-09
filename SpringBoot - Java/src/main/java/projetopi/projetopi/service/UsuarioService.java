@@ -60,9 +60,8 @@ public class UsuarioService {
 
     private final StorageService azureStorageService;
 
-    private final PasswordEncoder passwordEncoder;
 
-    public UsuarioService(BarbeiroRepository barbeiroRepository, ClienteRepository clienteRepository, EnderecoRepository enderecoRepository, BarbeariasRepository barbeariasRepository, DiaSemanaRepository diaSemanaRepository, UsuarioRepository usuarioRepository, Token token, ModelMapper mapper, StorageService azureStorageService, PasswordEncoder passwordEncoder) {
+    public UsuarioService(BarbeiroRepository barbeiroRepository, ClienteRepository clienteRepository, EnderecoRepository enderecoRepository, BarbeariasRepository barbeariasRepository, DiaSemanaRepository diaSemanaRepository, UsuarioRepository usuarioRepository, Token token, ModelMapper mapper, StorageService azureStorageService) {
         this.barbeiroRepository = barbeiroRepository;
         this.clienteRepository = clienteRepository;
         this.enderecoRepository = enderecoRepository;
@@ -72,7 +71,6 @@ public class UsuarioService {
         this.token = token;
         this.mapper = mapper;
         this.azureStorageService = azureStorageService;
-        this.passwordEncoder =  passwordEncoder;
     }
 
 
@@ -85,8 +83,7 @@ public class UsuarioService {
         Integer idEndereco = endereco.getId();
         Cliente cliente = UsuarioMapper.toDto(nvCliente);
 
-        String senhaCriptografada = passwordEncoder.encode(nvCliente.getSenha());
-        cliente.setSenha(senhaCriptografada);
+
         cliente.getEndereco().setId(idEndereco);
         clienteRepository.save(cliente);
         return token.getToken(cliente);

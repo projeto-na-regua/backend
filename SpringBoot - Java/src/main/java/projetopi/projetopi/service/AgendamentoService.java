@@ -1,5 +1,6 @@
 package projetopi.projetopi.service;
 
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
@@ -19,6 +20,7 @@ import java.util.List;
 
 
 @Service
+@RequiredArgsConstructor
 public class AgendamentoService {
 
     @Autowired

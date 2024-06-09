@@ -93,7 +93,7 @@ class UsuarioServiceTest {
                                     usuarioRepository,
                                     token,
                                     mapper,
-                                    azureStorageService, passwordEncoder);
+                                    azureStorageService);
 
     }
 
