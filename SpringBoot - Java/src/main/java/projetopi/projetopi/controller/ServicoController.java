@@ -51,7 +51,6 @@ public class ServicoController {
         return status(204).build();
     }
 
-
     @PostMapping
     public ResponseEntity<ServicoConsulta> cadastrarServivco(@RequestHeader("Authorization") String token,
                                                              @Valid @RequestBody ServicoCriacao nvServico){

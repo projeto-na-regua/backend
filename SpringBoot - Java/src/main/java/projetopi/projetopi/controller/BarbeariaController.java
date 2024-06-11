@@ -3,26 +3,35 @@ package projetopi.projetopi.controller;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import projetopi.projetopi.dto.response.ImgConsulta;
 import projetopi.projetopi.entity.Barbearia;
 import projetopi.projetopi.entity.DiaSemana;
 import projetopi.projetopi.entity.Endereco;
-import projetopi.projetopi.dto.response.InfoBarbearia;
-import projetopi.projetopi.dto.response.InfoEndereco;
+import projetopi.projetopi.dto.response.BarbeariaConsulta;
+import projetopi.projetopi.dto.response.EnderecoConsulta;
 import projetopi.projetopi.repository.BarbeariasRepository;
 import projetopi.projetopi.repository.DiaSemanaRepository;
 import projetopi.projetopi.repository.EnderecoRepository;
+import projetopi.projetopi.service.BarbeariaService;
 
 import java.util.List;
 
 import static org.springframework.http.ResponseEntity.*;
 @CrossOrigin("*")
 @RestController
-@RequestMapping("/barbearia")
+@RequestMapping("/barbearias")
 public class BarbeariaController {
 
 
+
+    @Autowired
+    private BarbeariaService service;
     @Autowired
     private BarbeariasRepository barbeariasRepository;
 
@@ -33,89 +42,50 @@ public class BarbeariaController {
     private EnderecoRepository enderecoRepository;
 
 
-    @GetMapping("/perfil/info/{id}")
-    public ResponseEntity<List<InfoBarbearia>> getPerfil(@PathVariable Integer id){
+    @GetMapping("/perfil")
+    public ResponseEntity<BarbeariaConsulta> getPerfil(@RequestHeader("Authorization") String token){
+        return status(200).body(service.getPerfil(token));
+    }
 
-        if (!barbeariasRepository.existsById(id)){
-            return status(404).build();
-        }
+    @GetMapping("/get-image-perfil")
+    public ResponseEntity<ByteArrayResource> getImagePerfil(@RequestHeader("Authorization") String token){
+        ByteArrayResource resource = service.getImagePerfil(token);
 
-        return status(200).body(barbeariasRepository.findByInfoBarbearia(id));
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.IMAGE_PNG);
+
+        return ResponseEntity.ok().headers(headers).contentLength(resource.contentLength()).body(resource);
+    }
+
+    @GetMapping("/get-image-banner")
+    public ResponseEntity<ByteArrayResource> getImageBanner(@RequestHeader("Authorization") String token){
+        ByteArrayResource resource = service.getImageBanner(token);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.IMAGE_PNG);
+
+        return ResponseEntity.ok().headers(headers).contentLength(resource.contentLength()).body(resource);
+    }
+
+    @PutMapping("/image-perfil")
+    public ResponseEntity<ImgConsulta> getPerfil(@RequestHeader("Authorization") String token,
+                                                 @RequestParam("file") MultipartFile file){
+        return status(200).body(service.editarImgPerfil(token, file));
+    }
+
+    @PutMapping("/image-banner")
+    public ResponseEntity<ImgConsulta> getBanner(@RequestHeader("Authorization") String token,
+                                                 @RequestParam("file") MultipartFile file){
+        return status(200).body(service.editarImgBanner(token, file));
     }
 
 
-    @GetMapping("/perfil/endereco/{id}")
-    public ResponseEntity<List<InfoEndereco>> getEndereco(@PathVariable Integer id){
-
-        if (!barbeariasRepository.existsById(id)){
-            return status(404).build();
-        }
-
-        return status(200).body(barbeariasRepository.findByInfoEndereco(id));
-    }
-
-    @GetMapping("/perfil/horario-comercial/{id}")
-    public ResponseEntity<DiaSemana[]> getSemana(@PathVariable Integer id){
-
-        if (!barbeariasRepository.existsById(id)){
-            return status(404).build();
-        }
-
-        return status(200).body(diaSemanaRepository.findByBarbeariaId(id));
+    @PutMapping("/perfil")
+    public ResponseEntity<BarbeariaConsulta> editarPerfilInfo(@RequestHeader("Authorization") String token, @Valid
+                                                              @RequestBody BarbeariaConsulta nvBarbearia){
+        return status(200).body(service.editarPerfilInfo(token, nvBarbearia));
     }
 
 
-    @PutMapping("/perfil/info/{id}")
-    public ResponseEntity<InfoBarbearia> editarPerfilInfo(@PathVariable Integer id, @Valid @RequestBody InfoBarbearia nvBarbearia){
-
-        if (!barbeariasRepository.existsById(id)){
-            return status(404).build();
-        }
-
-        Barbearia b = nvBarbearia.gerarBarbearia();
-        b.setEndereco(barbeariasRepository.getReferenceById(id).getEndereco());
-        b.setId(id);
-        barbeariasRepository.save(b);
-        return status(200).body(nvBarbearia);
-    }
-
-    @PutMapping("/perfil/endereco/{id}")
-    public ResponseEntity<InfoEndereco> editarPefil(@PathVariable Integer id, @Valid @RequestBody InfoEndereco nvEndereco){
-
-        if (!barbeariasRepository.existsById(id)){
-            return status(404).build();
-        }
-
-        Barbearia b = barbeariasRepository.getReferenceById(id);
-        Endereco endereco = nvEndereco.gerarEndereco();
-
-        endereco.setId(b.getEndereco().getId());
-        enderecoRepository.save(endereco);
-
-
-        return status(200).body(nvEndereco);
-
-    }
-
-    @PutMapping("perfil/horario-comercial/{id}")
-    public ResponseEntity<DiaSemana[]> editarHorarioComercial(@PathVariable Integer id, @RequestBody DiaSemana[] hrNovos){
-
-        if (!barbeariasRepository.existsById(id)){
-            return status(404).build();
-        }
-
-        DiaSemana[] hrAntigos = diaSemanaRepository.findByBarbeariaId(id);
-
-        for (int i = 0; i < hrNovos.length; i++) {
-            if (hrAntigos.length > i) {
-                hrNovos[i].setId(hrAntigos[i].getId());
-            }
-
-            hrNovos[i].setBarbearia(barbeariasRepository.getReferenceById(id));
-            diaSemanaRepository.save(hrNovos[i]);
-        }
-
-        return status(200).body(hrNovos);
-    }
 
 }

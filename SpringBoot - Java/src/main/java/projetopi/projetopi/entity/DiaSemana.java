@@ -2,11 +2,15 @@ package projetopi.projetopi.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import projetopi.projetopi.util.Dia;
 
 import java.time.LocalTime;
 
 @Entity
+@Getter
+@Setter
 public class DiaSemana {
 
     @Id
@@ -30,47 +34,5 @@ public class DiaSemana {
 
     public DiaSemana(Dia nome) {
         this.nome = nome;
-    }
-
-
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Dia getNome() {
-        return nome;
-    }
-
-    public void setNome(Dia nome) {
-        this.nome = nome;
-    }
-
-    public LocalTime getHoraAbertura() {
-        return horaAbertura;
-    }
-
-    public void setHoraAbertura(LocalTime horaAbertura) {
-        this.horaAbertura = horaAbertura;
-    }
-
-    public LocalTime getHoraFechamento() {
-        return horaFechamento;
-    }
-
-    public void setHoraFechamento(LocalTime horaFechamento) {
-        this.horaFechamento = horaFechamento;
-    }
-
-    public Barbearia getBarbearia() {
-        return barbearia;
-    }
-
-    public void setBarbearia(Barbearia barbearia) {
-        this.barbearia = barbearia;
     }
 }
