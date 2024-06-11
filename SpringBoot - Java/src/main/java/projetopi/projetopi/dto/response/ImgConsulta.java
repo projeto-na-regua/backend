@@ -6,9 +6,9 @@ import lombok.Getter;
 @Getter
 public class ImgConsulta {
 
-    private String imagemPerfil;
+    private String imagem;
 
     public ImgConsulta(String imagemPerfil) {
-        this.imagemPerfil = imagemPerfil;
+        this.imagem = imagemPerfil;
     }
 }

@@ -43,6 +43,7 @@ public class Global {
         }
     }
 
+
     public  void validaBarbearia(String token){
         Integer id = getBarbeariaByToken(token).getId();
         if (!barbeariasRepository.existsById(id)){

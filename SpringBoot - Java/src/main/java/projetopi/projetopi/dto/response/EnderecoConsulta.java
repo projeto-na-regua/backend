@@ -5,7 +5,7 @@ import projetopi.projetopi.entity.Barbearia;
 import projetopi.projetopi.entity.Cliente;
 import projetopi.projetopi.entity.Endereco;
 
-public class InfoEndereco {
+public class EnderecoConsulta {
 
     @Size(max = 9)
     private String cep;
@@ -20,10 +20,10 @@ public class InfoEndereco {
 
     private String estado;
 
-    public InfoEndereco() {
+    public EnderecoConsulta() {
     }
 
-    public InfoEndereco(Barbearia barbearia) {
+    public EnderecoConsulta(Barbearia barbearia) {
         this.cep = barbearia.getEndereco().getCep();
         this.logradouro = barbearia.getEndereco().getLogradouro();
         this.numero = barbearia.getEndereco().getNumero();
@@ -32,7 +32,7 @@ public class InfoEndereco {
         this.estado = barbearia.getEndereco().getEstado();
     }
 
-    public InfoEndereco(Cliente cliente) {
+    public EnderecoConsulta(Cliente cliente) {
         this.cep = cliente.getEndereco().getCep();
         this.logradouro = cliente.getEndereco().getLogradouro();
         this.numero = cliente.getEndereco().getNumero();

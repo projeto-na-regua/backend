@@ -2,6 +2,7 @@ package projetopi.projetopi.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
+import projetopi.projetopi.dto.response.BarbeariaConsulta;
 
 @Entity
 public class Endereco {
@@ -34,6 +35,15 @@ public class Endereco {
         this.complemento = complemento;
         this.cidade = cidade;
         this.estado = estado;
+    }
+
+    public Endereco(BarbeariaConsulta barbeariaConsulta) {
+        this.cep = barbeariaConsulta.getCep();
+        this.logradouro = barbeariaConsulta.getLogradouro();
+        this.numero = barbeariaConsulta.getNumero();
+        this.complemento = barbeariaConsulta.getComplemento();
+        this.cidade = barbeariaConsulta.getCidade();
+        this.estado = barbeariaConsulta.getEstado();
     }
 
     public Integer getId() {
