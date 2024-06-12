@@ -1,8 +1,10 @@
 package projetopi.projetopi.service;
 
+import jdk.jshell.Snippet;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -12,11 +14,16 @@ import projetopi.projetopi.dto.mappers.AgendamentoMapper;
 import projetopi.projetopi.dto.request.AgendamentoCriacao;
 import projetopi.projetopi.dto.response.AgendamentoConsulta;
 import projetopi.projetopi.entity.*;
+import projetopi.projetopi.exception.AcessoNegadoException;
 import projetopi.projetopi.exception.RecursoNaoEncontradoException;
 import projetopi.projetopi.repository.*;
+import projetopi.projetopi.util.Global;
+import projetopi.projetopi.util.Token;
 
+import java.net.HttpRetryException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -24,89 +31,189 @@ import java.util.List;
 public class AgendamentoService {
 
     @Autowired
-    private AgendaRepository repository;
+    private final AgendaRepository repository;
 
     @Autowired
-    private BarbeiroRepository barbeiroRepository;
+    private final BarbeiroRepository barbeiroRepository;
 
     @Autowired
-    private ServicoRepository servicoRepository;
+    private final ServicoRepository servicoRepository;
 
     @Autowired
-    private ClienteRepository clienteRepository;
+    private final ClienteRepository clienteRepository;
 
     @Autowired
-    private BarbeariasRepository barbeariasRepository;
+    private final BarbeariasRepository barbeariasRepository;
 
     @Autowired
-    private BarbeiroServicoRepository barbeiroServicoRepository;
+    private final BarbeiroServicoRepository barbeiroServicoRepository;
+    private final UsuarioRepository usuarioRepository;
+
 
     private ModelMapper mapper;
 
-    public List<AgendamentoConsulta> getAgendamento(){
-        var lista = repository.findAll();
-        List<AgendamentoConsulta> agendamentos = new ArrayList<>();
-        for (Agendamento a : lista){
-            agendamentos.add(AgendamentoMapper.toDto(a));
+
+    @Autowired
+    private Global global;
+
+    @Autowired
+    private Token tk;
+
+    public String definirStatus(String status){
+        String stt = null;
+
+        if (status.equalsIgnoreCase("Pendente")){
+            stt = "Pendente";
+        }else if (status.equalsIgnoreCase("Concluido")){
+            stt = "Concluido";
+        }else if (status.equalsIgnoreCase("Agendado")){
+            stt = "Agendado";
+        }else if (status.equalsIgnoreCase("Cancelado")){
+            stt = "Cancelado";
         }
 
-        if (agendamentos.isEmpty()) {
-            throw new ResponseStatusException(HttpStatusCode.valueOf(204));
+        return stt;
+    }
+
+    public List<AgendamentoConsulta> getAgendamento(String token, String status) {
+        List<Agendamento> agendamentos = new ArrayList<>();
+
+
+        if (!(status.equalsIgnoreCase("Pendente") ||
+                status.equalsIgnoreCase("Agendado") ||
+                status.equalsIgnoreCase("Concluido") ||
+                status.equalsIgnoreCase("Cancelado") ||
+                status.equalsIgnoreCase("none"))) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Status de agendamento inválido");
         }
-        return agendamentos;
+
+        String stt = definirStatus(status);
+
+
+        Integer userId = Integer.valueOf(tk.getUserIdByToken(token));
+        Optional<Usuario> usuarioOpt = usuarioRepository.findById(userId);
+        if (!usuarioOpt.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Usuário não encontrado");
+        }
+
+        Usuario usuario = usuarioOpt.get();
+        if (usuario.getDtype().equalsIgnoreCase("Barbeiro")) {
+            Barbeiro barbeiro = barbeiroRepository.findById(userId)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Barbeiro não encontrado"));
+            agendamentos = stt == null ? repository.findByBarbeiroId(barbeiro.getId())
+                    : repository.findByBarbeiroIdAndStatus(barbeiro.getId(), stt);
+        } else {
+            Cliente cliente = clienteRepository.findById(userId)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado"));
+            agendamentos = stt == null ? repository.findByClienteId(cliente.getId())
+                    : repository.findByClienteIdAndStatus(cliente.getId(), stt);
+        }
+
+
+        if (agendamentos.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NO_CONTENT, "Nenhum agendamento encontrado");
+        }
+
+
+        List<AgendamentoConsulta> dto = new ArrayList<>();
+        for (Agendamento a : agendamentos) {
+            dto.add(AgendamentoMapper.toDto(a));
+        }
+
+        return dto;
     }
 
 
-//    public List<Barbeiro> getBarbeirosByServico(Integer idServico){
-//        return barbeiroRepository.findByServico(idServico);
-//    }
+    public AgendamentoConsulta getOneAgendamento(String token, Integer id){
+
+        if (!usuarioRepository.existsById(Integer.valueOf(tk.getUserIdByToken(token)))){
+            throw new AcessoNegadoException("Usuário");
+        }
+
+        if (!repository.existsById(id)){
+            throw new RecursoNaoEncontradoException("Agendamento", id);
+        }
+
+        return AgendamentoMapper.toDto(repository.findById(id).get());
+    }
+
+    public AgendamentoConsulta updateStatus(String token, Integer id, String status){
+
+        if (!repository.existsById(id)){
+            throw new RecursoNaoEncontradoException("Agendamento", id);
+        }
+
+        if (!usuarioRepository.existsById(Integer.valueOf(tk.getUserIdByToken(token)))){
+            throw new AcessoNegadoException("Usuário");
+        }
+
+        Agendamento agendamento = repository.findById(id).get();
+
+
+        if (usuarioRepository.findById(Integer.valueOf(tk.getUserIdByToken(token))).get().getDtype().equalsIgnoreCase("Barbeiro")){
+            global.validaBarbearia(token);
+            if (!status.equalsIgnoreCase("Concluido")
+                    && !status.equalsIgnoreCase("Agendado")
+                    && !status.equalsIgnoreCase("Cancelado")){
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Status de agendamento inválido");
+            }
+
+
+        }else {
+            if (!status.equalsIgnoreCase("Cancelado")){
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Status de agendamento inválido");
+            }
+        }
+
+
+        if (!(agendamento.getStatus().equalsIgnoreCase("Pendente")) &&
+                !(agendamento.getStatus().equalsIgnoreCase("Agendado"))){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Status de agendamento inválido");
+        }
+
+        if (agendamento.getStatus().equalsIgnoreCase("Pedente")
+                && definirStatus(status).equalsIgnoreCase("Concluido")) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Status de agendamento inválido");
+        }
+
+        if (agendamento.getStatus().equalsIgnoreCase(definirStatus(status))) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Status de agendamento inválido");
+        }
+
+        agendamento.setStatus(definirStatus(status));
+        repository.save(agendamento);
+
+        return AgendamentoMapper.toDto(agendamento);
+    }
 
 
 
-    public AgendamentoConsulta adicionarAgendamento(AgendamentoCriacao a){
+    public AgendamentoConsulta adicionarAgendamento(AgendamentoCriacao a, String token){
 
-        if (!servicoRepository.existsById(a.getIdServico())){
-            throw new RecursoNaoEncontradoException("Serviço", a.getIdServico());
+        global.validaCliente(token, "Usuário");
+        Cliente cliente = clienteRepository.findById(Integer.valueOf(tk.getUserIdByToken(token))).get();
+
+
+        if (!barbeariasRepository.existsById(a.getIdBarbearia())){
+            throw new RecursoNaoEncontradoException("Barbearia", a.getIdBarbearia());
         }
 
         if (!barbeiroRepository.existsById(a.getIdBarbeiro())){
             throw new RecursoNaoEncontradoException("Barbeiro", a.getIdBarbeiro());
         }
 
-        if (!clienteRepository.existsById(a.getIdCliente())){
-            throw new RecursoNaoEncontradoException("Cliente", a.getIdCliente());
+        if (!servicoRepository.existsById(a.getIdServico())){
+            throw new RecursoNaoEncontradoException("Serviço", a.getIdServico());
         }
 
-        if (!barbeariasRepository.existsById(a.getIdBarbearia())){
-            throw new RecursoNaoEncontradoException("Barbearia", a.getIdBarbearia());
-        }
         Servico servico = servicoRepository.findById(a.getIdServico()).get();
         Barbeiro barbeiro = barbeiroRepository.findById(a.getIdBarbeiro()).get();
-        Cliente cliente = clienteRepository.findById(a.getIdCliente()).get();
         Barbearia barbearia = barbeariasRepository.findById(a.getIdBarbearia()).get();
         Agendamento nvAgendamento = new Agendamento(a.getDataHora(), servico, barbeiro, cliente, barbearia);
+        nvAgendamento.setStatus("Pendente");
         return AgendamentoMapper.toDto(repository.save(nvAgendamento));
     }
 
 
-//    @PutMapping("/{id}")
-//    public ResponseEntity<Agendamento> atualizarAgendamento(@RequestBody Agendamento a,
-//                                                            @PathVariable Integer id){
-//        if (repository.existsById(id)) {
-//            a.setId(id);
-//            repository.save(a);
-//            return status(200).body(a);
-//        }
-//        return status(404).build();
-//    }
-//
-//    @DeleteMapping("/{id}")
-//    public ResponseEntity<Agendamento> deletarAgendamento(@PathVariable Integer id){
-//        if (repository.existsById(id)) {
-//            repository.deleteById(id);
-//            return status(204).build();
-//        }
-//        return status(404).build();
-//    }
 
 }

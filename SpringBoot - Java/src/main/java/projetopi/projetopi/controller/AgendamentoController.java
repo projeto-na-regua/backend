@@ -31,37 +31,28 @@ public class AgendamentoController{
     @Autowired
     private AgendamentoService service;
 
-
-
     @PostMapping
-    public ResponseEntity<AgendamentoConsulta> adicionarAgendamento(@Valid  @RequestBody AgendamentoCriacao nvAgendamento){
-        return status(201).body(service.adicionarAgendamento(nvAgendamento));
+    public ResponseEntity<AgendamentoConsulta> adicionarAgendamento(@RequestHeader("Authorization") String token,
+                                                                    @Valid @RequestBody AgendamentoCriacao nvAgendamento){
+        return status(201).body(service.adicionarAgendamento(nvAgendamento, token));
     }
 
-    @GetMapping
-    public ResponseEntity<List<AgendamentoConsulta>> getAgendamento(){
-        return status(200).body(service.getAgendamento());
+    @GetMapping("/list-all-by-status/{status}")
+    public ResponseEntity<List<AgendamentoConsulta>> getAgendamentos(@RequestHeader("Authorization") String token,
+                                                                    @PathVariable String status){
+        return status(200).body(service.getAgendamento(token, status));
     }
 
-
-    @PutMapping("/{id}")
-    public ResponseEntity<Agendamento> atualizarAgendamento(@RequestBody Agendamento a,
-                                                            @PathVariable Integer id){
-        if (repository.existsById(id)) {
-            a.setId(id);
-            repository.save(a);
-            return status(200).body(a);
-        }
-        return status(404).build();
+    @GetMapping("/{id}")
+    public ResponseEntity<AgendamentoConsulta> getOneAgendamento(@RequestHeader("Authorization") String token,
+                                                                    @PathVariable Integer id){
+        return status(200).body(service.getOneAgendamento(token, id));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Agendamento> deletarAgendamento(@PathVariable Integer id){
-        if (repository.existsById(id)) {
-            repository.deleteById(id);
-            return status(204).build();
-        }
-        return status(404).build();
+    @PutMapping("/{id}/{status}")
+    public ResponseEntity<AgendamentoConsulta> updateStatus(@RequestHeader("Authorization") String token,
+                                                              @PathVariable Integer id, @PathVariable String status){
+        return status(200).body(service.updateStatus(token, id, status));
     }
 
 }

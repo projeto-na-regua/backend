@@ -32,14 +32,6 @@ public class BarbeariaController {
 
     @Autowired
     private BarbeariaService service;
-    @Autowired
-    private BarbeariasRepository barbeariasRepository;
-
-    @Autowired
-    private DiaSemanaRepository diaSemanaRepository;
-
-    @Autowired
-    private EnderecoRepository enderecoRepository;
 
 
     @GetMapping("/perfil")

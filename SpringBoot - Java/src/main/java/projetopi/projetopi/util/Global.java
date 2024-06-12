@@ -9,10 +9,7 @@ import projetopi.projetopi.entity.Barbeiro;
 import projetopi.projetopi.entity.Usuario;
 import projetopi.projetopi.exception.AcessoNegadoException;
 import projetopi.projetopi.exception.RecursoNaoEncontradoException;
-import projetopi.projetopi.repository.BarbeariasRepository;
-import projetopi.projetopi.repository.BarbeiroRepository;
-import projetopi.projetopi.repository.ServicoRepository;
-import projetopi.projetopi.repository.UsuarioRepository;
+import projetopi.projetopi.repository.*;
 
 import javax.imageio.spi.ServiceRegistry;
 
@@ -27,6 +24,8 @@ public class Global {
     @Autowired
     private BarbeiroRepository barbeiroRepository;
     @Autowired
+    private ClienteRepository clienteRepository;
+    @Autowired
     private Token tk;
 
     public void validarBarbeiroAdm(String token, String recurso){
@@ -39,6 +38,12 @@ public class Global {
     public void validaBarbeiro(String token, String recurso){
         Integer id = getBarbeiroByToken(token).getId();
         if (!barbeiroRepository.existsById(id)){
+            throw new AcessoNegadoException(recurso);
+        }
+    }
+    public void validaCliente(String token, String recurso){
+        Integer id = Integer.valueOf(tk.getUserIdByToken(token));
+        if (!clienteRepository.existsById(id)){
             throw new AcessoNegadoException(recurso);
         }
     }

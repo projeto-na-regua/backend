@@ -1,11 +1,13 @@
 package projetopi.projetopi.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Future;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
-
 
 @Getter
 @Setter
@@ -17,10 +19,13 @@ public class Agendamento {
     private Integer id;
 
     @Column(name="data_hora")
+    @Future
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime dataHora;
 
-    @Column(name="concluido")
-    private Boolean concluido;
+    @Column(name="status")
+    private String status;
 
     @ManyToOne
     @PrimaryKeyJoinColumn(name="servico_id_servico")
@@ -42,16 +47,16 @@ public class Agendamento {
     @JoinColumn(name="ag_fk_avaliacao", nullable = true)
     private Avaliacao avaliacao;
 
-    public Agendamento(){}
+    public Agendamento() {}
 
     public Agendamento(LocalDateTime dataHora, Servico servico, Barbeiro barbeiro,
-                       Cliente cliente, Barbearia barbearia, Boolean concluido, Avaliacao avaliacao) {
+                       Cliente cliente, Barbearia barbearia, String status, Avaliacao avaliacao) {
         this.dataHora = dataHora;
         this.servico = servico;
         this.barbeiro = barbeiro;
         this.cliente = cliente;
         this.barbearia = barbearia;
-        this.concluido = concluido;
+        this.status = status;
         this.avaliacao = avaliacao;
     }
 
@@ -60,6 +65,13 @@ public class Agendamento {
         this.servico = servico;
         this.barbeiro = barbeiro;
         this.cliente = cliente;
+        this.barbearia = barbearia;
+    }
+
+    public Agendamento(LocalDateTime dataHora, Servico servico, Barbeiro barbeiro, Barbearia barbearia) {
+        this.dataHora = dataHora;
+        this.servico = servico;
+        this.barbeiro = barbeiro;
         this.barbearia = barbearia;
     }
 }

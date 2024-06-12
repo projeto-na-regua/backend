@@ -9,6 +9,8 @@ import java.time.LocalDateTime;
 @Getter
 public class AgendamentoConsulta {
 
+    private Integer id;
+
     private LocalDateTime dataHora;
 
     private String tipoServico;
@@ -23,9 +25,11 @@ public class AgendamentoConsulta {
 
     private String nomeNegocio;
 
+    private String status;
+
     private Endereco enderecoBarbearia;
 
-    public AgendamentoConsulta(LocalDateTime dataHora, String tipoServico, String descricao, Double valorServico, String nomeCliente, String nomeBarbeiro, String nomeNegocio, Endereco enderecoBarbearia) {
+    public AgendamentoConsulta(Integer id, String status, LocalDateTime dataHora, String tipoServico, String descricao, Double valorServico, String nomeCliente, String nomeBarbeiro, String nomeNegocio, Endereco enderecoBarbearia) {
         this.dataHora = dataHora;
         this.tipoServico = tipoServico;
         this.descricao = descricao;
@@ -34,5 +38,7 @@ public class AgendamentoConsulta {
         this.nomeBarbeiro = nomeBarbeiro;
         this.nomeNegocio = nomeNegocio;
         this.enderecoBarbearia = enderecoBarbearia;
+        this.status = status;
+        this.id = id;
     }
 }

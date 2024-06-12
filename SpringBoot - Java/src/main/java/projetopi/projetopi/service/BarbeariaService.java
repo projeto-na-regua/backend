@@ -54,15 +54,12 @@ public class BarbeariaService {
 
     private final Token tk;
 
-
     public BarbeariaConsulta getPerfil(String token){
         global.validaBarbearia(token);
         Barbearia barbearia = barbeariasRepository.findById(global.getBarbeariaByToken(token).getId()).get();
         DiaSemana[] semana = diaSemanaRepository.findByBarbeariaId(barbearia.getId());
         return new BarbeariaConsulta(barbearia, semana);
     }
-
-
 
 
     public BarbeariaConsulta editarPerfilInfo(String token, BarbeariaConsulta nvBarbearia){
