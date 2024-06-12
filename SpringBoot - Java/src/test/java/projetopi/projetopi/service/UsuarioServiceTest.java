@@ -552,7 +552,7 @@ class UsuarioServiceTest {
         ImgConsulta result = service.editarImgPerfil(tk, file);
 
         assertNotNull(result);
-        assertEquals(imageUrl, result.getImagemPerfil());
+        assertEquals(imageUrl, result.getImagem());
         verify(usuarioRepository).save(usuario);
         assertEquals(imageUrl, usuario.getImgPerfil());
     }

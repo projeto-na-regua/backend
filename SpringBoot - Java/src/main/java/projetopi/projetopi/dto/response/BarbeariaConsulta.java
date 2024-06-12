@@ -11,7 +11,7 @@ import projetopi.projetopi.entity.DiaSemana;
 @Setter
 public class BarbeariaConsulta {
 
-
+    private Integer id;
     private String nomeNegocio;
     private String emailNegocio;
     private String celularNegocio;
@@ -29,6 +29,7 @@ public class BarbeariaConsulta {
     }
 
     public BarbeariaConsulta(Barbearia barbearia, DiaSemana[] semana) {
+        this.id = barbearia.getId();
         this.nomeNegocio = barbearia.getNomeNegocio();
         this.emailNegocio = barbearia.getEmailNegocio();
         this.celularNegocio = barbearia.getCelularNegocio();

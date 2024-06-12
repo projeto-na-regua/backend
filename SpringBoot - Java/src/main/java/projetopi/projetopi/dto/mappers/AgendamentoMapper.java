@@ -24,7 +24,7 @@ public class AgendamentoMapper {
     private static BarbeariasRepository barbeariasRepository;
 
     public static AgendamentoConsulta toDto(Agendamento a){
-        return new AgendamentoConsulta(a.getDataHora(),
+        return new AgendamentoConsulta(a.getId(), a.getStatus(),a.getDataHora(),
                                        a.getServico().getTipoServico(),
                                        a.getServico().getDescricao(),
                                        a.getServico().getPreco(),
@@ -37,8 +37,7 @@ public class AgendamentoMapper {
     public static Agendamento toEntity(AgendamentoCriacao a){
         Servico servico = servicoRepository.findById(a.getIdServico()).get();
         Barbeiro barbeiro = barbeiroRepository.findById(a.getIdBarbeiro()).get();
-        Cliente cliente = clienteRepository.findById(a.getIdCliente()).get();
         Barbearia barbearia = barbeariasRepository.findById(a.getIdBarbearia()).get();
-        return new Agendamento(a.getDataHora(), servico, barbeiro, cliente, barbearia);
+        return new Agendamento(a.getDataHora(), servico, barbeiro,  barbearia);
     }
 }

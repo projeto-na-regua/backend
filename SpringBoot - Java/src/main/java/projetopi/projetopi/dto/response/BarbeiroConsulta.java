@@ -6,6 +6,8 @@ import projetopi.projetopi.entity.Barbeiro;
 @Getter
 public class BarbeiroConsulta {
 
+    private Integer id;
+
     private String nome;
 
     private String email;
@@ -17,6 +19,7 @@ public class BarbeiroConsulta {
     public BarbeiroConsulta() {}
 
     public BarbeiroConsulta(Barbeiro barbeiro) {
+        this.id = barbeiro.getId();
         this.nome = barbeiro.getNome();
         this.email = barbeiro.getEmail();
         this.imgPerfil = barbeiro.getImgPerfil();
