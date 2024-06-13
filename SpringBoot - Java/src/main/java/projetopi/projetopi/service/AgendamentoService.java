@@ -1,30 +1,31 @@
 package projetopi.projetopi.service;
 
-import jdk.jshell.Snippet;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import projetopi.projetopi.dto.mappers.AgendamentoMapper;
 import projetopi.projetopi.dto.request.AgendamentoCriacao;
 import projetopi.projetopi.dto.response.AgendamentoConsulta;
+import projetopi.projetopi.dto.response.HorarioDiaSemana;
 import projetopi.projetopi.entity.*;
 import projetopi.projetopi.exception.AcessoNegadoException;
 import projetopi.projetopi.exception.RecursoNaoEncontradoException;
 import projetopi.projetopi.repository.*;
+import projetopi.projetopi.util.Dia;
 import projetopi.projetopi.util.Global;
 import projetopi.projetopi.util.Token;
 
-import java.net.HttpRetryException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 
@@ -46,6 +47,8 @@ public class AgendamentoService {
 
     @Autowired
     private final BarbeariasRepository barbeariasRepository;
+    @Autowired
+    private final DiaSemanaRepository diaSemanaRepository;
 
     @Autowired
     private final BarbeiroServicoRepository barbeiroServicoRepository;
@@ -141,12 +144,51 @@ public class AgendamentoService {
         return AgendamentoMapper.toDto(repository.findById(id).get());
     }
 
-    public List<AgendamentoConsulta> getHorarios(String token, BarbeiroServicoId barbeiroServico, LocalDate date){
+    public static void main(String[] args) {
+        System.out.println(ChronoUnit.MINUTES.between(LocalTime.now(), LocalTime.now().plusMinutes(60)));
+    }
 
+    public List<HorarioDiaSemana> getHorarios(String token, BarbeiroServicoId barbeiroServicoId, LocalDate date){
+
+        String dia3Letras = date.format(DateTimeFormatter.ofPattern("EEE", new Locale("pt")))
+                                .substring(0, 3).toUpperCase();
+
+        DiaSemana diaSemana = diaSemanaRepository.findByNomeAndBarbeariaId(Dia.valueOf(dia3Letras), barbeiroServicoId.getBarbearia());
+
+        Servico servico = servicoRepository.findById(barbeiroServicoId.getServico()).get();
+
+        Integer tempoEstimado = servico.getTempoEstimado();
+
+        long minutos = ChronoUnit.MINUTES.between(diaSemana.getHoraAbertura(), diaSemana.getHoraFechamento());
+
+        long quantidadeHorarios = minutos / tempoEstimado;
+
+        LocalTime horario = diaSemana.getHoraAbertura();
+        List<HorarioDiaSemana> horariosDtos = new ArrayList<>();
+
+        var formatoHM = DateTimeFormatter.ofPattern("HH:mm");
+
+        for (int h = 1 ; h <= quantidadeHorarios; h++) {
+            LocalDateTime dataHora = LocalDateTime.of(date, horario);
+            if (repository.existsByBarbeiroServicoDataHoraConfirmado(
+                    barbeiroServicoId.getBarbeiro(), barbeiroServicoId.getServico(), dataHora)) {
+                horario = horario.plusMinutes(tempoEstimado);
+                continue;
+            }
+            HorarioDiaSemana dto = new HorarioDiaSemana(
+                    horario.format(formatoHM),
+                    barbeiroServicoId.getBarbeiro(),
+                    barbeiroServicoId.getServico()
+            );
+            horariosDtos.add(dto);
+            horario = horario.plusMinutes(tempoEstimado);
+        }
+        return horariosDtos;
+/*
         if (!usuarioRepository.existsById(Integer.valueOf(tk.getUserIdByToken(token)))){
             throw new AcessoNegadoException("Usuário");
         }
-        List<Agendamento> agendamentos = repository.findAllByBarbeiroAndDate(barbeiroServico.getBarbeiro(), date);
+        List<Agendamento> agendamentos = repository.findAllByBarbeiroAndDate(barbeiroServicoId.getBarbeiro(), date);
 
         if (agendamentos.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NO_CONTENT, "Nenhum agendamento encontrado");
@@ -158,7 +200,7 @@ public class AgendamentoService {
             dto.add(AgendamentoMapper.toDto(a));
         }
 
-        return dto;
+        return dto;*/
     }
 
 
@@ -205,6 +247,9 @@ public class AgendamentoService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Status de agendamento inválido");
         }
 
+        if(definirStatus(status).equalsIgnoreCase("Concluido")){
+            agendamento.setDataHoraConcluido(LocalDateTime.now());
+        }
         agendamento.setStatus(definirStatus(status));
         repository.save(agendamento);
 

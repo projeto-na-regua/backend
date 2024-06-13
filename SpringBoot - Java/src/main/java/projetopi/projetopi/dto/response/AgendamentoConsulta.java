@@ -52,9 +52,10 @@ public class AgendamentoConsulta {
         this.status = status;
         this.id = id;
         this.tempoEstimado = tempoEstimado;
+        this.dataHoraPrevista = calcularDataHora(dataHora,tempoEstimado);
     }
 
-    public LocalDateTime getDataHoraPrevista(LocalDateTime dataHora, Integer tempoEstimado) {
+    public LocalDateTime calcularDataHora(LocalDateTime dataHora, Integer tempoEstimado) {
         return dataHora.plusMinutes(tempoEstimado);
     }
 }
