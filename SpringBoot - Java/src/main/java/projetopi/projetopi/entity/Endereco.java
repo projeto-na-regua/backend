@@ -1,10 +1,26 @@
 package projetopi.projetopi.entity;
 
+
+import com.microsoft.sqlserver.jdbc.Geography;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.Setter;
+
+import org.hibernate.annotations.ColumnTransformer;
+
+import org.hibernate.annotations.Type;
+import org.hibernate.spatial.dialect.sqlserver.SqlServerGeographyType;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
 import projetopi.projetopi.dto.response.BarbeariaConsulta;
 
+
+
 @Entity
+@Getter
+@Setter
 public class Endereco {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,6 +40,10 @@ public class Endereco {
     private String cidade;
     @Column(name = "estado")
     private String estado;
+    @Column(name = "longitude")
+    private Double longitude;
+    @Column(name = "latitude")
+    private Double latitude;
 
     public Endereco() {
     }
@@ -44,61 +64,5 @@ public class Endereco {
         this.complemento = barbeariaConsulta.getComplemento();
         this.cidade = barbeariaConsulta.getCidade();
         this.estado = barbeariaConsulta.getEstado();
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getCep() {
-        return cep;
-    }
-
-    public void setCep(String cep) {
-        this.cep = cep;
-    }
-
-    public String getLogradouro() {
-        return logradouro;
-    }
-
-    public void setLogradouro(String logradouro) {
-        this.logradouro = logradouro;
-    }
-
-    public Integer getNumero() {
-        return numero;
-    }
-
-    public void setNumero(Integer numero) {
-        this.numero = numero;
-    }
-
-    public String getComplemento() {
-        return complemento;
-    }
-
-    public void setComplemento(String complemento) {
-        this.complemento = complemento;
-    }
-
-    public String getCidade() {
-        return cidade;
-    }
-
-    public void setCidade(String cidade) {
-        this.cidade = cidade;
-    }
-
-    public String getEstado() {
-        return estado;
-    }
-
-    public void setEstado(String estado) {
-        this.estado = estado;
     }
 }

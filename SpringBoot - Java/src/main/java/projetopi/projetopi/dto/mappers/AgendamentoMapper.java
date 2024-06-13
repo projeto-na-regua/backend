@@ -31,7 +31,7 @@ public class AgendamentoMapper {
                                        a.getCliente().getNome(),
                                        a.getBarbeiro().getNome(),
                                        a.getBarbearia().getNomeNegocio(),
-                                       a.getBarbearia().getEndereco());
+                                       a.getBarbearia().getEndereco(), a.getServico().getTempoEstimado());
     }
 
     public static Agendamento toEntity(AgendamentoCriacao a){

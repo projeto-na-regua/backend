@@ -21,6 +21,8 @@ import projetopi.projetopi.util.Global;
 import projetopi.projetopi.util.Token;
 
 import java.net.HttpRetryException;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -48,6 +50,8 @@ public class AgendamentoService {
     @Autowired
     private final BarbeiroServicoRepository barbeiroServicoRepository;
     private final UsuarioRepository usuarioRepository;
+
+    private final FuncionarioService funcionarioService;
 
 
     private ModelMapper mapper;
@@ -136,6 +140,27 @@ public class AgendamentoService {
 
         return AgendamentoMapper.toDto(repository.findById(id).get());
     }
+
+    public List<AgendamentoConsulta> getHorarios(String token, BarbeiroServicoId barbeiroServico, LocalDate date){
+
+        if (!usuarioRepository.existsById(Integer.valueOf(tk.getUserIdByToken(token)))){
+            throw new AcessoNegadoException("Usuário");
+        }
+        List<Agendamento> agendamentos = repository.findAllByBarbeiroAndDate(barbeiroServico.getBarbeiro(), date);
+
+        if (agendamentos.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NO_CONTENT, "Nenhum agendamento encontrado");
+        }
+
+        List<AgendamentoConsulta> dto = new ArrayList<>();
+
+        for (Agendamento a : agendamentos) {
+            dto.add(AgendamentoMapper.toDto(a));
+        }
+
+        return dto;
+    }
+
 
     public AgendamentoConsulta updateStatus(String token, Integer id, String status){
 

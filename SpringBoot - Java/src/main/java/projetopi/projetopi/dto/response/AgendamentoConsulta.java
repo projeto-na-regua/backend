@@ -1,7 +1,11 @@
 package projetopi.projetopi.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.persistence.Column;
+import jakarta.validation.constraints.FutureOrPresent;
 import lombok.Getter;
 import org.springframework.cglib.core.Local;
+import org.springframework.format.annotation.DateTimeFormat;
 import projetopi.projetopi.entity.Endereco;
 
 import java.time.LocalDateTime;
@@ -29,7 +33,14 @@ public class AgendamentoConsulta {
 
     private Endereco enderecoBarbearia;
 
-    public AgendamentoConsulta(Integer id, String status, LocalDateTime dataHora, String tipoServico, String descricao, Double valorServico, String nomeCliente, String nomeBarbeiro, String nomeNegocio, Endereco enderecoBarbearia) {
+
+    private Integer tempoEstimado;
+
+    private LocalDateTime dataHoraPrevista;
+
+
+    public AgendamentoConsulta(Integer id, String status, LocalDateTime dataHora, String tipoServico, String descricao, Double valorServico, String nomeCliente, String nomeBarbeiro, String nomeNegocio, Endereco enderecoBarbearia,
+       Integer tempoEstimado) {
         this.dataHora = dataHora;
         this.tipoServico = tipoServico;
         this.descricao = descricao;
@@ -40,5 +51,10 @@ public class AgendamentoConsulta {
         this.enderecoBarbearia = enderecoBarbearia;
         this.status = status;
         this.id = id;
+        this.tempoEstimado = tempoEstimado;
+    }
+
+    public LocalDateTime getDataHoraPrevista(LocalDateTime dataHora, Integer tempoEstimado) {
+        return dataHora.plusMinutes(tempoEstimado);
     }
 }

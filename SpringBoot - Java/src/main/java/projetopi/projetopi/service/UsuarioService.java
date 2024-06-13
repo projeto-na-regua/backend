@@ -1,29 +1,21 @@
 package projetopi.projetopi.service;
 
 
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClient;
 import org.springframework.web.multipart.MultipartFile;
+import projetopi.projetopi.controller.UsuarioController;
 import projetopi.projetopi.dto.mappers.UsuarioMapper;
-import projetopi.projetopi.dto.request.EditarSenha;
+import projetopi.projetopi.dto.response.*;
 import projetopi.projetopi.entity.*;
 import projetopi.projetopi.dto.request.CadastroBarbearia;
 import projetopi.projetopi.dto.request.CadastroCliente;
 import projetopi.projetopi.dto.request.LoginUsuario;
-import projetopi.projetopi.dto.response.DtypeConsulta;
-import projetopi.projetopi.dto.response.ImgConsulta;
-import projetopi.projetopi.dto.response.PerfilUsuarioConsulta;
-import projetopi.projetopi.dto.response.UsuarioConsulta;
 import projetopi.projetopi.exception.ConflitoException;
 import projetopi.projetopi.exception.ErroServidorException;
 import projetopi.projetopi.exception.RecursoNaoEncontradoException;
@@ -60,6 +52,8 @@ public class UsuarioService {
 
     private final StorageService azureStorageService;
 
+    private static final Logger log = LoggerFactory.getLogger(UsuarioController.class);
+
 
     public UsuarioService(BarbeiroRepository barbeiroRepository, ClienteRepository clienteRepository, EnderecoRepository enderecoRepository, BarbeariasRepository barbeariasRepository, DiaSemanaRepository diaSemanaRepository, UsuarioRepository usuarioRepository, Token token, ModelMapper mapper, StorageService azureStorageService) {
         this.barbeiroRepository = barbeiroRepository;
@@ -77,7 +71,7 @@ public class UsuarioService {
     public String cadastrarCliente(CadastroCliente nvCliente){
         validarEmail(nvCliente.getEmail());
 
-        Endereco endereco = enderecoRepository.save(UsuarioMapper.toDtoEndereco(nvCliente));
+        Endereco endereco = cadastroEndereco(nvCliente);
         validarEnderecoCadastrado(endereco);
 
         Integer idEndereco = endereco.getId();
@@ -92,6 +86,21 @@ public class UsuarioService {
 
     public Endereco cadastroEndereco(CadastroBarbearia nvBarbearia){
         Endereco endereco = nvBarbearia.gerarEndereco();
+        setCoordenadas(endereco);
+        return enderecoRepository.save(endereco);
+    }
+
+    public Endereco cadastroEndereco(CadastroCliente nvCliente){
+        Endereco endereco = UsuarioMapper.toDtoEndereco(nvCliente);
+        setCoordenadas(endereco);
+        return enderecoRepository.save(endereco);
+    }
+
+    public Endereco updateEndereco(Endereco endereco, Integer id){
+        if (!enderecoRepository.existsById(id)){
+            throw  new RecursoNaoEncontradoException("Endereço", id);
+        }
+        setCoordenadas(endereco);
         return enderecoRepository.save(endereco);
     }
 
@@ -215,6 +224,25 @@ public class UsuarioService {
         }
     }
 
+    public Coordenada gerarCoordenadas(String postalcode){
+        String url = String.format(
+                "https://cep.awesomeapi.com.br/json/");
+
+
+        RestClient client = RestClient.builder()
+                .baseUrl(url)
+                .messageConverters(httpMessageConverters -> httpMessageConverters.add(new MappingJackson2HttpMessageConverter()))
+                .build();
+
+        Coordenada data = client.get()
+                .uri(postalcode)
+                .retrieve()
+                .body(Coordenada.class);
+
+        log.info("Resposta da API: " + data);
+        return data;
+    }
+
 
     void validarEmail(String email){
         if (usuarioRepository.findByEmail(email) != null){
@@ -258,6 +286,12 @@ public class UsuarioService {
         if (endereco == null || endereco.getId() == null) {
             throw new RecursoNaoEncontradoException("Endereco", endereco);
         }
+    }
+
+    void setCoordenadas(Endereco endereco){
+        Coordenada coordenada = gerarCoordenadas(endereco.getCep());
+        endereco.setLongitude(Double.valueOf(coordenada.getLng()));
+        endereco.setLatitude(Double.valueOf(coordenada.getLat()));
     }
 
 }
