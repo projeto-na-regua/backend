@@ -34,6 +34,11 @@ public class BarbeariaController {
     private BarbeariaService service;
 
 
+    @GetMapping("/list-by-endereco/{raio}")
+    public ResponseEntity<List<Barbearia>> getBarbeariasByToken(@RequestHeader("Authorization") String token,
+                                                                @PathVariable double raio){
+        return status(200).body(service.getBarbeariaByEndereco(token, raio));
+    }
     @GetMapping("/perfil")
     public ResponseEntity<BarbeariaConsulta> getPerfil(@RequestHeader("Authorization") String token){
         return status(200).body(service.getPerfil(token));

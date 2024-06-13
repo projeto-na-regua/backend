@@ -14,6 +14,7 @@ import projetopi.projetopi.dto.request.BarbeiroCriacao;
 
 import projetopi.projetopi.dto.response.BarbeiroConsulta;
 import projetopi.projetopi.dto.response.UsuarioConsulta;
+import projetopi.projetopi.entity.BarbeiroServico;
 import projetopi.projetopi.exception.AcessoNegadoException;
 import projetopi.projetopi.exception.ConflitoException;
 import projetopi.projetopi.exception.RecursoNaoEncontradoException;
@@ -22,6 +23,7 @@ import projetopi.projetopi.repository.*;
 import projetopi.projetopi.util.Token;
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.http.ResponseEntity.of;
@@ -47,6 +49,13 @@ public class FuncionarioService {
     private ClienteRepository clienteRepository;
 
     @Autowired
+    private BarbeiroServicoRepository barbeiroServicoRepository;
+
+    @Autowired
+    private ServicoRepository servicoRepository;
+
+
+    @Autowired
     public Token tk;
 
     @Autowired
@@ -61,6 +70,27 @@ public class FuncionarioService {
         validarPermissioes(token);
 
         List<Barbeiro> barbeiros = barbeiroRepository.findByBarbeariaIdAndUsuarioIdNot(getBarbeariaByToken(token).getId(), getBarbeiroByToken(token).getId());
+        if (barbeiros.isEmpty()) {
+            throw new ResponseStatusException(HttpStatusCode.valueOf(204));
+        }
+
+        return UsuarioMapper.toDto(barbeiros);
+    }
+    public List<BarbeiroConsulta> getFuncionariosByServico(String token, Integer idServico){
+        validarPermissioes(token);
+
+        if (!servicoRepository.existsById(idServico)) {
+            throw new RecursoNaoEncontradoException("Servico", idServico);
+        }
+
+        List<BarbeiroServico> barbeirosServico = barbeiroServicoRepository.findByServicoIdAndBarbeariaId(idServico, getBarbeariaByToken(token).getId());
+        List<Barbeiro> barbeiros = new ArrayList<>();
+
+        for (BarbeiroServico bs: barbeirosServico){
+            barbeiros.add(barbeiroRepository.findById(bs.getBarbeiro().getId()).get());
+        }
+
+
         if (barbeiros.isEmpty()) {
             throw new ResponseStatusException(HttpStatusCode.valueOf(204));
         }

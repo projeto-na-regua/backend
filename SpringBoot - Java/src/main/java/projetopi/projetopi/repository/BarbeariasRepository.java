@@ -23,5 +23,9 @@ public interface BarbeariasRepository extends JpaRepository<Barbearia, Integer> 
 
       Barbearia findByNomeNegocio(String nomeNegocio);
 
-
+//      @Query("SELECT b FROM Barbearia b WHERE " +
+//              "distance(geography::Point(:latitude, :longitude, 4326), b.endereco.location) <= :raio")
+//      List<Barbearia> encontrarBarbeariasProximas(@Param("latitude") Double latitude,
+//                                                  @Param("longitude") Double longitude,
+//                                                  @Param("raio") Double raio);
 }

@@ -3,6 +3,7 @@ package projetopi.projetopi.entity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.FutureOrPresent;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -19,10 +20,21 @@ public class Agendamento {
     private Integer id;
 
     @Column(name="data_hora")
-    @Future
+    @FutureOrPresent
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime dataHora;
+
+    @Column(name="data_hora_fim_prevista")
+    @FutureOrPresent
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime dataHoraFimPrevista;
+
+    @Column(name="data_hora_concluido")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime dataHoraConcluido;
 
     @Column(name="status")
     private String status;

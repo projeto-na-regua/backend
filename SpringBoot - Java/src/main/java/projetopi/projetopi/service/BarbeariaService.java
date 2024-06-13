@@ -13,13 +13,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 import projetopi.projetopi.dto.response.BarbeariaConsulta;
 import projetopi.projetopi.dto.response.ImgConsulta;
-import projetopi.projetopi.entity.Barbearia;
-import projetopi.projetopi.entity.DiaSemana;
-import projetopi.projetopi.entity.Endereco;
-import projetopi.projetopi.entity.Usuario;
+import projetopi.projetopi.entity.*;
 import projetopi.projetopi.exception.ErroServidorException;
 import projetopi.projetopi.exception.RecursoNaoEncontradoException;
 import projetopi.projetopi.repository.BarbeariasRepository;
+import projetopi.projetopi.repository.ClienteRepository;
 import projetopi.projetopi.repository.DiaSemanaRepository;
 import projetopi.projetopi.repository.EnderecoRepository;
 import projetopi.projetopi.util.Global;
@@ -30,6 +28,8 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.springframework.http.ResponseEntity.status;
 
@@ -44,6 +44,9 @@ public class BarbeariaService {
     private final DiaSemanaRepository diaSemanaRepository;
 
     @Autowired
+    private final ClienteRepository clienteRepository;
+
+    @Autowired
     private final EnderecoRepository enderecoRepository;
 
     private final StorageService azureStorageService;
@@ -53,6 +56,45 @@ public class BarbeariaService {
     private final ModelMapper mapper;
 
     private final Token tk;
+
+
+
+    public static double calcularDistancia(double lat1, double lon1, double lat2, double lon2) {
+        int raioTerra = 6371; // Raio da Terra em quilômetros
+
+
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLon = Math.toRadians(lon2 - lon1);
+
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
+                        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        double distancia = raioTerra * c;
+
+        return distancia;
+    }
+
+    public List<Barbearia> getBarbeariaByEndereco(String token, double raio){
+        global.validaCliente(token, "Cliente");
+        Cliente cliente = clienteRepository.findById(Integer.valueOf(tk.getUserIdByToken(token))).get();
+
+        List<Barbearia> barbearias = barbeariasRepository.findAll();
+        List<Barbearia> barbeariasProximas = new ArrayList<>();
+
+
+        for (Barbearia b : barbearias){
+            if (calcularDistancia(cliente.getEndereco().getLatitude(), cliente.getEndereco().getLongitude(),
+                    b.getEndereco().getLatitude(), b.getEndereco().getLongitude()) <= raio){
+                barbeariasProximas.add(b);
+            }
+        }
+
+
+        return barbeariasProximas;
+    }
+
 
     public BarbeariaConsulta getPerfil(String token){
         global.validaBarbearia(token);

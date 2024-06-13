@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import projetopi.projetopi.dto.mappers.ServicoMapper;
@@ -16,6 +17,7 @@ import projetopi.projetopi.repository.BarbeiroServicoRepository;
 import projetopi.projetopi.repository.ServicoRepository;
 import projetopi.projetopi.service.AgendamentoService;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.springframework.http.ResponseEntity.status;
@@ -41,6 +43,13 @@ public class AgendamentoController{
     public ResponseEntity<List<AgendamentoConsulta>> getAgendamentos(@RequestHeader("Authorization") String token,
                                                                     @PathVariable String status){
         return status(200).body(service.getAgendamento(token, status));
+    }
+
+    @GetMapping("/list-horarios-disponiveis/{date}")
+    public ResponseEntity<List<AgendamentoConsulta>> getAgendamentos(@RequestHeader("Authorization") String token,
+                                                               @RequestBody BarbeiroServicoId barbeiroServico,
+                                                               @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date){
+        return status(200).body(service.getHorarios(token, barbeiroServico, date));
     }
 
     @GetMapping("/{id}")
