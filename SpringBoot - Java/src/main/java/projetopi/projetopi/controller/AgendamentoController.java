@@ -1,20 +1,15 @@
 package projetopi.projetopi.controller;
 
 import jakarta.validation.Valid;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import projetopi.projetopi.dto.mappers.ServicoMapper;
 import projetopi.projetopi.dto.request.AgendamentoCriacao;
 import projetopi.projetopi.dto.response.AgendamentoConsulta;
-import projetopi.projetopi.dto.response.ServicoConsulta;
+import projetopi.projetopi.dto.response.HorarioDiaSemana;
 import projetopi.projetopi.entity.*;
 import projetopi.projetopi.repository.AgendaRepository;
-import projetopi.projetopi.repository.BarbeiroServicoRepository;
-import projetopi.projetopi.repository.ServicoRepository;
 import projetopi.projetopi.service.AgendamentoService;
 
 import java.time.LocalDate;
@@ -46,9 +41,9 @@ public class AgendamentoController{
     }
 
     @GetMapping("/list-horarios-disponiveis/{date}")
-    public ResponseEntity<List<AgendamentoConsulta>> getAgendamentos(@RequestHeader("Authorization") String token,
-                                                               @RequestBody BarbeiroServicoId barbeiroServico,
-                                                               @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date){
+    public ResponseEntity<List<HorarioDiaSemana>> getAgendamentos(@RequestHeader("Authorization") String token,
+                                                                  @RequestBody BarbeiroServicoId barbeiroServico,
+                                                                  @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date){
         return status(200).body(service.getHorarios(token, barbeiroServico, date));
     }
 

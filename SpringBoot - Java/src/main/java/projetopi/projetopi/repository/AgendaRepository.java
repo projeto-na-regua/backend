@@ -1,6 +1,5 @@
 package projetopi.projetopi.repository;
 
-import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -8,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import projetopi.projetopi.entity.Agendamento;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -23,7 +23,7 @@ public interface AgendaRepository extends JpaRepository<Agendamento, Integer> {
     List<Agendamento> findAllByBarbeiroAndDate(@Param("barbeiroId") Integer barbeiroId, @Param("date") LocalDate date);
 
 
-
-
+    @Query("select count(a)>0 from Agendamento a where a.barbeiro.id = ?1 and a.servico.id = ?2 and a.dataHora = ?3 and a.status = 'Agendado'")
+    boolean existsByBarbeiroServicoDataHoraConfirmado(Integer barbeiroId, Integer servicoId, LocalDateTime dataHora);
 }
 
