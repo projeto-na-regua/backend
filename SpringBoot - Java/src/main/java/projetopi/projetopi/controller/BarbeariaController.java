@@ -1,6 +1,7 @@
 package projetopi.projetopi.controller;
 
 
+import com.azure.core.annotation.Get;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -71,15 +72,12 @@ public class BarbeariaController {
     }
 
     @GetMapping("/client-side/get-image-perfil")
-    public ResponseEntity<List<ByteArrayResource>> getImagePerfilCliente(@RequestHeader("Authorization") String token) {
-        List<ByteArrayResource> resources = service.getImagePerfilCliente(token);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.IMAGE_PNG);
+    public ResponseEntity<byte[]> getImagePerfilCliente(@RequestHeader("Authorization") String token) {
+        byte[] imageBytes = service.getImagePerfilCliente(token);
 
         return ResponseEntity.ok()
-                .headers(headers)
-                .body(resources);
+                .contentType(MediaType.IMAGE_PNG)
+                .body(imageBytes);
     }
 
     @GetMapping("/get-image-banner")
