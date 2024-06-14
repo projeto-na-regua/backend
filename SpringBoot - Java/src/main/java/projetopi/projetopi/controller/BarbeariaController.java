@@ -71,13 +71,15 @@ public class BarbeariaController {
     }
 
     @GetMapping("/client-side/get-image-perfil")
-    public ResponseEntity<ByteArrayResource> getImagePerfilCliente(@RequestHeader("Authorization") String token){
-        ByteArrayResource resource = service.getImagePerfilCliente(token);
+    public ResponseEntity<List<ByteArrayResource>> getImagePerfilCliente(@RequestHeader("Authorization") String token) {
+        List<ByteArrayResource> resources = service.getImagePerfilCliente(token);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.IMAGE_PNG);
 
-        return ResponseEntity.ok().headers(headers).contentLength(resource.contentLength()).body(resource);
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(resources);
     }
 
     @GetMapping("/get-image-banner")

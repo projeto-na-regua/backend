@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -49,26 +50,30 @@ public class StorageService {
         return outputStream.toByteArray();
     }
 
-    public byte[] getBlobArray(List<String> blobNames) throws IOException {
+    public List<byte[]> getBlobArray(List<String> blobNames) throws IOException {
         // Nome do seu container de armazenamento na Azure
         String containerName = "upload";
 
         // Recupera uma referência para o container de blobs
         BlobContainerClient containerClient = azureStorageManager.setCliente(containerName).getContainerClient();
 
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        List<byte[]> imageBytesList = new ArrayList<>();
 
         // Itera sobre a lista de nomes de blobs
         for (String blobName : blobNames) {
             // Recupera uma referência para o blob
             BlobClient blobClient = containerClient.getBlobClient(blobName);
 
-            // Faz o download do conteúdo do blob e escreve no outputStream
+            // Faz o download do conteúdo do blob
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             blobClient.download(outputStream);
+
+            // Adiciona o conteúdo do blob como um array de bytes à lista
+            imageBytesList.add(outputStream.toByteArray());
         }
 
-        // Retorna o conteúdo acumulado dos blobs como um array de bytes
-        return outputStream.toByteArray();
+        // Retorna a lista de arrays de bytes das imagens
+        return imageBytesList;
     }
 
 }

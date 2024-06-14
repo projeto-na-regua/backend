@@ -194,7 +194,7 @@ public class BarbeariaService {
         }
     }
 
-    public ByteArrayResource getImagePerfilCliente(String token) {
+    public List<ByteArrayResource> getImagePerfilCliente(String token) {
         global.validaCliente(token, "Cliente");
         try {
             List<String> imageNames = new ArrayList<>();
@@ -202,22 +202,27 @@ public class BarbeariaService {
                 imageNames.add(barbearia.getImgPerfil());
             }
 
-            byte[] blobBytes = azureStorageService.getBlobArray(imageNames);
+            List<byte[]> blobBytesList = azureStorageService.getBlobArray(imageNames);
+            List<ByteArrayResource> resources = new ArrayList<>();
 
-            BufferedImage image = ImageIO.read(new ByteArrayInputStream(blobBytes));
+            // Itera sobre a lista de arrays de bytes das imagens
+            for (byte[] blobBytes : blobBytesList) {
+                BufferedImage image = ImageIO.read(new ByteArrayInputStream(blobBytes));
 
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ImageIO.write(image, "png", baos);
-            byte[] imageBytes = baos.toByteArray();
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                ImageIO.write(image, "png", baos);
+                byte[] imageBytes = baos.toByteArray();
 
-            ByteArrayResource resource = new ByteArrayResource(imageBytes);
-            return resource;
+                ByteArrayResource resource = new ByteArrayResource(imageBytes);
+                resources.add(resource);
+            }
+
+            return resources;
 
         } catch (IOException e) {
-            throw new ErroServidorException("ao resgatar imagem");
+            throw new ErroServidorException("ao resgatar imagens");
         }
     }
-
 
     public ImgConsulta editarImgBanner(String token, MultipartFile file){
 
