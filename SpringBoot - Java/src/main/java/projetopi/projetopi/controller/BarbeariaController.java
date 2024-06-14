@@ -39,11 +39,7 @@ public class BarbeariaController {
 
 
     @GetMapping("/client-side/pesquisa")
-    public ResponseEntity<List<BarbeariaPesquisa>> getBarbeariasByToken(@RequestHeader("Authorization") String token,
-                                                                        @RequestParam String localizacao,
-                                                                        @RequestParam String servico,
-                                                                        @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
-                                                                        @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)LocalTime hora){
+    public ResponseEntity<List<BarbeariaPesquisa>> getBarbeariasByToken(@RequestHeader("Authorization") String token){
         return status(200).body(service.findAll(token));
     }
 
