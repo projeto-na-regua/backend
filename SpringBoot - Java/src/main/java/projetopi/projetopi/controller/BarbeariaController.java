@@ -70,6 +70,16 @@ public class BarbeariaController {
         return ResponseEntity.ok().headers(headers).contentLength(resource.contentLength()).body(resource);
     }
 
+    @GetMapping("/client-side/get-image-perfil")
+    public ResponseEntity<ByteArrayResource> getImagePerfilCliente(@RequestHeader("Authorization") String token){
+        ByteArrayResource resource = service.getImagePerfilCliente(token);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.IMAGE_PNG);
+
+        return ResponseEntity.ok().headers(headers).contentLength(resource.contentLength()).body(resource);
+    }
+
     @GetMapping("/get-image-banner")
     public ResponseEntity<ByteArrayResource> getImageBanner(@RequestHeader("Authorization") String token){
         ByteArrayResource resource = service.getImageBanner(token);

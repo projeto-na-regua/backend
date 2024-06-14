@@ -194,6 +194,31 @@ public class BarbeariaService {
         }
     }
 
+    public ByteArrayResource getImagePerfilCliente(String token) {
+        global.validaCliente(token, "Cliente");
+        try {
+            List<String> imageNames = new ArrayList<>();
+            for (Barbearia barbearia : barbeariasRepository.findAll()) {
+                imageNames.add(barbearia.getImgPerfil());
+            }
+
+            byte[] blobBytes = azureStorageService.getBlobArray(imageNames);
+
+            BufferedImage image = ImageIO.read(new ByteArrayInputStream(blobBytes));
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ImageIO.write(image, "png", baos);
+            byte[] imageBytes = baos.toByteArray();
+
+            ByteArrayResource resource = new ByteArrayResource(imageBytes);
+            return resource;
+
+        } catch (IOException e) {
+            throw new ErroServidorException("ao resgatar imagem");
+        }
+    }
+
+
     public ImgConsulta editarImgBanner(String token, MultipartFile file){
 
         validacoesPermissoes(token);
