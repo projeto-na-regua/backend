@@ -6,12 +6,15 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 import projetopi.projetopi.dto.response.BarbeariaConsulta;
+import projetopi.projetopi.dto.response.BarbeariaPesquisa;
 import projetopi.projetopi.dto.response.ImgConsulta;
 import projetopi.projetopi.entity.*;
 import projetopi.projetopi.exception.ErroServidorException;
@@ -95,6 +98,33 @@ public class BarbeariaService {
         return barbeariasProximas;
     }
 
+    public List<BarbeariaPesquisa> findAll(String token){
+        global.validaCliente(token, "Cliente");
+        Cliente cliente = clienteRepository.findById(Integer.valueOf(tk.getUserIdByToken(token))).get();
+        List<Barbearia> barbearias = barbeariasRepository.findAll();
+        List<BarbeariaPesquisa> barbeariasProximas = new ArrayList<>();
+
+
+        for (Barbearia b : barbearias){
+            barbeariasProximas.add(new BarbeariaPesquisa(b, 0.0));
+        }
+
+
+        return barbeariasProximas;
+    }
+
+
+    public BarbeariaConsulta getPerfilForCliente(String token, Integer barbeariaId){
+        global.validaCliente(token, "Cliente");
+
+        if (!barbeariasRepository.existsById(barbeariaId)){
+            throw new RecursoNaoEncontradoException("Barbearia", barbeariaId);
+        }
+
+        Barbearia barbearia = barbeariasRepository.findById(barbeariaId).get();
+        DiaSemana[] semana = diaSemanaRepository.findByBarbeariaId(barbearia.getId());
+        return new BarbeariaConsulta(barbearia, semana);
+    }
 
     public BarbeariaConsulta getPerfil(String token){
         global.validaBarbearia(token);
@@ -208,5 +238,18 @@ public class BarbeariaService {
     }
 
 
+    public List<BarbeariaPesquisa> filtroBarberiasNome(String token, String nomeBarbearia) {
 
+        global.validaCliente(token, "Cliente");
+
+        List<Barbearia> barbearias = barbeariasRepository.findByNomeNegocioContaining(nomeBarbearia);
+        List<BarbeariaPesquisa> dtos = new ArrayList<>();
+
+        for (Barbearia b : barbearias){
+            dtos.add(new BarbeariaPesquisa(b, 0.0));
+        }
+
+
+        return dtos;
+    }
 }

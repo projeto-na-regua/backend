@@ -21,6 +21,8 @@ public interface BarbeariasRepository extends JpaRepository<Barbearia, Integer> 
 
       Barbearia findByCpf(String cpf);
 
+      List<Barbearia> findByNomeNegocioContaining(String nomeNegocio);
+
       Barbearia findByNomeNegocio(String nomeNegocio);
 
 //      @Query("SELECT b FROM Barbearia b WHERE " +

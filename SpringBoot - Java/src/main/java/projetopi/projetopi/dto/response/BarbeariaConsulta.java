@@ -12,6 +12,8 @@ import projetopi.projetopi.entity.DiaSemana;
 public class BarbeariaConsulta {
 
     private Integer id;
+    private String imgPerfil;
+    private String imgBanner;
     private String nomeNegocio;
     private String emailNegocio;
     private String celularNegocio;
@@ -35,13 +37,14 @@ public class BarbeariaConsulta {
         this.celularNegocio = barbearia.getCelularNegocio();
         this.descricao = barbearia.getDescricao();
         this.cep = barbearia.getEndereco().getCep();
-        this.cep = barbearia.getEndereco().getCep();
         this.logradouro = barbearia.getEndereco().getLogradouro();
         this.numero = barbearia.getEndereco().getNumero();
         this.complemento = barbearia.getEndereco().getComplemento();
         this.cidade = barbearia.getEndereco().getCidade();
         this.estado = barbearia.getEndereco().getEstado();
         this.diaSemanas = semana;
+        this.imgPerfil = barbearia.getImgPerfil();
+        this.imgBanner = barbearia.getImgBanner();
     }
 
 }

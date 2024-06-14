@@ -28,6 +28,13 @@ public class ServicoController {
         return status(200).body(service.getAllServicos(token));
     }
 
+    @GetMapping("/client-side/{idBarbearia}")
+    public ResponseEntity<List<ServicoConsulta>> getServicos(@RequestHeader("Authorization") String token,
+                                                             @PathVariable Integer idBarbearia){
+        return status(200).body(service.getAllServicosByBarbeariaForClientes(token, idBarbearia));
+    }
+
+
     @GetMapping("/list-by-status/{status}")
     @Operation(summary = "Listando os serviços pelo status", description = """
                status = active ou deactive

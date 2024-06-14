@@ -38,6 +38,12 @@ public class FuncionarioController {
             return status(200).body(service.getFuncionariosByServico(token, idServico));
         }
 
+        @GetMapping("/client-side/list-by-servico/{idServico}")
+        public ResponseEntity<List<BarbeiroConsulta>> getFuncionariosForCliente(@RequestHeader("Authorization") String token,
+                                                                  @PathVariable Integer idServico){
+        return status(200).body(service.getFuncionariosByServicoForCliente(token, idServico));
+        }
+
 
         @GetMapping("/{email}")
         public ResponseEntity<BarbeiroConsulta> getFuncionario(@RequestHeader("Authorization") String token,
