@@ -6,7 +6,9 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -194,7 +196,7 @@ public class BarbeariaService {
         }
     }
 
-    public List<ByteArrayResource> getImagePerfilCliente(String token) {
+    public byte[] getImagePerfilCliente(String token) {
         global.validaCliente(token, "Cliente");
         try {
             List<String> imageNames = new ArrayList<>();
@@ -203,26 +205,28 @@ public class BarbeariaService {
             }
 
             List<byte[]> blobBytesList = azureStorageService.getBlobArray(imageNames);
-            List<ByteArrayResource> resources = new ArrayList<>();
 
-            // Itera sobre a lista de arrays de bytes das imagens
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
             for (byte[] blobBytes : blobBytesList) {
                 BufferedImage image = ImageIO.read(new ByteArrayInputStream(blobBytes));
-
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 ImageIO.write(image, "png", baos);
-                byte[] imageBytes = baos.toByteArray();
-
-                ByteArrayResource resource = new ByteArrayResource(imageBytes);
-                resources.add(resource);
+                baos.write("\n".getBytes()); // Adiciona uma quebra de linha entre as imagens (opcional)
             }
 
-            return resources;
+            byte[] imageBytes = baos.toByteArray();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.IMAGE_PNG);
+            headers.setContentLength(imageBytes.length);
+
+            return imageBytes;
 
         } catch (IOException e) {
-            throw new ErroServidorException("ao resgatar imagens");
+            throw new ErroServidorException("Erro ao resgatar imagens");
         }
     }
+
 
     public ImgConsulta editarImgBanner(String token, MultipartFile file){
 
