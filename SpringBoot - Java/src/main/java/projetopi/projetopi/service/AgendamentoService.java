@@ -98,20 +98,13 @@ public class AgendamentoService {
 
 
         Integer userId = Integer.valueOf(tk.getUserIdByToken(token));
-        Optional<Usuario> usuarioOpt = usuarioRepository.findById(userId);
-        if (!usuarioOpt.isPresent()) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Usuário não encontrado");
-        }
-
-        Usuario usuario = usuarioOpt.get();
+        Usuario usuario = usuarioRepository.findById(userId).get();
         if (usuario.getDtype().equalsIgnoreCase("Barbeiro")) {
-            Barbeiro barbeiro = barbeiroRepository.findById(userId)
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Barbeiro não encontrado"));
+            Barbeiro barbeiro = barbeiroRepository.findById(userId).get();
             agendamentos = stt == null ? repository.findByBarbeiroId(barbeiro.getId())
                     : repository.findByBarbeiroIdAndStatus(barbeiro.getId(), stt);
         } else {
-            Cliente cliente = clienteRepository.findById(userId)
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado"));
+            Cliente cliente = clienteRepository.findById(userId).get();
             agendamentos = stt == null ? repository.findByClienteId(cliente.getId())
                     : repository.findByClienteIdAndStatus(cliente.getId(), stt);
         }

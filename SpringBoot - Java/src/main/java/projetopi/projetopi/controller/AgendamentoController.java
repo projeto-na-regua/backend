@@ -40,11 +40,16 @@ public class AgendamentoController{
         return status(200).body(service.getAgendamento(token, status));
     }
 
-    @GetMapping("/list-horarios-disponiveis/{date}")
-    public ResponseEntity<List<HorarioDiaSemana>> getAgendamentos(@RequestHeader("Authorization") String token,
-                                                                  @RequestBody BarbeiroServicoId barbeiroServico,
-                                                                  @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date){
-        return status(200).body(service.getHorarios(token, barbeiroServico, date));
+    @GetMapping("/list-horarios-disponiveis")
+    public ResponseEntity<List<HorarioDiaSemana>> getAgendamentos(
+            @RequestHeader("Authorization") String token,
+            @RequestParam Integer barbeiro,
+            @RequestParam Integer servico,
+            @RequestParam Integer barbearia,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+
+        BarbeiroServicoId barbeiroServico = new BarbeiroServicoId(barbeiro, servico, barbearia);
+        return ResponseEntity.ok(service.getHorarios(token, barbeiroServico, date));
     }
 
     @GetMapping("/{id}")
