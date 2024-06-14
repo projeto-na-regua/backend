@@ -4,11 +4,13 @@ package projetopi.projetopi.controller;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import projetopi.projetopi.dto.response.BarbeariaPesquisa;
 import projetopi.projetopi.dto.response.ImgConsulta;
 import projetopi.projetopi.entity.Barbearia;
 import projetopi.projetopi.entity.DiaSemana;
@@ -20,6 +22,8 @@ import projetopi.projetopi.repository.DiaSemanaRepository;
 import projetopi.projetopi.repository.EnderecoRepository;
 import projetopi.projetopi.service.BarbeariaService;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 import static org.springframework.http.ResponseEntity.*;
@@ -34,11 +38,27 @@ public class BarbeariaController {
     private BarbeariaService service;
 
 
-    @GetMapping("/list-by-endereco/{raio}")
-    public ResponseEntity<List<Barbearia>> getBarbeariasByToken(@RequestHeader("Authorization") String token,
-                                                                @PathVariable double raio){
-        return status(200).body(service.getBarbeariaByEndereco(token, raio));
+    @GetMapping("/client-side/pesquisa")
+    public ResponseEntity<List<BarbeariaPesquisa>> getBarbeariasByToken(@RequestHeader("Authorization") String token,
+                                                                        @RequestParam String localizacao,
+                                                                        @RequestParam String servico,
+                                                                        @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+                                                                        @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)LocalTime hora){
+        return status(200).body(service.findAll(token));
     }
+
+    @GetMapping("/client-side/perfil/{idBarbearia}")
+    public ResponseEntity<BarbeariaConsulta> getPerfilByCliente(@RequestHeader("Authorization") String token,
+                                                       @PathVariable Integer idBarbearia){
+        return status(200).body(service.getPerfilForCliente(token, idBarbearia));
+    }
+
+    @GetMapping("/client-side/filtro")
+    public ResponseEntity<List<BarbeariaPesquisa>> getPerfilByCliente(@RequestHeader("Authorization") String token,
+                                                                @RequestParam String nomeBarbearia){
+        return status(200).body(service.filtroBarberiasNome(token, nomeBarbearia));
+    }
+
     @GetMapping("/perfil")
     public ResponseEntity<BarbeariaConsulta> getPerfil(@RequestHeader("Authorization") String token){
         return status(200).body(service.getPerfil(token));

@@ -20,6 +20,7 @@ import projetopi.projetopi.exception.ConflitoException;
 import projetopi.projetopi.exception.RecursoNaoEncontradoException;
 import projetopi.projetopi.relatorios.RelatorioBarbeiro;
 import projetopi.projetopi.repository.*;
+import projetopi.projetopi.util.Global;
 import projetopi.projetopi.util.Token;
 
 import java.io.ByteArrayOutputStream;
@@ -61,6 +62,9 @@ public class FuncionarioService {
     @Autowired
     public ModelMapper mapper;
 
+    @Autowired
+    private Global global;
+
     public boolean isCliente(String token){
         return usuarioRepository.findById(Integer.valueOf(tk.getUserIdByToken(token))).get().getDtype().equals("Cliente");
     }
@@ -90,6 +94,28 @@ public class FuncionarioService {
             barbeiros.add(barbeiroRepository.findById(bs.getBarbeiro().getId()).get());
         }
 
+
+        if (barbeiros.isEmpty()) {
+            throw new ResponseStatusException(HttpStatusCode.valueOf(204));
+        }
+
+        return UsuarioMapper.toDto(barbeiros);
+    }
+
+    public List<BarbeiroConsulta> getFuncionariosByServicoForCliente(String token, Integer idServico){
+
+        global.validaCliente(token, "Cliente");
+
+        if (!servicoRepository.existsById(idServico)) {
+            throw new RecursoNaoEncontradoException("Servico", idServico);
+        }
+
+        List<BarbeiroServico> barbeirosServico = barbeiroServicoRepository.findByServicoIdAndBarbeariaId(idServico, servicoRepository.findById(idServico).get().getBarbearia().getId());
+        List<Barbeiro> barbeiros = new ArrayList<>();
+
+        for (BarbeiroServico bs: barbeirosServico){
+            barbeiros.add(barbeiroRepository.findById(bs.getBarbeiro().getId()).get());
+        }
 
         if (barbeiros.isEmpty()) {
             throw new ResponseStatusException(HttpStatusCode.valueOf(204));

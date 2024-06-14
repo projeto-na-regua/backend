@@ -58,6 +58,18 @@ public class ServicoService {
         return ServicoMapper.toDto(servicos);
     }
 
+    public List<ServicoConsulta> getAllServicosByBarbeariaForClientes(String token, Integer idBarbearia){
+        global.validaCliente(token, "Cliente");
+        List<Servico> servicos = servicoRepository.findByBarbeariaIdAndStatus(idBarbearia, true);
+
+        if (servicos.isEmpty()) {
+            throw new ResponseStatusException(HttpStatusCode.valueOf(204));
+        }
+
+        return ServicoMapper.toDto(servicos);
+    }
+
+
     public ServicoConsulta getServico(String token, Integer idServico){
         validacoesPermissoes(token);
         validarServico(idServico);
