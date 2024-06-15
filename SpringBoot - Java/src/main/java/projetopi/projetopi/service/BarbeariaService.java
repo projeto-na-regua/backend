@@ -18,6 +18,7 @@ import org.springframework.web.server.ResponseStatusException;
 import projetopi.projetopi.dto.response.BarbeariaConsulta;
 import projetopi.projetopi.dto.response.BarbeariaPesquisa;
 import projetopi.projetopi.dto.response.ImgConsulta;
+import projetopi.projetopi.dto.response.ImgConsultaBytes;
 import projetopi.projetopi.entity.*;
 import projetopi.projetopi.exception.ErroServidorException;
 import projetopi.projetopi.exception.RecursoNaoEncontradoException;
@@ -196,31 +197,35 @@ public class BarbeariaService {
         }
     }
 
-    public byte[] getImagePerfilCliente(String token) {
+    public List<byte[]> getImagePerfilCliente(String token) {
         global.validaCliente(token, "Cliente");
         try {
-            List<String> imageNames = new ArrayList<>();
+            List<byte[]> imageBytesList = new ArrayList<>();
             for (Barbearia barbearia : barbeariasRepository.findAll()) {
-                imageNames.add(barbearia.getImgPerfil());
-            }
+                BufferedImage image = ImageIO.read(new ByteArrayInputStream(azureStorageService.getBlob(barbearia.getImgPerfil())));
 
-            List<byte[]> blobBytesList = azureStorageService.getBlobArray(imageNames);
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                ImageIO.write(image, "png", baos);
+                byte[] imageBytes = baos.toByteArray();
+
+                imageBytesList.add(imageBytes);
+            }
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//
+//            for (byte[] blobBytes : blobBytesList) {
+//                BufferedImage image = ImageIO.read(new ByteArrayInputStream(blobBytes));
+//                ImageIO.write(image, "png", baos);
+//                baos.write("\n".getBytes()); // Adiciona uma quebra de linha entre as imagens (opcional)
+//            }
+//
+//            byte[] imageBytes = baos.toByteArray();
+//
+//            HttpHeaders headers = new HttpHeaders();
+//            headers.setContentType(MediaType.IMAGE_PNG);
+//            headers.setContentLength(imageBytes.length);
 
-            for (byte[] blobBytes : blobBytesList) {
-                BufferedImage image = ImageIO.read(new ByteArrayInputStream(blobBytes));
-                ImageIO.write(image, "png", baos);
-                baos.write("\n".getBytes()); // Adiciona uma quebra de linha entre as imagens (opcional)
-            }
-
-            byte[] imageBytes = baos.toByteArray();
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.IMAGE_PNG);
-            headers.setContentLength(imageBytes.length);
-
-            return imageBytes;
+            return imageBytesList;
 
         } catch (IOException e) {
             throw new ErroServidorException("Erro ao resgatar imagens");

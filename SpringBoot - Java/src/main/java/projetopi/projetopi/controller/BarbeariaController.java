@@ -11,13 +11,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import projetopi.projetopi.dto.response.BarbeariaPesquisa;
-import projetopi.projetopi.dto.response.ImgConsulta;
+import projetopi.projetopi.dto.response.*;
 import projetopi.projetopi.entity.Barbearia;
 import projetopi.projetopi.entity.DiaSemana;
 import projetopi.projetopi.entity.Endereco;
-import projetopi.projetopi.dto.response.BarbeariaConsulta;
-import projetopi.projetopi.dto.response.EnderecoConsulta;
 import projetopi.projetopi.repository.BarbeariasRepository;
 import projetopi.projetopi.repository.DiaSemanaRepository;
 import projetopi.projetopi.repository.EnderecoRepository;
@@ -72,11 +69,10 @@ public class BarbeariaController {
     }
 
     @GetMapping("/client-side/get-image-perfil")
-    public ResponseEntity<byte[]> getImagePerfilCliente(@RequestHeader("Authorization") String token) {
-        byte[] imageBytes = service.getImagePerfilCliente(token);
+    public ResponseEntity<List<byte[]>> getImagePerfilCliente(@RequestHeader("Authorization") String token) {
+        List<byte[]> imageBytes = service.getImagePerfilCliente(token);
 
         return ResponseEntity.ok()
-                .contentType(MediaType.IMAGE_PNG)
                 .body(imageBytes);
     }
 
