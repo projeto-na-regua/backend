@@ -69,8 +69,8 @@ public class BarbeariaController {
     }
 
     @GetMapping("/client-side/get-image-perfil")
-    public ResponseEntity<List<byte[]>> getImagePerfilCliente(@RequestHeader("Authorization") String token) {
-        List<byte[]> imageBytes = service.getImagePerfilCliente(token);
+    public ResponseEntity<List<String>> getImagePerfilCliente(@RequestHeader("Authorization") String token) {
+        List<String> imageBytes = service.getImagePerfilCliente(token);
 
         return ResponseEntity.ok()
                 .body(imageBytes);
