@@ -197,38 +197,17 @@ public class BarbeariaService {
         }
     }
 
-    public List<byte[]> getImagePerfilCliente(String token) {
+    public List<String> getImagePerfilCliente(String token) {
         global.validaCliente(token, "Cliente");
         try {
-            List<byte[]> imageBytesList = new ArrayList<>();
+            List<String> imageUrlList = new ArrayList<>();
             for (Barbearia barbearia : barbeariasRepository.findAll()) {
-                BufferedImage image = ImageIO.read(new ByteArrayInputStream(azureStorageService.getBlob(barbearia.getImgPerfil())));
-
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                ImageIO.write(image, "png", baos);
-                byte[] imageBytes = baos.toByteArray();
-
-                imageBytesList.add(imageBytes);
+                String imageUrl = azureStorageService.getBlobUrl(barbearia.getImgPerfil());
+                imageUrlList.add(imageUrl);
             }
-
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//
-//            for (byte[] blobBytes : blobBytesList) {
-//                BufferedImage image = ImageIO.read(new ByteArrayInputStream(blobBytes));
-//                ImageIO.write(image, "png", baos);
-//                baos.write("\n".getBytes()); // Adiciona uma quebra de linha entre as imagens (opcional)
-//            }
-//
-//            byte[] imageBytes = baos.toByteArray();
-//
-//            HttpHeaders headers = new HttpHeaders();
-//            headers.setContentType(MediaType.IMAGE_PNG);
-//            headers.setContentLength(imageBytes.length);
-
-            return imageBytesList;
-
-        } catch (IOException e) {
-            throw new ErroServidorException("Erro ao resgatar imagens");
+            return imageUrlList;
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

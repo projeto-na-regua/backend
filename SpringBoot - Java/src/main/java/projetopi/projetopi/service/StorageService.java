@@ -23,7 +23,6 @@ public class StorageService {
         this.azureStorageManager = azureStorageManager;
     }
 
-
     public String uploadImage(MultipartFile file) throws IOException {
         String fileName = file.getOriginalFilename();
         File tempFile = File.createTempFile("temp", null);
@@ -33,47 +32,31 @@ public class StorageService {
     }
 
     public byte[] getBlob(String blobName) throws IOException {
-        // Nome do seu container de armazenamento na Azure
         String containerName = "upload";
-
-        // Recupera uma referência para o container de blobs
         BlobContainerClient containerClient = azureStorageManager.setCliente(containerName).getContainerClient();
-
-        // Recupera uma referência para o blob
         BlobClient blobClient = containerClient.getBlobClient(blobName);
-
-        // Faz o download do conteúdo do blob
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         blobClient.download(outputStream);
-
-        // Retorna o conteúdo do blob como um array de bytes
         return outputStream.toByteArray();
     }
 
     public List<byte[]> getBlobArray(List<String> blobNames) throws IOException {
-        // Nome do seu container de armazenamento na Azure
         String containerName = "upload";
-
-        // Recupera uma referência para o container de blobs
         BlobContainerClient containerClient = azureStorageManager.setCliente(containerName).getContainerClient();
-
         List<byte[]> imageBytesList = new ArrayList<>();
-
-        // Itera sobre a lista de nomes de blobs
         for (String blobName : blobNames) {
-            // Recupera uma referência para o blob
             BlobClient blobClient = containerClient.getBlobClient(blobName);
-
-            // Faz o download do conteúdo do blob
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             blobClient.download(outputStream);
-
-            // Adiciona o conteúdo do blob como um array de bytes à lista
             imageBytesList.add(outputStream.toByteArray());
         }
-
-        // Retorna a lista de arrays de bytes das imagens
         return imageBytesList;
     }
 
+    public String getBlobUrl(String blobName) {
+        String containerName = "upload";
+        BlobContainerClient containerClient = azureStorageManager.setCliente(containerName).getContainerClient();
+        BlobClient blobClient = containerClient.getBlobClient(blobName);
+        return blobClient.getBlobUrl();
+    }
 }
