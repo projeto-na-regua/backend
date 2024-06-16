@@ -175,7 +175,6 @@ public class BarbeariaService {
     }
 
     public ByteArrayResource getImagePerfil(String token) {
-        validacoesPermissoes(token);
         try {
             String imageName = barbeariasRepository.findById(global.getBarbeariaByToken(token).getId()).get().getImgPerfil();
             byte[] blobBytes = azureStorageService.getBlob(imageName);
@@ -227,7 +226,6 @@ public class BarbeariaService {
     }
 
     public ByteArrayResource getImageBanner(String token) {
-        validacoesPermissoes(token);
         try {
             String imageName = barbeariasRepository.findById(global.getBarbeariaByToken(token).getId()).get().getImgBanner();
             byte[] blobBytes = azureStorageService.getBlob(imageName);

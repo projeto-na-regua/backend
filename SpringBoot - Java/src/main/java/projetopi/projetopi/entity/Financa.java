@@ -1,11 +1,15 @@
 package projetopi.projetopi.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "financeiro") // nome da tabela corrigido
+@Getter
+@Setter
+@Table(name = "financeiro")
 public class Financa {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,7 +23,7 @@ public class Financa {
     private LocalDateTime dtLancamento;
 
     @ManyToOne
-    @JoinColumn(name = "financeiro_fk_barberia") // nome da coluna de chave estrangeira corrigido
+    @JoinColumn(name = "financeiro_fk_barbearia")
     private Barbearia barbearia;
 
     @JoinColumn(name = "despesas")
@@ -41,35 +45,4 @@ public class Financa {
         this.valor = valor;
     }
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Double getValor() {
-        return valor;
-    }
-
-    public void setValor(Double valor) {
-        this.valor = valor;
-    }
-
-    public LocalDateTime getDtLancamento() {
-        return dtLancamento;
-    }
-
-    public void setDtLancamento(LocalDateTime dtLancamento) {
-        this.dtLancamento = dtLancamento;
-    }
-
-    public Barbearia getBarbearia() {
-        return barbearia;
-    }
-
-    public void setBarbearia(Barbearia barbearia) {
-        this.barbearia = barbearia;
-    }
 }
