@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import projetopi.projetopi.dto.response.BarbeiroConsulta;
 import projetopi.projetopi.entity.Barbearia;
 import projetopi.projetopi.entity.Barbeiro;
 import projetopi.projetopi.dto.response.UsuarioConsulta;
