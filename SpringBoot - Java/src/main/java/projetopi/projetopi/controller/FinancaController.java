@@ -1,19 +1,21 @@
 package projetopi.projetopi.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import projetopi.projetopi.dto.response.FinancaConsulta;
 import projetopi.projetopi.entity.Financa;
 import projetopi.projetopi.relatorios.RelatorioFinanceiro;
 import projetopi.projetopi.repository.BarbeariasRepository;
 import projetopi.projetopi.repository.FinanceiroRepository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import org.springframework.web.bind.annotation.CrossOrigin;
+
+import projetopi.projetopi.service.FinanceiroService;
+
 import static org.springframework.http.ResponseEntity.status;
 
 
@@ -28,15 +30,15 @@ public class FinancaController {
     @Autowired
     private BarbeariasRepository barbeariaRepository;
 
-    @GetMapping("/{fk}")
-    public ResponseEntity<List<Financa>> getFinancasPorBarbearia(@PathVariable Integer fk){
+    @Autowired
+    private FinanceiroService service;
 
-        if(!financeiroRepository.existsById(fk)){
-            return status(404).build();
-        }
-
-        var financas = financeiroRepository.findByBarbeariaId(fk);
-        return financas.isEmpty() ? status(204).build() : status(200).body(financas);
+    @GetMapping
+    public ResponseEntity<FinancaConsulta> getFinancasPorBarbearia(@RequestHeader("Authorization") String token,
+                                                                   @RequestParam Integer qtdDias,
+                                                                   @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataInicial,
+                                                                   @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataFinal){
+        return status(200).body(service.getFinancasPorBarbearia(token, qtdDias, dataInicial, dataFinal));
     }
 
     @GetMapping("/especifico/{id}")
