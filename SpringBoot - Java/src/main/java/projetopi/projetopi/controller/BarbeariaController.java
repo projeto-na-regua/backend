@@ -41,6 +41,15 @@ public class BarbeariaController {
         return status(200).body(service.findAll(token));
     }
 
+    @GetMapping("/client-side/pesquisa-by-localizacao")
+    public ResponseEntity<List<BarbeariaServico>> getBarbeariasByToken(@RequestHeader("Authorization") String token,
+                                                                        @RequestParam String servico,
+                                                                        @RequestParam LocalDate date,
+                                                                        @RequestParam LocalTime time){
+
+        return status(200).body(service.getAllByLocalizacao(token, servico, date, time));
+    }
+
     @GetMapping("/client-side/perfil/{idBarbearia}")
     public ResponseEntity<BarbeariaConsulta> getPerfilByCliente(@RequestHeader("Authorization") String token,
                                                        @PathVariable Integer idBarbearia){
@@ -103,6 +112,12 @@ public class BarbeariaController {
     public ResponseEntity<BarbeariaConsulta> editarPerfilInfo(@RequestHeader("Authorization") String token, @Valid
                                                               @RequestBody BarbeariaConsulta nvBarbearia){
         return status(200).body(service.editarPerfilInfo(token, nvBarbearia));
+    }
+
+
+    @PutMapping("/editar-endereco/{id}")
+    public ResponseEntity<Endereco> editarPerfilInfo(@Valid @RequestBody Endereco endereco, @PathVariable Integer id){
+        return status(200).body(service.editarEndereco(endereco, id));
     }
 
 

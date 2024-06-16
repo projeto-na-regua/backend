@@ -150,7 +150,7 @@ public class AgendamentoService {
 
         Servico servico = servicoRepository.findById(barbeiroServicoId.getServico()).get();
 
-        Integer tempoEstimado = servico.getTempoEstimado();
+        Integer tempoEstimado = 60;
 
         long minutos = ChronoUnit.MINUTES.between(diaSemana.getHoraAbertura(), diaSemana.getHoraFechamento());
 

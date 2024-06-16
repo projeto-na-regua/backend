@@ -10,6 +10,8 @@ import lombok.Setter;
 import org.hibernate.validator.constraints.br.CPF;
 import projetopi.projetopi.dto.response.BarbeariaConsulta;
 
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
@@ -50,6 +52,9 @@ public class Barbearia {
     @OneToOne()
     @JoinColumn(name = "barbearia_fk_endereco", nullable = false)
     private Endereco endereco;
+
+    @OneToMany(mappedBy = "barbearia")
+    private List<Servico> servicos;
 
     public Barbearia(String nomeNegocio) {
         this.nomeNegocio = nomeNegocio;

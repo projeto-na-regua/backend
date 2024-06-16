@@ -22,6 +22,9 @@ public class Financa {
     @JoinColumn(name = "financeiro_fk_barberia") // nome da coluna de chave estrangeira corrigido
     private Barbearia barbearia;
 
+    @JoinColumn(name = "despesas")
+    private Boolean despesas;
+
     public Financa() {
     }
 

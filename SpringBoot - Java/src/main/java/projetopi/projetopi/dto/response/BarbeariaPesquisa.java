@@ -20,6 +20,9 @@ public class BarbeariaPesquisa {
 
     private Integer numero;
 
+    private Double latitude;
+    private Double longitude;
+
     private Double distancia;
 
     public BarbeariaPesquisa(Barbearia barbearia, Double distancia) {
@@ -29,5 +32,7 @@ public class BarbeariaPesquisa {
         this.numero = barbearia.getEndereco().getNumero();
         this.distancia = distancia;
         this.imgPerfil = barbearia.getImgPerfil();
+        this.latitude = barbearia.getEndereco().getLatitude();
+        this.longitude = barbearia.getEndereco().getLongitude();
     }
 }

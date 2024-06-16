@@ -3,10 +3,13 @@ package projetopi.projetopi.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import projetopi.projetopi.dto.response.BarbeariaServico;
 import projetopi.projetopi.entity.Barbearia;
 import projetopi.projetopi.dto.response.BarbeariaConsulta;
 import projetopi.projetopi.dto.response.EnderecoConsulta;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 public interface BarbeariasRepository extends JpaRepository<Barbearia, Integer> {
@@ -25,9 +28,12 @@ public interface BarbeariasRepository extends JpaRepository<Barbearia, Integer> 
 
       Barbearia findByNomeNegocio(String nomeNegocio);
 
+      @Query("SELECT new projetopi.projetopi.dto.response.BarbeariaServico(b, s) FROM Barbearia b JOIN b.servicos s WHERE s.tipoServico LIKE %?1%")
+      List<BarbeariaServico> findBarbeariasByTipoServico(String tipoServico);
+}
+
 //      @Query("SELECT b FROM Barbearia b WHERE " +
 //              "distance(geography::Point(:latitude, :longitude, 4326), b.endereco.location) <= :raio")
 //      List<Barbearia> encontrarBarbeariasProximas(@Param("latitude") Double latitude,
 //                                                  @Param("longitude") Double longitude,
 //                                                  @Param("raio") Double raio);
-}

@@ -1,24 +1,18 @@
 package projetopi.projetopi.service;
 
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import projetopi.projetopi.dto.response.BarbeariaConsulta;
 import projetopi.projetopi.dto.response.BarbeariaPesquisa;
+import projetopi.projetopi.dto.response.BarbeariaServico;
 import projetopi.projetopi.dto.response.ImgConsulta;
-import projetopi.projetopi.dto.response.ImgConsultaBytes;
 import projetopi.projetopi.entity.*;
 import projetopi.projetopi.exception.ErroServidorException;
 import projetopi.projetopi.exception.RecursoNaoEncontradoException;
@@ -34,6 +28,8 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,6 +58,8 @@ public class BarbeariaService {
     private final ModelMapper mapper;
 
     private final Token tk;
+
+    private final AgendamentoService agendamentoService;
 
 
 
@@ -269,5 +267,32 @@ public class BarbeariaService {
 
 
         return dtos;
+    }
+
+    public Endereco editarEndereco(Endereco endereco, Integer id) {
+        Endereco endereco1 = enderecoRepository.findById(id).get();
+        endereco1.setId(id);
+        return  enderecoRepository.save(endereco);
+    }
+
+    public List<BarbeariaServico> getAllByLocalizacao(String token, String servico, LocalDate date, LocalTime time) {
+
+        Cliente cliente = clienteRepository.findById(Integer.valueOf(tk.getUserIdByToken(token))).get();
+        List<BarbeariaServico> barbearias = barbeariasRepository.findBarbeariasByTipoServico(servico);
+        Double raio = 3000.0;
+        List<BarbeariaServico> barbeariasProximas = new ArrayList<>();
+
+        for (BarbeariaServico b : barbearias){
+
+            Double distancia = calcularDistancia(cliente.getEndereco().getLatitude(), cliente.getEndereco().getLongitude(),
+                    b.getBarbearia().getLatitude(), b.getBarbearia().getLongitude());
+
+            if (distancia <= raio){
+                b.getBarbearia().setDistancia(distancia);
+                barbeariasProximas.add(b);
+            }
+        }
+
+        return barbeariasProximas;
     }
 }
