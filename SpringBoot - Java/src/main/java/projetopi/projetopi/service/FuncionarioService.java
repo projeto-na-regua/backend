@@ -80,6 +80,18 @@ public class FuncionarioService {
 
         return UsuarioMapper.toDto(barbeiros);
     }
+
+    public List<BarbeiroConsulta> getFuncionariosCliente(String token, Integer idBarbearia){
+        global.validaCliente(token, "Cliente");
+
+        List<Barbeiro> barbeiros = barbeiroRepository.findByBarbeariaId(idBarbearia);
+        if (barbeiros.isEmpty()) {
+            throw new ResponseStatusException(HttpStatusCode.valueOf(204));
+        }
+
+        return UsuarioMapper.toDto(barbeiros);
+    }
+
     public List<BarbeiroConsulta> getFuncionariosByServico(String token, Integer idServico){
         validarPermissioes(token);
 
