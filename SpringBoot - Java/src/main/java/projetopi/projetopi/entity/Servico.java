@@ -43,6 +43,8 @@ public class Servico {
     @ManyToOne
     @JoinColumn(name="servico_fk_barbearia")
     private Barbearia barbearia;
+
+
     @OneToMany(mappedBy = "servico")
     private Set<BarbeiroServico> barbeiroServicos = new HashSet<>();
 
