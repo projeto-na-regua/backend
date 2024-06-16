@@ -32,6 +32,11 @@ public class FuncionarioController {
         public ResponseEntity<List<BarbeiroConsulta>> getFuncionarios(@RequestHeader("Authorization") String token){
             return status(200).body(service.getFuncionarios(token));
         }
+
+        @GetMapping("/client-side/{idBarbearia}")
+        public ResponseEntity<List<BarbeiroConsulta>> getFuncionariosCliente(@RequestHeader("Authorization") String token, @PathVariable Integer idBarbearia){
+            return status(200).body(service.getFuncionariosCliente(token, idBarbearia));
+        }
         @GetMapping("/list-by-servico/{idServico}")
         public ResponseEntity<List<BarbeiroConsulta>> getFuncionarios(@RequestHeader("Authorization") String token,
                                                                       @PathVariable Integer idServico){
