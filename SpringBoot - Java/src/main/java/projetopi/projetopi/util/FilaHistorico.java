@@ -1,10 +1,10 @@
 package projetopi.projetopi.util;
 
 import projetopi.projetopi.dto.response.AgendamentoConsulta;
-import projetopi.projetopi.entity.Agendamento;
 
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.List;
 
 public class FilaHistorico {
 
@@ -32,5 +32,9 @@ public class FilaHistorico {
 
     public Queue<AgendamentoConsulta> getFila() {
         return fila;
+    }
+
+    public List<AgendamentoConsulta> getHistorico() {
+        return new LinkedList<>(fila);
     }
 }
