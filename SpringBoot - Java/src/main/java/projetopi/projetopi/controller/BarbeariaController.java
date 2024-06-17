@@ -77,6 +77,30 @@ public class BarbeariaController {
         return ResponseEntity.ok().headers(headers).contentLength(resource.contentLength()).body(resource);
     }
 
+    @GetMapping("/client-side/get-one-image-perfil/{idBarbearia}")
+    public ResponseEntity<ByteArrayResource> getImagePerfilClienteSide(@RequestHeader("Authorization") String token, @PathVariable Integer idBarbearia){
+
+
+        ByteArrayResource resource = service.getImagePerfilClienteSide(token, idBarbearia);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.IMAGE_PNG);
+
+        return ResponseEntity.ok().headers(headers).contentLength(resource.contentLength()).body(resource);
+    }
+
+    @GetMapping("/client-side/get-image-banner/{idBarbearia}")
+    public ResponseEntity<ByteArrayResource> getImageBanner(@RequestHeader("Authorization") String token, @PathVariable Integer idBarbearia){
+        ByteArrayResource resource = service.getImageBannerClieteSide(token, idBarbearia);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.IMAGE_PNG);
+
+        return ResponseEntity.ok().headers(headers).contentLength(resource.contentLength()).body(resource);
+    }
+
+
+
     @GetMapping("/client-side/get-image-perfil")
     public ResponseEntity<List<String>> getImagePerfilCliente(@RequestHeader("Authorization") String token) {
         List<String> imageBytes = service.getImagePerfilCliente(token);

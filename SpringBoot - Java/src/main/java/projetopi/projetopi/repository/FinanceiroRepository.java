@@ -25,11 +25,9 @@ public interface FinanceiroRepository extends JpaRepository<Financa, Integer> {
             "    SUM(CASE WHEN f.despesas = true THEN f.valor ELSE 0 END)) " +
             "FROM Financa f " +
             "WHERE f.barbearia.id = :id " +
-            "AND CONVERT(date, f.dtLancamento) BETWEEN :dataInicial AND :dataFinal")
+            "AND f.dtLancamento BETWEEN :dataInicial AND :dataFinal")
     FinancaConsulta findByFinancasByBarbeariaIdAndBetweenDates(
             @Param("id") Integer id,
-            @Param("dataInicial") LocalDate dataInicial,
-            @Param("dataFinal") LocalDate dataFinal);
-
-
+            @Param("dataInicial") LocalDateTime dataInicial,
+            @Param("dataFinal") LocalDateTime dataFinal);
 }
