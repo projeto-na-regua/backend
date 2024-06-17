@@ -4,6 +4,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
+import java.util.List;
+
 
 @Getter
 @Setter
@@ -14,7 +17,8 @@ public class FinancaConsulta {
     private Double lucro;
     private Double saldo;
     private Double lucratividade;
-    private TotalServicoPorDia servico;
+    private List<Double> servicosPreco;
+    private List<LocalDate> servicosData;
 
     public FinancaConsulta(Double despesa, Double lucro, Double saldo) {
         this.saldo = saldo;
