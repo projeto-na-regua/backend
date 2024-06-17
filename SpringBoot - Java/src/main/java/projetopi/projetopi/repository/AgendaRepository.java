@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import projetopi.projetopi.dto.response.DashboardConsulta;
 import projetopi.projetopi.dto.response.TotalServicoPorDia;
 import projetopi.projetopi.entity.Agendamento;
 
@@ -41,4 +42,19 @@ public interface AgendaRepository extends JpaRepository<Agendamento, Integer> {
             "AND a.dataHoraConcluido >= DATEADD(DAY, -1 * :qtdDias, CURRENT_TIMESTAMP) " +
             "GROUP BY CAST(a.dataHoraConcluido AS java.time.LocalDate)")
     List<TotalServicoPorDia> findByServicosByDataConcluido(@Param("barbeariaId") Integer barbeariaId, @Param("qtdDias") Integer qtdDias);
+
+
+
+    @Query("SELECT new projetopi.projetopi.dto.response.DashboardConsulta(" +
+            "    SUM(CASE WHEN a.status = 'Pendente' THEN 1 ELSE 0 END), " +
+            "    SUM(CASE WHEN a.status = 'Cancelado' THEN 1 ELSE 0 END), " +
+            "    SUM(CASE WHEN a.status = 'Agendado' THEN 1 ELSE 0 END)) " +
+            "FROM Agendamento a " +
+            "WHERE a.barbearia.id = :id " +
+            "AND a.dataHora BETWEEN :dataInicial AND :dataFinal")
+    DashboardConsulta findDashboardData(
+            @Param("id") Integer id,
+            @Param("dataInicial") LocalDateTime dataInicial,
+            @Param("dataFinal") LocalDateTime dataFinal);
+
 }
