@@ -49,6 +49,15 @@ public class FuncionarioController {
         return status(200).body(service.getFuncionariosByServicoForCliente(token, idServico));
         }
 
+        @GetMapping("/client-side/get-image-perfil/{idBarbearia}")
+        public ResponseEntity<List<String>> getImagePerfilCliente(@RequestHeader("Authorization") String token, @PathVariable Integer idBarbearia) {
+            List<String> imageBytes = service.getImagePerfilCliente(token, idBarbearia);
+
+            return ResponseEntity.ok()
+                    .body(imageBytes);
+        }
+
+
 
         @GetMapping("/{email}")
         public ResponseEntity<BarbeiroConsulta> getFuncionario(@RequestHeader("Authorization") String token,
