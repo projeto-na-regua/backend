@@ -167,7 +167,7 @@ class UsuarioServiceTest {
 
 
 
-    @DisplayName("Se usuario já possui barbearia lançar exceptio")
+    @DisplayName("Se usuario já possui barbearia lançar exception")
     @Test
     public void validarSeUsuarioPossuiBarbearia(){
         String tokenMock = "token";
