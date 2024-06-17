@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import projetopi.projetopi.dto.request.FinancaCriacao;
 import projetopi.projetopi.dto.response.FinancaConsulta;
 import projetopi.projetopi.entity.Financa;
 import projetopi.projetopi.relatorios.RelatorioFinanceiro;
@@ -39,6 +40,12 @@ public class FinancaController {
                                                                    @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataInicial,
                                                                    @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataFinal){
         return status(200).body(service.getFinancasPorBarbearia(token, qtdDias, dataInicial, dataFinal));
+    }
+
+    @PostMapping("/lancar-valor")
+    public ResponseEntity<Financa> postFinancasPorBarbearia(@RequestHeader("Authorization") String token,
+                                                                   @RequestBody FinancaCriacao lancarFinanca){
+        return status(201).body(service.postFinanca(token, lancarFinanca));
     }
 
     @GetMapping("/especifico/{id}")

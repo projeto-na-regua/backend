@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import projetopi.projetopi.dto.request.FinancaCriacao;
 import projetopi.projetopi.dto.response.BarbeariaPesquisa;
 import projetopi.projetopi.dto.response.FinancaConsulta;
 import projetopi.projetopi.dto.response.TotalServicoPorDia;
@@ -72,10 +73,8 @@ public class FinanceiroService {
             datas.add(t.getData());
             precos.add(t.getTotal());
         }
-
-
+        
         FinancaConsulta financaConsulta = financeiroRepository.findByFinancasByBarbeariaIdAndBetweenDates(barbearia.getId(), dataInicialDateTime, dataFinalDateTime);
-
 
         financaConsulta.setSaldo(financaConsulta.getSaldo() == null ? 0. : financaConsulta.getSaldo() + total);
         financaConsulta.setLucro(financaConsulta.getLucro() == null ? 0. : financaConsulta.getLucro() + total);
@@ -88,26 +87,15 @@ public class FinanceiroService {
         return financaConsulta;
     }
 
-    @GetMapping("/especifico/{id}")
-    public ResponseEntity<Optional<Financa>> getFinanca(@PathVariable Integer id){
-        var financa = financeiroRepository.findById(id);
 
-        if(!financeiroRepository.existsById(id)){
-            return status(404).build();
-        }
+    public Financa postFinanca(String token, FinancaCriacao lancarFinanca) {
 
-        return status(200).body(financa);
-    }
+        global.validarBarbeiroAdm(token, "Barbeiro");
+        global.validaBarbearia(token);
 
-    @GetMapping("/relatorio/{fk}")
-    public void gerarRelatorioFinanca(@PathVariable Integer fk){
-        var financas = financeiroRepository.findByBarbeariaId(fk);
+        Barbearia barbearia = global.getBarbeariaByToken(token);
+        return financeiroRepository.save( new Financa(lancarFinanca.getValor(), LocalDateTime.now(), barbearia, lancarFinanca.getDespesa()));
 
-        if(financas.isEmpty()){
-            status(204).build();
-        }
 
-        RelatorioFinanceiro.gravarRelatorioFinanceiro(financas,"relatório_finanças");
-        status(200);
     }
 }
