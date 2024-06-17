@@ -26,10 +26,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
 
 
 @Service
@@ -70,7 +67,11 @@ public class AgendamentoService {
     @Autowired
     private Token tk;
 
-    private FilaHistorico filaHistorico = new FilaHistorico();
+    private final Map<Integer, FilaHistorico> historicoPorCliente;
+
+    private FilaHistorico getFilaHistoricoParaCliente(Integer clienteId) {
+        return historicoPorCliente.computeIfAbsent(clienteId, k -> new FilaHistorico());
+    }
 
     public String definirStatus(String status){
         String stt = null;
@@ -187,17 +188,18 @@ public class AgendamentoService {
 
 
     public AgendamentoConsulta updateStatus(String token, Integer id, String status) {
+        Integer userId = Integer.valueOf(tk.getUserIdByToken(token));
         if (!repository.existsById(id)) {
             throw new RecursoNaoEncontradoException("Agendamento", id);
         }
 
-        if (!usuarioRepository.existsById(Integer.valueOf(tk.getUserIdByToken(token)))) {
+        if (!usuarioRepository.existsById(userId)) {
             throw new AcessoNegadoException("Usuário");
         }
 
         Agendamento agendamento = repository.findById(id).get();
 
-        if (usuarioRepository.findById(Integer.valueOf(tk.getUserIdByToken(token))).get().getDtype().equalsIgnoreCase("Barbeiro")) {
+        if (usuarioRepository.findById(userId).get().getDtype().equalsIgnoreCase("Barbeiro")) {
             global.validaBarbearia(token);
             if (!status.equalsIgnoreCase("Concluido")
                     && !status.equalsIgnoreCase("Agendado")
@@ -215,7 +217,7 @@ public class AgendamentoService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Status de agendamento inválido");
         }
 
-        if (agendamento.getStatus().equalsIgnoreCase("Pedente")
+        if (agendamento.getStatus().equalsIgnoreCase("Pendente")
                 && definirStatus(status).equalsIgnoreCase("Concluido")) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Status de agendamento inválido");
         }
@@ -227,7 +229,8 @@ public class AgendamentoService {
         if (definirStatus(status).equalsIgnoreCase("Concluido")) {
             agendamento.setDataHoraConcluido(LocalDateTime.now());
             AgendamentoConsulta agendamentoConsulta = AgendamentoMapper.toDto(agendamento);
-            filaHistorico.adicionar(agendamentoConsulta);
+            FilaHistorico fila = getFilaHistoricoParaCliente(userId);
+            fila.adicionar(agendamentoConsulta);
         }
 
         agendamento.setStatus(definirStatus(status));
@@ -279,12 +282,16 @@ public class AgendamentoService {
             throw new ResponseStatusException(HttpStatus.NO_CONTENT, "Nenhum agendamento concluído encontrado");
         }
 
-        List<AgendamentoConsulta> dto = new ArrayList<>();
+        FilaHistorico fila = getFilaHistoricoParaCliente(userId);
+
+        fila.getFila().clear();
+
         for (Agendamento a : agendamentosConcluidos) {
-            dto.add(AgendamentoMapper.toDto(a));
+            AgendamentoConsulta agendamentoConsulta = AgendamentoMapper.toDto(a);
+            fila.adicionar(agendamentoConsulta);
         }
 
-        return dto;
+        return new ArrayList<>(fila.getHistorico());
     }
 
     public DashboardConsulta getMetricasDash(String token, LocalDate dateInicial, LocalDate dateFinal) {
