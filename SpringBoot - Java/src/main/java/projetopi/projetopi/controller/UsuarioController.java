@@ -60,13 +60,13 @@ public class UsuarioController {
     }
 
     @GetMapping("/get-image")
-    public ResponseEntity<ByteArrayResource> getImage(@RequestHeader("Authorization") String token){
-        ByteArrayResource resource = service.getImage(token);
+    public ResponseEntity<String> getImage(@RequestHeader("Authorization") String token){
+//        ByteArrayResource resource = service.getImage(token);
+//
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.setContentType(MediaType.IMAGE_PNG);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.IMAGE_PNG);
-
-        return ResponseEntity.ok().headers(headers).contentLength(resource.contentLength()).body(resource);
+        return ResponseEntity.ok().body(service.getImagePerfilClienteSide(token));
     }
 
     @GetMapping("/perfil")

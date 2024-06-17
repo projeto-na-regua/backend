@@ -32,6 +32,7 @@ import projetopi.projetopi.exception.ConflitoException;
 import projetopi.projetopi.exception.ErroServidorException;
 import projetopi.projetopi.exception.RecursoNaoEncontradoException;
 import projetopi.projetopi.repository.*;
+import projetopi.projetopi.util.Global;
 import projetopi.projetopi.util.Token;
 
 
@@ -72,6 +73,8 @@ class UsuarioServiceTest {
 
     StorageService azureStorageService;
 
+    Global global;
+
     private PasswordEncoder passwordEncoder;
 
     @BeforeEach
@@ -84,6 +87,7 @@ class UsuarioServiceTest {
         usuarioRepository = mock(UsuarioRepository.class);
         token = mock(Token.class);
         passwordEncoder = mock(PasswordEncoder.class);
+        global = mock(Global.class);
         mapper = new ModelMapper();
         azureStorageService = mock(StorageService.class);
         service = new UsuarioService(barbeiroRepository,
@@ -94,7 +98,8 @@ class UsuarioServiceTest {
                                     usuarioRepository,
                                     token,
                                     mapper,
-                                    azureStorageService);
+                                    azureStorageService,
+                                    global);
 
     }
 

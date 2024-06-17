@@ -1,9 +1,12 @@
 package projetopi.projetopi.service;
 
 
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Service;
@@ -20,6 +23,7 @@ import projetopi.projetopi.exception.ConflitoException;
 import projetopi.projetopi.exception.ErroServidorException;
 import projetopi.projetopi.exception.RecursoNaoEncontradoException;
 import projetopi.projetopi.repository.*;
+import projetopi.projetopi.util.Global;
 import projetopi.projetopi.util.Token;
 
 import javax.imageio.ImageIO;
@@ -46,16 +50,19 @@ public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
 
+    private final Global global;
+
     private final Token token;
 
     public ModelMapper mapper;
 
     private final StorageService azureStorageService;
 
+
     private static final Logger log = LoggerFactory.getLogger(UsuarioController.class);
 
 
-    public UsuarioService(BarbeiroRepository barbeiroRepository, ClienteRepository clienteRepository, EnderecoRepository enderecoRepository, BarbeariasRepository barbeariasRepository, DiaSemanaRepository diaSemanaRepository, UsuarioRepository usuarioRepository, Token token, ModelMapper mapper, StorageService azureStorageService) {
+    public UsuarioService(BarbeiroRepository barbeiroRepository, ClienteRepository clienteRepository, EnderecoRepository enderecoRepository, BarbeariasRepository barbeariasRepository, DiaSemanaRepository diaSemanaRepository, UsuarioRepository usuarioRepository, Token token, ModelMapper mapper, StorageService azureStorageService, Global global) {
         this.barbeiroRepository = barbeiroRepository;
         this.clienteRepository = clienteRepository;
         this.enderecoRepository = enderecoRepository;
@@ -65,6 +72,7 @@ public class UsuarioService {
         this.token = token;
         this.mapper = mapper;
         this.azureStorageService = azureStorageService;
+        this.global = global;
     }
 
 
@@ -123,6 +131,18 @@ public class UsuarioService {
         Barbearia barbearia = cadastroBarbearia(nvBarbearia, endereco);
         clienteRepository.atualizarClienteParaBarbeiro(id, barbearia, true);
         return barbearia;
+    }
+
+    public String getImagePerfilClienteSide(String tk) {
+        global.validaCliente(tk, "Cliente");
+
+        if (!usuarioRepository.existsById(Integer.valueOf(token.getUserIdByToken(tk)))){
+            throw new RecursoNaoEncontradoException("Usuário", Integer.valueOf(token.getUserIdByToken(tk)));
+        }
+
+        String imageName = usuarioRepository.findById(Integer.valueOf(token.getUserIdByToken(tk))).get().getImgPerfil();
+
+        return azureStorageService.getBlobUrl(imageName);
     }
 
 
