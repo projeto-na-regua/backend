@@ -15,6 +15,12 @@ import java.util.List;
 public interface BarbeariasRepository extends JpaRepository<Barbearia, Integer> {
 
 
+//      @Query(value = "SELECT DISTINCT b.img_perfil, b.id_barbearia " +
+//              "FROM barbearia b " +
+//              "JOIN agendamento a ON b.id_barbearia = a.barbearia_id_barbearia " +
+//              "WHERE a.status = 'Concluido' AND a.cliente_id_usuario = 20",
+//              nativeQuery = true)
+//      List<BarbeariaConsulta> findImagensBarbeariaAgendamentoConcluido(Integer id);
 
       @Query("SELECT new Barbearia(b.nomeNegocio, b.emailNegocio, b.celularNegocio, b.cnpj, b.cpf, b.descricao) FROM Barbearia b WHERE b.id = :id")
       List<BarbeariaConsulta> findByInfoBarbearia(@Param("id") Integer id);
