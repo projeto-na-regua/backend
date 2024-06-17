@@ -86,7 +86,7 @@ public class ServicoService {
             throw new ResponseStatusException(HttpStatusCode.valueOf(204));
         }
 
-        return ServicoMapper.toDto(servicos);
+        return servicoMapper.toDto(servicos);
     }
 
 
