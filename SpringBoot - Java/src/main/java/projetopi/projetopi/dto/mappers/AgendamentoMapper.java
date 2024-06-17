@@ -24,6 +24,9 @@ public class AgendamentoMapper {
     private static BarbeariasRepository barbeariasRepository;
 
     public static AgendamentoConsulta toDto(Agendamento a){
+
+        Double restAvaliacao = a.getAvaliacao() == null ? null : a.getAvaliacao().getResultadoAvaliacao();
+        String comentario = a.getAvaliacao() == null ? null : a.getAvaliacao().getComentario();
         return new AgendamentoConsulta(a.getId(), a.getStatus(),a.getDataHora(),
                                        a.getServico().getTipoServico(),
                                        a.getServico().getDescricao(),
@@ -31,7 +34,8 @@ public class AgendamentoMapper {
                                        a.getCliente().getNome(),
                                        a.getBarbeiro().getNome(),
                                        a.getBarbearia().getNomeNegocio(),
-                                       a.getBarbearia().getEndereco(), a.getServico().getTempoEstimado());
+                                       a.getBarbearia().getEndereco(), a.getServico().getTempoEstimado(),
+                                       restAvaliacao, comentario);
     }
 
     public static Agendamento toEntity(AgendamentoCriacao a){

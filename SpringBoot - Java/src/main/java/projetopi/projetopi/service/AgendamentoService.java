@@ -1,6 +1,7 @@
 package projetopi.projetopi.service;
 
 import lombok.RequiredArgsConstructor;
+import org.hibernate.id.IntegralDataTypeHolder;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -51,6 +52,9 @@ public class AgendamentoService {
     private final BarbeariasRepository barbeariasRepository;
     @Autowired
     private final DiaSemanaRepository diaSemanaRepository;
+
+    @Autowired
+    private final AvaliacaoRepository avaliacaoRepository;
 
     @Autowired
     private final BarbeiroServicoRepository barbeiroServicoRepository;
@@ -295,5 +299,40 @@ public class AgendamentoService {
         return repository.findDashboardData(barbearia.getId(), dataInicialDateTime, dataFinalDateTime);
 
 
+    }
+
+    public List<AgendamentoConsulta> getAvaliacoes(String token) {
+        global.validaCliente(token, "Cliente");
+        Integer id = Integer.valueOf(tk.getUserIdByToken(token));
+
+        if (!clienteRepository.existsById(id)){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        var lista = repository.findByClienteIdAndStatusAndAvaliacaoIsNull(id, "Concluido");
+
+        if (lista.isEmpty()){
+            throw new ResponseStatusException(HttpStatus.NO_CONTENT);
+        }
+
+        List<AgendamentoConsulta> dtos = new ArrayList<>();
+        for (Agendamento a : lista){
+            dtos.add(AgendamentoMapper.toDto(a));
+        }
+        return dtos;
+    }
+
+    public Avaliacao postAvaliacao(String token, Avaliacao a, Integer idAgendamento){
+        global.validaCliente(token, "Cliente");
+        Avaliacao avaliacaoSalva = avaliacaoRepository.save(a);
+
+        if (!repository.existsById(idAgendamento)){
+            throw new  ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+        Agendamento agendamento = repository.findById(idAgendamento).get();
+
+        agendamento.setAvaliacao(avaliacaoSalva);
+        repository.save(agendamento);
+        return avaliacaoSalva;
     }
 }

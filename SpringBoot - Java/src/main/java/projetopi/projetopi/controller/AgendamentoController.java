@@ -1,5 +1,6 @@
 package projetopi.projetopi.controller;
 
+import com.azure.core.annotation.Get;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -16,6 +17,7 @@ import projetopi.projetopi.service.AgendamentoService;
 import java.time.LocalDate;
 import java.util.List;
 
+import static org.springframework.http.ResponseEntity.ok;
 import static org.springframework.http.ResponseEntity.status;
 
 @CrossOrigin("*")
@@ -77,6 +79,19 @@ public class AgendamentoController{
                                                              @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateFinal){
         return status(200).body(service.getMetricasDash(token, dateInicial, dateFinal));
 
+    }
+
+
+    @GetMapping("/avaliacoes")
+    public  ResponseEntity<List<AgendamentoConsulta>> getAllAvaliacoes(@RequestHeader("Authorization") String token){
+        return ok().body(service.getAvaliacoes(token));
+    }
+
+    @PostMapping("/avaliar/{idAgendamento}")
+    public  ResponseEntity<Avaliacao> getAllAvaliacoes(@RequestHeader("Authorization") String token,
+                                                             @RequestBody Avaliacao a,
+                                                             @PathVariable Integer idAgendamento){
+        return ok().body(service.postAvaliacao(token, a, idAgendamento));
     }
 
 
