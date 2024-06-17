@@ -209,9 +209,6 @@ public class FuncionarioService {
         return headers;
     }
 
-
-
-
    void validarPermissioes(String token){
         if(isCliente(token) ||
            getBarbeariaByToken(token) == null ||
@@ -238,7 +235,7 @@ public class FuncionarioService {
    void validarUsuarioComumExiste(String email){
         if (clienteRepository.findByEmail(email) == null){
             throw new RecursoNaoEncontradoException("Usuário", email);
-        };
+        }
     }
 
 

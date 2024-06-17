@@ -1,6 +1,7 @@
 package projetopi.projetopi.dto.mappers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import projetopi.projetopi.dto.request.ServicoCriacao;
 import projetopi.projetopi.dto.response.ServicoConsulta;
 import projetopi.projetopi.entity.Barbeiro;
@@ -11,6 +12,7 @@ import projetopi.projetopi.repository.BarbeiroRepository;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class ServicoMapper {
 
 
@@ -30,7 +32,7 @@ public class ServicoMapper {
         return new ServicoConsulta(servico);
     }
 
-    public static List<ServicoConsulta> toDto(List<Servico> servicos){
+    public List<ServicoConsulta> toDto(List<Servico> servicos){
         List<ServicoConsulta> servicoConsultas = new ArrayList<>();
         for (Servico s: servicos){
             servicoConsultas.add(new ServicoConsulta(s));

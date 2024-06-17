@@ -3,6 +3,7 @@ package projetopi.projetopi.service;
 
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -23,17 +24,36 @@ import static org.springframework.http.ResponseEntity.status;
 @RequiredArgsConstructor
 public class ServicoService {
 
-
     private final ServicoRepository servicoRepository;
+
     private final BarbeariasRepository barbeariasRepository;
+
     private final BarbeiroRepository barbeiroRepository;
+
     public final Token tk;
+
     public final ModelMapper mapper;
+
     private final UsuarioRepository usuarioRepository;
+
     private final BarbeiroServicoRepository barbeiroServicoRepository;
+
     private final Global global;
 
+    private final ServicoMapper servicoMapper;
 
+    @Autowired
+    public ServicoService(BarbeariasRepository barbeariasRepository, BarbeiroRepository barbeiroRepository, BarbeiroServicoRepository barbeiroServicoRepository, Global global, ModelMapper mapper, ServicoRepository servicoRepository, Token tk, UsuarioRepository usuarioRepository, ServicoMapper servicoMapper) {
+        this.barbeariasRepository = barbeariasRepository;
+        this.barbeiroRepository = barbeiroRepository;
+        this.barbeiroServicoRepository = barbeiroServicoRepository;
+        this.global = global;
+        this.mapper = mapper;
+        this.servicoRepository = servicoRepository;
+        this.tk = tk;
+        this.usuarioRepository = usuarioRepository;
+        this.servicoMapper = servicoMapper;
+    }
 
     public List<ServicoConsulta> getAllServicos(String token){
         validacoesPermissoes(token);
@@ -43,7 +63,7 @@ public class ServicoService {
             throw new ResponseStatusException(HttpStatusCode.valueOf(204));
         }
 
-        return ServicoMapper.toDto(servicos);
+        return servicoMapper.toDto(servicos);
     }
 
     public List<ServicoConsulta> getAllServicosByStatus(String token, String status){
@@ -55,7 +75,7 @@ public class ServicoService {
             throw new ResponseStatusException(HttpStatusCode.valueOf(204));
         }
 
-        return ServicoMapper.toDto(servicos);
+        return servicoMapper.toDto(servicos);
     }
 
     public List<ServicoConsulta> getAllServicosByBarbeariaForClientes(String token, Integer idBarbearia){
@@ -72,10 +92,14 @@ public class ServicoService {
 
     public ServicoConsulta getServico(String token, Integer idServico){
         validacoesPermissoes(token);
-        validarServico(idServico);
-        ServicoConsulta servico = new ServicoConsulta(servicoRepository.findByBarbeariaIdAndId(getIdBarbearia(token), idServico));
-        return servico;
+        validarServico(idServico); // Lança exceção se o serviço não for encontrado
+        Servico servico = servicoRepository.findByBarbeariaIdAndId(getIdBarbearia(token), idServico);
+        if (servico == null) {
+            throw new RecursoNaoEncontradoException("Serviço", idServico);
+        }
+        return ServicoMapper.toDto(servico);
     }
+
 
 
     public ServicoConsulta criar(String token, ServicoCriacao nvServico){

@@ -64,4 +64,9 @@ public class AgendamentoController{
         return status(200).body(service.updateStatus(token, id, status));
     }
 
+    @GetMapping("/historico")
+    public ResponseEntity<List<AgendamentoConsulta>> getHistoricoPorCliente(@RequestHeader("Authorization") String token) {
+        return status(200).body(service.getHistoricoPorCliente(token));
+    }
+
 }
