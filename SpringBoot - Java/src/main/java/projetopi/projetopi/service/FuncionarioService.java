@@ -15,6 +15,7 @@ import projetopi.projetopi.dto.request.BarbeiroCriacao;
 import projetopi.projetopi.dto.response.BarbeiroConsulta;
 import projetopi.projetopi.dto.response.UsuarioConsulta;
 import projetopi.projetopi.entity.BarbeiroServico;
+import projetopi.projetopi.entity.Usuario;
 import projetopi.projetopi.exception.AcessoNegadoException;
 import projetopi.projetopi.exception.ConflitoException;
 import projetopi.projetopi.exception.RecursoNaoEncontradoException;
@@ -55,6 +56,8 @@ public class FuncionarioService {
     @Autowired
     private ServicoRepository servicoRepository;
 
+    private final StorageService azureStorageService;
+
 
     @Autowired
     public Token tk;
@@ -90,6 +93,21 @@ public class FuncionarioService {
         }
 
         return UsuarioMapper.toDto(barbeiros);
+    }
+
+    public List<String> getImagePerfilCliente(String token, Integer idBarbearia) {
+        global.validaCliente(token, "Cliente");
+        try {
+            List<String> imageUrlList = new ArrayList<>();
+            for (Usuario barbeiro : usuarioRepository.findAllByBarbeariaId(idBarbearia)) {
+                    String imageUrl = azureStorageService.getBlobUrl(barbeiro.getImgPerfil());
+                    imageUrlList.add(imageUrl);
+            }
+            System.out.println(imageUrlList);
+            return imageUrlList;
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     public List<BarbeiroConsulta> getFuncionariosByServico(String token, Integer idServico){
