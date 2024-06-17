@@ -209,6 +209,21 @@ public class BarbeariaService {
         }
     }
 
+//    public List<String> getImagePerfilClienteAgendamentoConcluido(String token) {
+//        global.validaCliente(token, "Cliente");
+//        try {
+//            List<String> imageUrlList = new ArrayList<>();
+//            for (BarbeariaConsulta barbearia : barbeariasRepository.findImagensBarbeariaAgendamentoConcluido(Integer.valueOf(tk.getUserIdByToken(token)))) {
+//                String imageUrl = azureStorageService.getBlobUrl(barbearia.getImgPerfil());
+//                imageUrlList.add(imageUrl);
+//            }
+//            System.out.println(Integer.valueOf(tk.getUserIdByToken(token)));
+//            return imageUrlList;
+//        } catch (Exception e) {
+//            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
+
 
     public ImgConsulta editarImgBanner(String token, MultipartFile file){
 
