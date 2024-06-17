@@ -38,9 +38,12 @@ public class AgendamentoConsulta {
 
     private LocalDateTime dataHoraPrevista;
 
+    private Double avaliacao;
+    private String comentario;
+
 
     public AgendamentoConsulta(Integer id, String status, LocalDateTime dataHora, String tipoServico, String descricao, Double valorServico, String nomeCliente, String nomeBarbeiro, String nomeNegocio, Endereco enderecoBarbearia,
-       Integer tempoEstimado) {
+       Integer tempoEstimado, Double avaliacao, String comentario) {
         this.dataHora = dataHora;
         this.tipoServico = tipoServico;
         this.descricao = descricao;
@@ -53,6 +56,8 @@ public class AgendamentoConsulta {
         this.id = id;
         this.tempoEstimado = tempoEstimado;
         this.dataHoraPrevista = calcularDataHora(dataHora,tempoEstimado);
+        this.avaliacao = avaliacao;
+        this.comentario = comentario;
     }
 
     public LocalDateTime calcularDataHora(LocalDateTime dataHora, Integer tempoEstimado) {

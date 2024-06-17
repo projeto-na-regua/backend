@@ -15,7 +15,6 @@ public class BarbeiroServicoId implements Serializable {
     private Integer servico;
     private Integer barbearia;
 
-
     public BarbeiroServicoId() {}
 
     public BarbeiroServicoId(Integer barbeiro, Integer servico, Integer barbearia) {
@@ -23,7 +22,6 @@ public class BarbeiroServicoId implements Serializable {
         this.servico = servico;
         this.barbearia = barbearia;
     }
-
 
     @Override
     public boolean equals(Object o) {

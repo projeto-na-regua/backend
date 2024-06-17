@@ -57,4 +57,7 @@ public interface AgendaRepository extends JpaRepository<Agendamento, Integer> {
             @Param("dataInicial") LocalDateTime dataInicial,
             @Param("dataFinal") LocalDateTime dataFinal);
 
+
+    List<Agendamento> findByClienteIdAndStatusAndAvaliacaoIsNull(Integer clienteId, String status);
+
 }
