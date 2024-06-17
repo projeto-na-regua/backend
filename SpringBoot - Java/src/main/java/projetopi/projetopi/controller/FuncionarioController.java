@@ -1,6 +1,7 @@
 package projetopi.projetopi.controller;
 
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,7 @@ public class FuncionarioController {
         public ResponseEntity<List<BarbeiroConsulta>> getFuncionariosCliente(@RequestHeader("Authorization") String token, @PathVariable Integer idBarbearia){
             return status(200).body(service.getFuncionariosCliente(token, idBarbearia));
         }
+        
         @GetMapping("/list-by-servico/{idServico}")
         public ResponseEntity<List<BarbeiroConsulta>> getFuncionarios(@RequestHeader("Authorization") String token,
                                                                       @PathVariable Integer idServico){
@@ -89,7 +91,7 @@ public class FuncionarioController {
             return status(204).build();
         }
 
-
+        @Operation(summary = "Gerar relatório de funcionários")
         @GetMapping("/relatorio")
         public ResponseEntity<byte[]> gerarRelatorioBarbeiro(@RequestHeader("Authorization") String token) {
             return new ResponseEntity<>(service.gerarRelatorio(token), service.configurarHeadears(), HttpStatus.OK);

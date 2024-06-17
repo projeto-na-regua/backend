@@ -15,6 +15,7 @@ import projetopi.projetopi.exception.AcessoNegadoException;
 import projetopi.projetopi.exception.RecursoNaoEncontradoException;
 import projetopi.projetopi.repository.*;
 import projetopi.projetopi.util.Dia;
+import projetopi.projetopi.util.FilaHistorico;
 import projetopi.projetopi.util.Global;
 import projetopi.projetopi.util.Token;
 
@@ -56,15 +57,15 @@ public class AgendamentoService {
 
     private final FuncionarioService funcionarioService;
 
-
     private ModelMapper mapper;
-
 
     @Autowired
     private Global global;
 
     @Autowired
     private Token tk;
+
+    private FilaHistorico filaHistorico = new FilaHistorico();
 
     public String definirStatus(String status){
         String stt = null;
@@ -197,37 +198,32 @@ public class AgendamentoService {
     }
 
 
-    public AgendamentoConsulta updateStatus(String token, Integer id, String status){
-
-        if (!repository.existsById(id)){
+    public AgendamentoConsulta updateStatus(String token, Integer id, String status) {
+        if (!repository.existsById(id)) {
             throw new RecursoNaoEncontradoException("Agendamento", id);
         }
 
-        if (!usuarioRepository.existsById(Integer.valueOf(tk.getUserIdByToken(token)))){
+        if (!usuarioRepository.existsById(Integer.valueOf(tk.getUserIdByToken(token)))) {
             throw new AcessoNegadoException("Usuário");
         }
 
         Agendamento agendamento = repository.findById(id).get();
 
-
-        if (usuarioRepository.findById(Integer.valueOf(tk.getUserIdByToken(token))).get().getDtype().equalsIgnoreCase("Barbeiro")){
+        if (usuarioRepository.findById(Integer.valueOf(tk.getUserIdByToken(token))).get().getDtype().equalsIgnoreCase("Barbeiro")) {
             global.validaBarbearia(token);
             if (!status.equalsIgnoreCase("Concluido")
                     && !status.equalsIgnoreCase("Agendado")
-                    && !status.equalsIgnoreCase("Cancelado")){
+                    && !status.equalsIgnoreCase("Cancelado")) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Status de agendamento inválido");
             }
-
-
-        }else {
-            if (!status.equalsIgnoreCase("Cancelado")){
+        } else {
+            if (!status.equalsIgnoreCase("Cancelado")) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Status de agendamento inválido");
             }
         }
 
-
         if (!(agendamento.getStatus().equalsIgnoreCase("Pendente")) &&
-                !(agendamento.getStatus().equalsIgnoreCase("Agendado"))){
+                !(agendamento.getStatus().equalsIgnoreCase("Agendado"))) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Status de agendamento inválido");
         }
 
@@ -240,15 +236,17 @@ public class AgendamentoService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Status de agendamento inválido");
         }
 
-        if(definirStatus(status).equalsIgnoreCase("Concluido")){
+        if (definirStatus(status).equalsIgnoreCase("Concluido")) {
             agendamento.setDataHoraConcluido(LocalDateTime.now());
+            AgendamentoConsulta agendamentoConsulta = AgendamentoMapper.toDto(agendamento);
+            filaHistorico.adicionar(agendamentoConsulta);
         }
+
         agendamento.setStatus(definirStatus(status));
         repository.save(agendamento);
 
         return AgendamentoMapper.toDto(agendamento);
     }
-
 
 
     public AgendamentoConsulta adicionarAgendamento(AgendamentoCriacao a, String token){
@@ -277,6 +275,28 @@ public class AgendamentoService {
         return AgendamentoMapper.toDto(repository.save(nvAgendamento));
     }
 
+    public List<AgendamentoConsulta> getHistoricoPorCliente(String token) {
+        Integer userId = Integer.valueOf(tk.getUserIdByToken(token));
+        if (!usuarioRepository.existsById(userId)) {
+            throw new AcessoNegadoException("Usuário");
+        }
 
+        if (!clienteRepository.existsById(userId)) {
+            throw new AcessoNegadoException("Cliente");
+        }
+
+        List<Agendamento> agendamentosConcluidos = repository.findByClienteIdAndStatus(userId, "Concluido");
+
+        if (agendamentosConcluidos.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NO_CONTENT, "Nenhum agendamento concluído encontrado");
+        }
+
+        List<AgendamentoConsulta> dto = new ArrayList<>();
+        for (Agendamento a : agendamentosConcluidos) {
+            dto.add(AgendamentoMapper.toDto(a));
+        }
+
+        return dto;
+    }
 
 }

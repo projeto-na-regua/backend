@@ -1,6 +1,7 @@
 package projetopi.projetopi.dto.response;
 
 import lombok.Getter;
+import lombok.Setter;
 import projetopi.projetopi.entity.Barbeiro;
 import projetopi.projetopi.entity.Servico;
 
@@ -9,6 +10,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Getter
+@Setter
 public class ServicoConsulta {
 
     private Integer id;

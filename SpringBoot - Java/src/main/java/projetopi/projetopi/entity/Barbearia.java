@@ -66,6 +66,8 @@ public class Barbearia {
         this.endereco = endereco;
     }
 
+    public Barbearia(Integer id) { this.id = id; }
+
     public Barbearia(String nomeNegocio, String emailNegocio, String celularNegocio, String cnpj, String cpf, String descricao) {
         this.nomeNegocio = nomeNegocio;
         this.emailNegocio = emailNegocio;

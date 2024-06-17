@@ -78,7 +78,7 @@ public class ServicoController {
         return status(200).body(service.updateStatus(token, id));
     }
 
-
+// Na regra de negócio não iremos efetivamente deletar um serviço e sim desativá-lo através de um PUT no status.
 //    @DeleteMapping("/{id}")
 //    public ResponseEntity<ServicoConsulta> deletarServico(@RequestHeader("Authorization") String token, @PathVariable Integer id){
 //        service.deletar(token, id);
