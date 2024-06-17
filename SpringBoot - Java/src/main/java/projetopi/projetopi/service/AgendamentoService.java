@@ -213,7 +213,7 @@ public class AgendamentoService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Status de agendamento inválido");
         }
 
-        if (agendamento.getStatus().equalsIgnoreCase("Pedente")
+        if (agendamento.getStatus().equalsIgnoreCase("Pendente")
                 && definirStatus(status).equalsIgnoreCase("Concluido")) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Status de agendamento inválido");
         }
