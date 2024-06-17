@@ -9,6 +9,7 @@ import org.springframework.web.server.ResponseStatusException;
 import projetopi.projetopi.dto.mappers.AgendamentoMapper;
 import projetopi.projetopi.dto.request.AgendamentoCriacao;
 import projetopi.projetopi.dto.response.AgendamentoConsulta;
+import projetopi.projetopi.dto.response.DashboardConsulta;
 import projetopi.projetopi.dto.response.HorarioDiaSemana;
 import projetopi.projetopi.entity.*;
 import projetopi.projetopi.exception.AcessoNegadoException;
@@ -282,4 +283,17 @@ public class AgendamentoService {
         return dto;
     }
 
+    public DashboardConsulta getMetricasDash(String token, LocalDate dateInicial, LocalDate dateFinal) {
+
+        global.validarBarbeiroAdm(token, "Barbeiro");
+        global.validaBarbearia(token);
+
+        LocalDateTime dataInicialDateTime = dateInicial.atStartOfDay();
+        LocalDateTime dataFinalDateTime = dateFinal.atTime(LocalTime.MAX);
+
+        Barbearia barbearia = global.getBarbeariaByToken(token);
+        return repository.findDashboardData(barbearia.getId(), dataInicialDateTime, dataFinalDateTime);
+
+
+    }
 }

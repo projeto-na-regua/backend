@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import projetopi.projetopi.dto.request.AgendamentoCriacao;
 import projetopi.projetopi.dto.response.AgendamentoConsulta;
+import projetopi.projetopi.dto.response.DashboardConsulta;
 import projetopi.projetopi.dto.response.HorarioDiaSemana;
 import projetopi.projetopi.entity.*;
 import projetopi.projetopi.repository.AgendaRepository;
@@ -69,5 +70,16 @@ public class AgendamentoController{
     public ResponseEntity<List<AgendamentoConsulta>> getHistoricoPorCliente(@RequestHeader("Authorization") String token) {
         return status(200).body(service.getHistoricoPorCliente(token));
     }
+
+    @GetMapping("/dashboard/metricas")
+    public ResponseEntity<DashboardConsulta> getMetricasDash(@RequestHeader("Authorization") String token,
+                                                             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateInicial,
+                                                             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateFinal){
+        return status(200).body(service.getMetricasDash(token, dateInicial, dateFinal));
+
+    }
+
+
+
 
 }
