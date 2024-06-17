@@ -52,6 +52,7 @@ public class AgendamentoController{
         return ResponseEntity.ok(service.getHorarios(token, barbeiroServico, date));
     }
 
+
     @GetMapping("/{id}")
     public ResponseEntity<AgendamentoConsulta> getOneAgendamento(@RequestHeader("Authorization") String token,
                                                                     @PathVariable Integer id){
