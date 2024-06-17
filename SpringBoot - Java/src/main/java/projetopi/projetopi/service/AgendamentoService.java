@@ -145,13 +145,13 @@ public class AgendamentoService {
     public List<HorarioDiaSemana> getHorarios(String token, BarbeiroServicoId barbeiroServicoId, LocalDate date){
 
         String dia3Letras = date.format(DateTimeFormatter.ofPattern("EEE", new Locale("pt")))
-                                .substring(0, 3).toUpperCase();
+                .substring(0, 3).toUpperCase();
 
         DiaSemana diaSemana = diaSemanaRepository.findByNomeAndBarbeariaId(Dia.valueOf(dia3Letras), barbeiroServicoId.getBarbearia());
 
         Servico servico = servicoRepository.findById(barbeiroServicoId.getServico()).get();
 
-        Integer tempoEstimado = 60;
+        Integer tempoEstimado = servico.getTempoEstimado();
 
         long minutos = ChronoUnit.MINUTES.between(diaSemana.getHoraAbertura(), diaSemana.getHoraFechamento());
 
@@ -178,23 +178,6 @@ public class AgendamentoService {
             horario = horario.plusMinutes(tempoEstimado);
         }
         return horariosDtos;
-/*
-        if (!usuarioRepository.existsById(Integer.valueOf(tk.getUserIdByToken(token)))){
-            throw new AcessoNegadoException("Usuário");
-        }
-        List<Agendamento> agendamentos = repository.findAllByBarbeiroAndDate(barbeiroServicoId.getBarbeiro(), date);
-
-        if (agendamentos.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NO_CONTENT, "Nenhum agendamento encontrado");
-        }
-
-        List<AgendamentoConsulta> dto = new ArrayList<>();
-
-        for (Agendamento a : agendamentos) {
-            dto.add(AgendamentoMapper.toDto(a));
-        }
-
-        return dto;*/
     }
 
 
