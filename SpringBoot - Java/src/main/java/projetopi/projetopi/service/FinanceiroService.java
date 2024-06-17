@@ -23,6 +23,7 @@ import projetopi.projetopi.util.Token;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -60,16 +61,26 @@ public class FinanceiroService {
 
         Barbearia barbearia = global.getBarbeariaByToken(token);
 
-        Double total = servicoRepository.totalServicoByBarbearia(barbearia.getId(), dataInicialDateTime, dataFinalDateTime);
+        Double total = servicoRepository.totalServicoByBarbearia(barbearia.getId(), dataInicialDateTime, dataFinalDateTime) == null ? 0. :
+                servicoRepository.totalServicoByBarbearia(barbearia.getId(), dataInicialDateTime, dataFinalDateTime);
 
         List<TotalServicoPorDia> servicos = agendaRepository.findByServicosByDataConcluido(barbearia.getId(), qtdDias);
+        List<LocalDate> datas = new ArrayList<>();
+        List<Double> precos = new ArrayList<>();
+
+        for(TotalServicoPorDia t : servicos){
+            datas.add(t.getData());
+            precos.add(t.getTotal());
+        }
+
 
         FinancaConsulta financaConsulta = financeiroRepository.findByFinancasByBarbeariaIdAndBetweenDates(barbearia.getId(), dataInicialDateTime, dataFinalDateTime);
 
 
-        financaConsulta.setSaldo(financaConsulta.getSaldo() + total);
-        financaConsulta.setLucro(financaConsulta.getLucro() + total);
-
+        financaConsulta.setSaldo(financaConsulta.getSaldo() == null ? 0. : financaConsulta.getSaldo() + total);
+        financaConsulta.setLucro(financaConsulta.getLucro() == null ? 0. : financaConsulta.getLucro() + total);
+        financaConsulta.setServicosData(datas);
+        financaConsulta.setServicosPreco(precos);
 
 
         financaConsulta.setLucratividade((total / financaConsulta.getSaldo()) * 100);

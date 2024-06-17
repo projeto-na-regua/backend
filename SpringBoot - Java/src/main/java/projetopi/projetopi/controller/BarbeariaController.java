@@ -78,25 +78,25 @@ public class BarbeariaController {
     }
 
     @GetMapping("/client-side/get-one-image-perfil/{idBarbearia}")
-    public ResponseEntity<ByteArrayResource> getImagePerfilClienteSide(@RequestHeader("Authorization") String token, @PathVariable Integer idBarbearia){
+    public ResponseEntity<String> getImagePerfilClienteSide(@RequestHeader("Authorization") String token, @PathVariable Integer idBarbearia){
 
 
-        ByteArrayResource resource = service.getImagePerfilClienteSide(token, idBarbearia);
+//        ByteArrayResource resource = service.getImagePerfilClienteSide(token, idBarbearia);
+//
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.setContentType(MediaType.IMAGE_PNG);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.IMAGE_PNG);
-
-        return ResponseEntity.ok().headers(headers).contentLength(resource.contentLength()).body(resource);
+        return ResponseEntity.ok().body(service.getImagePerfilClienteSide(token, idBarbearia));
     }
 
     @GetMapping("/client-side/get-image-banner/{idBarbearia}")
-    public ResponseEntity<ByteArrayResource> getImageBanner(@RequestHeader("Authorization") String token, @PathVariable Integer idBarbearia){
-        ByteArrayResource resource = service.getImageBannerClieteSide(token, idBarbearia);
+    public ResponseEntity<String> getImageBanner(@RequestHeader("Authorization") String token, @PathVariable Integer idBarbearia){
+//        ByteArrayResource resource = service.getImageBannerClieteSide(token, idBarbearia);
+//
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.setContentType(MediaType.IMAGE_PNG);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.IMAGE_PNG);
-
-        return ResponseEntity.ok().headers(headers).contentLength(resource.contentLength()).body(resource);
+        return ResponseEntity.ok().body(service.getImageBannerClieteSide(token, idBarbearia));
     }
 
 
