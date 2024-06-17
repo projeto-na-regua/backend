@@ -33,10 +33,16 @@ public class Financa {
     }
 
     public Financa(Integer id, Double valor, LocalDateTime dtLancamento, Barbearia barbearia) {
-        this.id = id;
         this.valor = valor;
         this.dtLancamento = dtLancamento;
         this.barbearia = barbearia;
+    }
+
+    public Financa(Double valor, LocalDateTime dtLancamento, Barbearia barbearia, Boolean despesas) {
+        this.valor = valor;
+        this.dtLancamento = dtLancamento;
+        this.barbearia = barbearia;
+        this.despesas = despesas;
     }
 
     public Financa(Barbearia barbearia, LocalDateTime dtLancamento, Double valor) {
