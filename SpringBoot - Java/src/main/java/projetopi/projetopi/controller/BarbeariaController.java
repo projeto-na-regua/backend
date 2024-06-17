@@ -109,6 +109,14 @@ public class BarbeariaController {
                 .body(imageBytes);
     }
 
+//    @GetMapping("/client-side/get-image-perfil/agendamento-concluido")
+//    public ResponseEntity<List<String>> getImagePerfilClienteAgendamentoConcluido(@RequestHeader("Authorization") String token) {
+//        List<String> imageBytes = service.getImagePerfilClienteAgendamentoConcluido(token);
+//
+//        return ResponseEntity.ok()
+//                .body(imageBytes);
+//    }
+
     @GetMapping("/get-image-banner")
     public ResponseEntity<ByteArrayResource> getImageBanner(@RequestHeader("Authorization") String token){
         ByteArrayResource resource = service.getImageBanner(token);
