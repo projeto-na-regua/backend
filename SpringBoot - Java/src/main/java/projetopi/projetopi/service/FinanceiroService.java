@@ -64,7 +64,7 @@ public class FinanceiroService {
 
         List<TotalServicoPorDia> servicos = agendaRepository.findByServicosByDataConcluido(barbearia.getId(), qtdDias);
 
-        FinancaConsulta financaConsulta = financeiroRepository.findByFinancasByBarbeariaIdAndBetweenDates(barbearia.getId(), dataInicial, dataFinal);
+        FinancaConsulta financaConsulta = financeiroRepository.findByFinancasByBarbeariaIdAndBetweenDates(barbearia.getId(), dataInicialDateTime, dataFinalDateTime);
 
 
         financaConsulta.setSaldo(financaConsulta.getSaldo() + total);

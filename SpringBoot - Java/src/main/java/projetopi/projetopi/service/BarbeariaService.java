@@ -175,6 +175,7 @@ public class BarbeariaService {
     }
 
     public ByteArrayResource getImagePerfil(String token) {
+        validacoesPermissoes(token);
         try {
             String imageName = barbeariasRepository.findById(global.getBarbeariaByToken(token).getId()).get().getImgPerfil();
             byte[] blobBytes = azureStorageService.getBlob(imageName);
@@ -226,8 +227,61 @@ public class BarbeariaService {
     }
 
     public ByteArrayResource getImageBanner(String token) {
+        validacoesPermissoes(token);
         try {
             String imageName = barbeariasRepository.findById(global.getBarbeariaByToken(token).getId()).get().getImgBanner();
+            byte[] blobBytes = azureStorageService.getBlob(imageName);
+
+            BufferedImage image = ImageIO.read(new ByteArrayInputStream(blobBytes));
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ImageIO.write(image, "png", baos);
+            byte[] imageBytes = baos.toByteArray();
+
+            ByteArrayResource resource = new ByteArrayResource(imageBytes);
+            return resource;
+
+
+        } catch (IOException e) {
+            throw new ErroServidorException("ao resgatar imagem");
+        }
+    }
+
+    public ByteArrayResource getImageBannerClieteSide(String token, Integer idBarbearia) {
+        global.validaCliente(token, "Cliente");
+
+        if (!barbeariasRepository.existsById(idBarbearia)){
+            throw new RecursoNaoEncontradoException("Barbearia", idBarbearia);
+        }
+
+        try {
+            String imageName = barbeariasRepository.findById(idBarbearia).get().getImgBanner();
+            byte[] blobBytes = azureStorageService.getBlob(imageName);
+
+            BufferedImage image = ImageIO.read(new ByteArrayInputStream(blobBytes));
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ImageIO.write(image, "png", baos);
+            byte[] imageBytes = baos.toByteArray();
+
+            ByteArrayResource resource = new ByteArrayResource(imageBytes);
+            return resource;
+
+
+        } catch (IOException e) {
+            throw new ErroServidorException("ao resgatar imagem");
+        }
+    }
+
+    public ByteArrayResource getImagePerfilClienteSide(String token, Integer idBarbearia) {
+        global.validaCliente(token, "Cliente");
+
+        if (!barbeariasRepository.existsById(idBarbearia)){
+            throw new RecursoNaoEncontradoException("Barbearia", idBarbearia);
+        }
+
+        try {
+            String imageName = barbeariasRepository.findById(idBarbearia).get().getImgPerfil();
             byte[] blobBytes = azureStorageService.getBlob(imageName);
 
             BufferedImage image = ImageIO.read(new ByteArrayInputStream(blobBytes));
