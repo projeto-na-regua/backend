@@ -7,10 +7,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import projetopi.projetopi.dto.request.AgendamentoCriacao;
-import projetopi.projetopi.dto.response.AgendamentoConsulta;
-import projetopi.projetopi.dto.response.DashboardConsulta;
-import projetopi.projetopi.dto.response.HorarioDiaSemana;
-import projetopi.projetopi.dto.response.TotalValorPorDia;
+import projetopi.projetopi.dto.response.*;
 import projetopi.projetopi.entity.*;
 import projetopi.projetopi.repository.AgendaRepository;
 import projetopi.projetopi.service.AgendamentoService;
@@ -62,6 +59,9 @@ public class AgendamentoController{
     }
 
 
+
+
+
     @GetMapping("/{id}")
     public ResponseEntity<AgendamentoConsulta> getOneAgendamento(@RequestHeader("Authorization") String token,
                                                                     @PathVariable Integer id){
@@ -102,13 +102,20 @@ public class AgendamentoController{
         return ok().body(service.postAvaliacao(token, a, idAgendamento));
     }
 
-    @GetMapping("/teste")
-    public  ResponseEntity<List<TotalValorPorDia>> getAllAvaliacoes(){
-        return ok().body(service.countConcluidoByDayForLastDays(12, 10));
+
+    @GetMapping("/dashboard/ultimas-avaliacoes/{qtd}")
+    public ResponseEntity<List<AvaliacaoConsulta>> getAgendamentos(
+            @RequestHeader("Authorization") String token, @PathVariable Integer qtd) {
+
+        return ResponseEntity.ok(service.getAvaliacoes(token, qtd));
     }
 
+    @GetMapping("/cliente-side/ultimas-avaliacoes")
+    public ResponseEntity<List<AvaliacaoConsulta>> getAgendamentos(
+            @RequestHeader("Authorization") String token, @RequestParam Integer qtd, @RequestParam Integer idBarbearia) {
 
-
+        return ResponseEntity.ok(service.getAvaliacoesClienteSide(token, qtd, idBarbearia));
+    }
 
 
 }

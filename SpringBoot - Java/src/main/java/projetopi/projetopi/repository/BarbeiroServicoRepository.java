@@ -14,4 +14,6 @@ public interface BarbeiroServicoRepository extends JpaRepository<BarbeiroServico
 
 
     List<BarbeiroServico> findByServicoIdAndBarbeariaId(Integer servicoId, Integer barbeariaId);
+
+
 }
