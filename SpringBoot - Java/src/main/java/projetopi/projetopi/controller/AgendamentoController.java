@@ -10,6 +10,7 @@ import projetopi.projetopi.dto.request.AgendamentoCriacao;
 import projetopi.projetopi.dto.response.AgendamentoConsulta;
 import projetopi.projetopi.dto.response.DashboardConsulta;
 import projetopi.projetopi.dto.response.HorarioDiaSemana;
+import projetopi.projetopi.dto.response.TotalValorPorDia;
 import projetopi.projetopi.entity.*;
 import projetopi.projetopi.repository.AgendaRepository;
 import projetopi.projetopi.service.AgendamentoService;
@@ -76,8 +77,10 @@ public class AgendamentoController{
     @GetMapping("/dashboard/metricas")
     public ResponseEntity<DashboardConsulta> getMetricasDash(@RequestHeader("Authorization") String token,
                                                              @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateInicial,
-                                                             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateFinal){
-        return status(200).body(service.getMetricasDash(token, dateInicial, dateFinal));
+                                                             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateFinal,
+                                                             @RequestParam Integer qtdDiasParaGrafico){
+
+        return status(200).body(service.getMetricasDash(token, dateInicial, dateFinal, qtdDiasParaGrafico));
 
     }
 
@@ -93,6 +96,12 @@ public class AgendamentoController{
                                                              @PathVariable Integer idAgendamento){
         return ok().body(service.postAvaliacao(token, a, idAgendamento));
     }
+
+    @GetMapping("/teste")
+    public  ResponseEntity<List<TotalValorPorDia>> getAllAvaliacoes(){
+        return ok().body(service.countConcluidoByDayForLastDays(12, 10));
+    }
+
 
 
 

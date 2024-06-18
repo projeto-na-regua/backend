@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import projetopi.projetopi.dto.response.DashboardConsulta;
-import projetopi.projetopi.dto.response.TotalServicoPorDia;
+import projetopi.projetopi.dto.response.TotalValorPorDia;
 import projetopi.projetopi.entity.Agendamento;
 
 import java.time.LocalDate;
@@ -34,14 +34,14 @@ public interface AgendaRepository extends JpaRepository<Agendamento, Integer> {
     boolean existsByBarbeiroServicoDataHoraConfirmado(Integer barbeiroId, Integer servicoId, LocalDateTime dataHora);
 
 
-    @Query("SELECT NEW projetopi.projetopi.dto.response.TotalServicoPorDia(SUM(s.preco), CAST(a.dataHoraConcluido AS java.time.LocalDate)) " +
+    @Query("SELECT NEW projetopi.projetopi.dto.response.TotalValorPorDia(SUM(s.preco), CAST(a.dataHoraConcluido AS java.time.LocalDate)) " +
             "FROM Servico s " +
             "JOIN Agendamento a ON a.servico.id = s.id " +
             "WHERE a.status = 'Concluido' " +
             "AND a.barbearia.id = :barbeariaId " +
             "AND a.dataHoraConcluido >= DATEADD(DAY, -1 * :qtdDias, CURRENT_TIMESTAMP) " +
-            "GROUP BY CAST(a.dataHoraConcluido AS java.time.LocalDate)")
-    List<TotalServicoPorDia> findByServicosByDataConcluido(@Param("barbeariaId") Integer barbeariaId, @Param("qtdDias") Integer qtdDias);
+            "GROUP BY CAST(a.dataHoraConcluido AS DATE)")
+    List<TotalValorPorDia> findByServicosByDataConcluido(@Param("barbeariaId") Integer barbeariaId, @Param("qtdDias") Integer qtdDias);
 
 
 
@@ -59,5 +59,28 @@ public interface AgendaRepository extends JpaRepository<Agendamento, Integer> {
 
 
     List<Agendamento> findByClienteIdAndStatusAndAvaliacaoIsNull(Integer clienteId, String status);
+
+
+    @Query("SELECT SUM(av.resultadoAvaliacao) / (SELECT COUNT(a) FROM Agendamento a WHERE a.avaliacao.id IS NOT NULL AND a.barbearia.id  = :barbeariaId) " +
+            "FROM Agendamento a JOIN Avaliacao av on av.id = a.avaliacao.id WHERE a.barbearia.id" +
+            " = :barbeariaId")
+    Double findAverageResultadoAvaliacao(@Param("barbeariaId") Integer barbeariaId);
+
+
+    @Query("SELECT new projetopi.projetopi.dto.response.TotalValorPorDia(CAST(a.dataHoraConcluido AS date), COUNT(a)) " +
+            "FROM Agendamento a " +
+            "WHERE a.status = 'Concluido' " +
+            "AND a.barbearia.id = :barbeariaId " +
+            "AND a.dataHoraConcluido >= :startDate " +
+            "GROUP BY CAST(a.dataHoraConcluido AS date)")
+    List<TotalValorPorDia> countConcluidoByDay(@Param("barbeariaId") Integer barbeariaId, @Param("startDate") LocalDateTime startDate);
+
+    @Query("SELECT CAST(a.dataHoraConcluido AS date) as data, COUNT(a) as total " +
+            "FROM Agendamento a " +
+            "WHERE a.status = 'Concluido' " +
+            "AND a.barbearia.id = :barbeariaId " +
+            "AND a.dataHoraConcluido >= :startDate " +
+            "GROUP BY CAST(a.dataHoraConcluido AS date)")
+    List<Object[]> debugCountConcluidoByDay(@Param("barbeariaId") Integer barbeariaId, @Param("startDate") LocalDateTime startDate);
 
 }

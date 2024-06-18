@@ -3,6 +3,7 @@ package projetopi.projetopi.dto.response;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.List;
 
 
@@ -15,6 +16,12 @@ public class DashboardConsulta {
     private Long pendentes;
 
     private Long cancelados;
+
+    private Double mediaAvaliacoes;
+
+    private List<LocalDate> datasGrafico;
+
+    private List<Long> valoresGrafico;
 
     public DashboardConsulta(Long confirmados, Long pendentes, Long cancelados) {
         this.confirmados = confirmados;

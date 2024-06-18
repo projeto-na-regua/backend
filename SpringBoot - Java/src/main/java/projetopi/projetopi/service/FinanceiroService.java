@@ -2,18 +2,12 @@ package projetopi.projetopi.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.core.Local;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import projetopi.projetopi.dto.request.FinancaCriacao;
-import projetopi.projetopi.dto.response.BarbeariaPesquisa;
 import projetopi.projetopi.dto.response.FinancaConsulta;
-import projetopi.projetopi.dto.response.TotalServicoPorDia;
+import projetopi.projetopi.dto.response.TotalValorPorDia;
 import projetopi.projetopi.entity.Barbearia;
 import projetopi.projetopi.entity.Financa;
-import projetopi.projetopi.relatorios.RelatorioFinanceiro;
 import projetopi.projetopi.repository.AgendaRepository;
 import projetopi.projetopi.repository.BarbeariasRepository;
 import projetopi.projetopi.repository.FinanceiroRepository;
@@ -26,7 +20,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static org.springframework.http.ResponseEntity.status;
 @Service
@@ -65,15 +58,15 @@ public class FinanceiroService {
         Double total = servicoRepository.totalServicoByBarbearia(barbearia.getId(), dataInicialDateTime, dataFinalDateTime) == null ? 0. :
                 servicoRepository.totalServicoByBarbearia(barbearia.getId(), dataInicialDateTime, dataFinalDateTime);
 
-        List<TotalServicoPorDia> servicos = agendaRepository.findByServicosByDataConcluido(barbearia.getId(), qtdDias);
+        List<TotalValorPorDia> servicos = agendaRepository.findByServicosByDataConcluido(barbearia.getId(), qtdDias);
         List<LocalDate> datas = new ArrayList<>();
         List<Double> precos = new ArrayList<>();
 
-        for(TotalServicoPorDia t : servicos){
+        for(TotalValorPorDia t : servicos){
             datas.add(t.getData());
-            precos.add(t.getTotal());
+            precos.add(t.getPrecos());
         }
-        
+
         FinancaConsulta financaConsulta = financeiroRepository.findByFinancasByBarbeariaIdAndBetweenDates(barbearia.getId(), dataInicialDateTime, dataFinalDateTime);
 
         financaConsulta.setSaldo(financaConsulta.getSaldo() == null ? 0. : financaConsulta.getSaldo() + total);
