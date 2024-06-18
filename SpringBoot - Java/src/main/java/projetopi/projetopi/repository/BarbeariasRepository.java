@@ -3,6 +3,7 @@ package projetopi.projetopi.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import projetopi.projetopi.dto.response.BarbeariaAvaliacao;
 import projetopi.projetopi.dto.response.BarbeariaServico;
 import projetopi.projetopi.entity.Barbearia;
 import projetopi.projetopi.dto.response.BarbeariaConsulta;
@@ -36,6 +37,13 @@ public interface BarbeariasRepository extends JpaRepository<Barbearia, Integer> 
 
       @Query("SELECT new projetopi.projetopi.dto.response.BarbeariaServico(b, s) FROM Barbearia b JOIN b.servicos s WHERE s.tipoServico LIKE %?1%")
       List<BarbeariaServico> findBarbeariasByTipoServico(String tipoServico);
+
+      @Query("select new projetopi.projetopi.dto.response.BarbeariaAvaliacao(a.barbearia.nomeNegocio, " +
+              "sum(av.resultadoAvaliacao) / count(*) as media, a.barbearia.imgPerfil) " +
+              "from Avaliacao av join Agendamento a on av.id = a.avaliacao.id " +
+              "GROUP BY a.barbearia.id, a.barbearia.nomeNegocio, a.barbearia.imgPerfil " +
+              "ORDER BY media DESC FETCH FIRST 3 ROWS ONLY")
+      List<BarbeariaAvaliacao> findTopBarbearias();
 }
 
 //      @Query("SELECT b FROM Barbearia b WHERE " +

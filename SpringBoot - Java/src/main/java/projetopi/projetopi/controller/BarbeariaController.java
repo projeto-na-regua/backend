@@ -153,5 +153,11 @@ public class BarbeariaController {
     }
 
 
+    @GetMapping("/top-3-barbarias-avaliacoes")
+    public ResponseEntity<List<BarbeariaAvaliacao>> getTop3MelhoreAvaliacoes(){
+        return ok().body(service.getTop3Melhores());
+    }
+
+
 
 }
