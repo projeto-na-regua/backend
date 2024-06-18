@@ -14,14 +14,17 @@ public class FinancaConsulta {
 
     private Double despesa;
     private Double lucro;
-    private Double saldo;
+    private Double receita;
     private Double lucratividade;
-    private List<Double> servicosPreco;
-    private List<LocalDate> servicosData;
+    private String[][] servicos;
 
-    public FinancaConsulta(Double despesa, Double lucro, Double saldo) {
-        this.saldo = saldo;
+    public FinancaConsulta(Double despesa, Double receita, Double lucro) {
+        this.receita = receita;
         this.lucro = lucro;
         this.despesa = despesa;
+    }
+
+    public void definiMatriz(Integer qtd){
+        servicos = new String[2][qtd];
     }
 }
