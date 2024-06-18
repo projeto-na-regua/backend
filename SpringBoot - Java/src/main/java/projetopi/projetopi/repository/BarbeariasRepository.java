@@ -38,11 +38,12 @@ public interface BarbeariasRepository extends JpaRepository<Barbearia, Integer> 
       @Query("SELECT new projetopi.projetopi.dto.response.BarbeariaServico(b, s) FROM Barbearia b JOIN b.servicos s WHERE s.tipoServico LIKE %?1%")
       List<BarbeariaServico> findBarbeariasByTipoServico(String tipoServico);
 
-      @Query("select new projetopi.projetopi.dto.response.BarbeariaAvaliacao(a.barbearia.nomeNegocio, " +
-              "sum(av.resultadoAvaliacao) / count(*) as media, a.barbearia.imgPerfil) " +
-              "from Avaliacao av join Agendamento a on av.id = a.avaliacao.id " +
-              "GROUP BY a.barbearia.id, a.barbearia.nomeNegocio, a.barbearia.imgPerfil " +
-              "ORDER BY media DESC FETCH FIRST 3 ROWS ONLY")
+      @Query("SELECT new projetopi.projetopi.dto.response.BarbeariaAvaliacao(b.nomeNegocio, AVG(av.resultadoAvaliacao) AS media, b.imgPerfil) " +
+              "FROM Barbearia b " +
+              "JOIN Agendamento a ON b.id = a.barbearia.id " +
+              "JOIN Avaliacao av ON av.id = a.avaliacao.id " +
+              "GROUP BY b.id, b.nomeNegocio, b.imgPerfil " +
+              "ORDER BY media DESC")
       List<BarbeariaAvaliacao> findTopBarbearias();
 }
 
