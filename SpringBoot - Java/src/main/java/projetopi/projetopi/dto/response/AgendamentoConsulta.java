@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.FutureOrPresent;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.cglib.core.Local;
 import org.springframework.format.annotation.DateTimeFormat;
 import projetopi.projetopi.entity.Endereco;
@@ -11,6 +12,7 @@ import projetopi.projetopi.entity.Endereco;
 import java.time.LocalDateTime;
 
 @Getter
+@Setter
 public class AgendamentoConsulta {
 
     private Integer id;
@@ -29,10 +31,11 @@ public class AgendamentoConsulta {
 
     private String nomeNegocio;
 
+    private String imgPerfilBarbearia;
+
     private String status;
 
     private Endereco enderecoBarbearia;
-
 
     private Integer tempoEstimado;
 
@@ -40,6 +43,8 @@ public class AgendamentoConsulta {
 
     private Double avaliacao;
     private String comentario;
+
+
 
 
     public AgendamentoConsulta(Integer id, String status, LocalDateTime dataHora, String tipoServico, String descricao, Double valorServico, String nomeCliente, String nomeBarbeiro, String nomeNegocio, Endereco enderecoBarbearia,
