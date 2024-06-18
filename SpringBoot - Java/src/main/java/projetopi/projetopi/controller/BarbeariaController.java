@@ -42,12 +42,22 @@ public class BarbeariaController {
     }
 
     @GetMapping("/client-side/pesquisa-by-localizacao")
-    public ResponseEntity<List<BarbeariaServico>> getBarbeariasByToken(@RequestHeader("Authorization") String token,
+    public ResponseEntity<List<BarbeariaPesquisa>> getBarbeariasByToken(@RequestHeader("Authorization") String token,
                                                                         @RequestParam String servico,
                                                                         @RequestParam LocalDate date,
                                                                         @RequestParam LocalTime time){
 
         return status(200).body(service.getAllByLocalizacao(token, servico, date, time));
+    }
+
+    @GetMapping("/no-token/pesquisa-by-localizacao")
+    public ResponseEntity<List<BarbeariaPesquisa>> getBarbeariasByToken(@RequestParam Double lat,
+                                                                        @RequestParam Double lngt,
+                                                                        @RequestParam String servico,
+                                                                        @RequestParam LocalDate date,
+                                                                        @RequestParam LocalTime time){
+
+        return status(200).body(service.getAllByLocalizacaoSemCadastro(servico, date, time, lat, lngt));
     }
 
     @GetMapping("/client-side/perfil/{idBarbearia}")

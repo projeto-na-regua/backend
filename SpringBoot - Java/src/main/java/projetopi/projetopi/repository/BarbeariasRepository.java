@@ -35,8 +35,8 @@ public interface BarbeariasRepository extends JpaRepository<Barbearia, Integer> 
 
       Barbearia findByNomeNegocio(String nomeNegocio);
 
-      @Query("SELECT new projetopi.projetopi.dto.response.BarbeariaServico(b, s) FROM Barbearia b JOIN b.servicos s WHERE s.tipoServico LIKE %?1%")
-      List<BarbeariaServico> findBarbeariasByTipoServico(String tipoServico);
+      @Query("SELECT b FROM Barbearia b JOIN b.servicos s WHERE s.tipoServico LIKE %?1%")
+      List<Barbearia> findBarbeariasByTipoServico(String tipoServico);
 
       @Query("SELECT new projetopi.projetopi.dto.response.BarbeariaAvaliacao(b.nomeNegocio, AVG(av.resultadoAvaliacao) AS media, b.imgPerfil) " +
               "FROM Barbearia b " +
