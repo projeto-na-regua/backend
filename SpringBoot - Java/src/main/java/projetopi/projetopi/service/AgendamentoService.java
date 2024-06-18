@@ -12,6 +12,7 @@ import projetopi.projetopi.dto.request.AgendamentoCriacao;
 import projetopi.projetopi.dto.response.AgendamentoConsulta;
 import projetopi.projetopi.dto.response.DashboardConsulta;
 import projetopi.projetopi.dto.response.HorarioDiaSemana;
+import projetopi.projetopi.dto.response.TotalValorPorDia;
 import projetopi.projetopi.entity.*;
 import projetopi.projetopi.exception.AcessoNegadoException;
 import projetopi.projetopi.exception.RecursoNaoEncontradoException;
@@ -27,6 +28,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -294,19 +296,50 @@ public class AgendamentoService {
         return new ArrayList<>(fila.getHistorico());
     }
 
-    public DashboardConsulta getMetricasDash(String token, LocalDate dateInicial, LocalDate dateFinal) {
+    public DashboardConsulta getMetricasDash(String token, LocalDate dateInicial, LocalDate dateFinal, Integer qtdDias) {
 
         global.validarBarbeiroAdm(token, "Barbeiro");
         global.validaBarbearia(token);
+        Barbearia barbearia = global.getBarbeariaByToken(token);
 
         LocalDateTime dataInicialDateTime = dateInicial.atStartOfDay();
         LocalDateTime dataFinalDateTime = dateFinal.atTime(LocalTime.MAX);
 
-        Barbearia barbearia = global.getBarbeariaByToken(token);
-        return repository.findDashboardData(barbearia.getId(), dataInicialDateTime, dataFinalDateTime);
+        List<TotalValorPorDia> agendamentosdByDay = countConcluidoByDayForLastDays(barbearia.getId(), qtdDias);
 
 
+        List<LocalDate> datas = new ArrayList<>();
+        List<Long> precos = new ArrayList<>();
+
+        for(TotalValorPorDia a : agendamentosdByDay){
+            datas.add(a.getData());
+            precos.add(a.getTotal());
+        }
+
+        DashboardConsulta dto = repository.findDashboardData(barbearia.getId(), dataInicialDateTime, dataFinalDateTime);
+
+
+        dto.setMediaAvaliacoes(repository.findAverageResultadoAvaliacao(barbearia.getId()));
+        dto.setValoresGrafico(precos);
+        dto.setDatasGrafico(datas);
+
+
+        return dto;
     }
+
+
+    public List<TotalValorPorDia> countConcluidoByDayForLastDays(Integer barbeariaId, int days) {
+        LocalDateTime startDate = LocalDateTime.now().minus(days, ChronoUnit.DAYS);
+        List<Object[]> results = repository.debugCountConcluidoByDay(barbeariaId, startDate);
+
+        return results.stream().map(result -> {
+            LocalDate date = ((java.sql.Date) result[0]).toLocalDate();
+            Long count = (Long) result[1];
+            return new TotalValorPorDia(date, count);
+        }).collect(Collectors.toList());
+    }
+
+
 
     public List<AgendamentoConsulta> getAvaliacoes(String token) {
         global.validaCliente(token, "Cliente");
@@ -331,12 +364,15 @@ public class AgendamentoService {
 
     public Avaliacao postAvaliacao(String token, Avaliacao a, Integer idAgendamento){
         global.validaCliente(token, "Cliente");
+
+
         Avaliacao avaliacaoSalva = avaliacaoRepository.save(a);
 
         if (!repository.existsById(idAgendamento)){
             throw new  ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
         Agendamento agendamento = repository.findById(idAgendamento).get();
+
 
         agendamento.setAvaliacao(avaliacaoSalva);
         repository.save(agendamento);
