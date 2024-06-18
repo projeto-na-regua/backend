@@ -14,6 +14,10 @@ import java.util.List;
 
 @Repository
 public interface AgendaRepository extends JpaRepository<Agendamento, Integer> {
+
+    @Query(value = "SELECT * FROM agendamento WHERE barbearia_id_barbearia = :idBarbearia", nativeQuery = true)
+    List<Agendamento> findAgendamentosByBarbeariaIdAndStatus(@Param("idBarbearia") Integer idBarbearia);
+
     List<Agendamento> findByClienteIdAndStatus(Integer clienteId, String status);
 
     List<Agendamento> findByBarbeiroIdAndStatus(Integer BarbeiroId, String status);
