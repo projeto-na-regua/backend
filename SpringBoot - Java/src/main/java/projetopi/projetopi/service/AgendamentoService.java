@@ -130,6 +130,34 @@ public class AgendamentoService {
         return dto;
     }
 
+    public List<AgendamentoConsulta> getAgendamentoBarbearia(String token, String status) {
+        List<Agendamento> agendamentos;
+
+        if (!(status.equalsIgnoreCase("Pendente") ||
+                status.equalsIgnoreCase("Agendado") ||
+                status.equalsIgnoreCase("Concluido") ||
+                status.equalsIgnoreCase("Cancelado") ||
+                status.equalsIgnoreCase("none"))) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Status de agendamento inválido");
+        }
+
+        agendamentos = repository.findAgendamentosByBarbeariaIdAndStatus(global.getBarbeariaByToken(token).getId());
+        System.out.println(agendamentos);
+
+        if (agendamentos.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NO_CONTENT, "Nenhum agendamento encontrado");
+        }
+
+        List<AgendamentoConsulta> dto = new ArrayList<>();
+        for (Agendamento a : agendamentos) {
+            if(!(a.getStatus().equalsIgnoreCase("Concluido"))){
+                dto.add(AgendamentoMapper.toDto(a));
+            }
+        }
+
+        return dto;
+    }
+
 
     public AgendamentoConsulta getOneAgendamento(String token, Integer id){
 
