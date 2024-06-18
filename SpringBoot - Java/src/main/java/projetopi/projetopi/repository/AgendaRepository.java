@@ -1,9 +1,11 @@
 package projetopi.projetopi.repository;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import projetopi.projetopi.dto.response.AvaliacaoConsulta;
 import projetopi.projetopi.dto.response.DashboardConsulta;
 import projetopi.projetopi.dto.response.TotalValorPorDia;
 import projetopi.projetopi.entity.Agendamento;
@@ -86,5 +88,16 @@ public interface AgendaRepository extends JpaRepository<Agendamento, Integer> {
             "AND a.dataHoraConcluido >= :startDate " +
             "GROUP BY CAST(a.dataHoraConcluido AS date)")
     List<Object[]> debugCountConcluidoByDay(@Param("barbeariaId") Integer barbeariaId, @Param("startDate") LocalDateTime startDate);
+
+    @Query("SELECT new projetopi.projetopi.dto.response.AvaliacaoConsulta(a.cliente.nome, av.resultadoAvaliacao, av.comentario) " +
+            "FROM Avaliacao av " +
+            "JOIN Agendamento a " +
+            "ON av.id = a.avaliacao.id " +
+            "WHERE a.barbearia.id = :barbeariaId " +
+            "ORDER BY a.dataHoraConcluido DESC " +
+            "FETCH FIRST :quantidade ROWS ONLY")
+    List<AvaliacaoConsulta> findUltimasAvaliacoes(@Param("barbeariaId") Integer barbeariaId, @Param("quantidade") Integer quantidade);
+
+
 
 }

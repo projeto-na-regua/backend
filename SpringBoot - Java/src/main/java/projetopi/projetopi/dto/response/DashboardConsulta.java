@@ -23,7 +23,7 @@ public class DashboardConsulta {
 
     private List<Long> valoresGrafico;
 
-    public DashboardConsulta(Long confirmados, Long pendentes, Long cancelados) {
+    public DashboardConsulta(Long pendentes, Long cancelados, Long confirmados) {
         this.confirmados = confirmados;
         this.pendentes = pendentes;
         this.cancelados = cancelados;

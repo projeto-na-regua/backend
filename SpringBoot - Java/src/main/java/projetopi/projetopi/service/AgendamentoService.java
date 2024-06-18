@@ -4,15 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.hibernate.id.IntegralDataTypeHolder;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import projetopi.projetopi.dto.mappers.AgendamentoMapper;
 import projetopi.projetopi.dto.request.AgendamentoCriacao;
-import projetopi.projetopi.dto.response.AgendamentoConsulta;
-import projetopi.projetopi.dto.response.DashboardConsulta;
-import projetopi.projetopi.dto.response.HorarioDiaSemana;
-import projetopi.projetopi.dto.response.TotalValorPorDia;
+import projetopi.projetopi.dto.response.*;
 import projetopi.projetopi.entity.*;
 import projetopi.projetopi.exception.AcessoNegadoException;
 import projetopi.projetopi.exception.RecursoNaoEncontradoException;
@@ -21,6 +20,7 @@ import projetopi.projetopi.util.Dia;
 import projetopi.projetopi.util.FilaHistorico;
 import projetopi.projetopi.util.Global;
 import projetopi.projetopi.util.Token;
+
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -354,6 +354,43 @@ public class AgendamentoService {
 
         return dto;
     }
+
+    public List<AvaliacaoConsulta> getAvaliacoes(String token, Integer quantidade) {
+
+        global.validarBarbeiroAdm(token, "Barbeiro");
+        global.validaBarbearia(token);
+        Barbearia barbearia = global.getBarbeariaByToken(token);
+
+
+        List<AvaliacaoConsulta> dto = repository.findUltimasAvaliacoes(barbearia.getId(), quantidade);
+
+        if (dto.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NO_CONTENT, "Nenhum agendamento concluído encontrado");
+        }
+
+
+        return dto;
+    }
+
+    public List<AvaliacaoConsulta> getAvaliacoesClienteSide(String token, Integer quantidade, Integer idBarbearia) {
+
+        global.validaCliente(token, "Cliente");
+
+        if (!barbeariasRepository.existsById(idBarbearia)){
+            throw new RecursoNaoEncontradoException("Barbearia", idBarbearia);
+        }
+        Barbearia barbearia = barbeariasRepository.findById(idBarbearia).get();
+
+
+        List<AvaliacaoConsulta> dto = repository.findUltimasAvaliacoes(barbearia.getId(), quantidade);
+
+        if (dto.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NO_CONTENT, "Nenhum agendamento concluído encontrado");
+        }
+
+        return dto;
+    }
+
 
 
     public List<TotalValorPorDia> countConcluidoByDayForLastDays(Integer barbeariaId, int days) {
