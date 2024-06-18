@@ -62,20 +62,31 @@ public class FinanceiroService {
         List<LocalDate> datas = new ArrayList<>();
         List<Double> precos = new ArrayList<>();
 
-        for(TotalValorPorDia t : servicos){
-            datas.add(t.getData());
-            precos.add(t.getPrecos());
-        }
+        String[][] servicosMatriz = new String[2][qtdDias];
 
+        int index = 0;
+        for (TotalValorPorDia t : servicos) {
+            if (index < qtdDias) {
+                datas.add(t.getData());
+                precos.add(t.getPrecos());
+
+                servicosMatriz[0][index] = t.getData().toString();
+                servicosMatriz[1][index] = t.getPrecos().toString();
+
+                index++;
+            } else {
+                break;
+            }
+        }
         FinancaConsulta financaConsulta = financeiroRepository.findByFinancasByBarbeariaIdAndBetweenDates(barbearia.getId(), dataInicialDateTime, dataFinalDateTime);
 
-        financaConsulta.setSaldo(financaConsulta.getSaldo() == null ? 0. : financaConsulta.getSaldo() + total);
+        financaConsulta.setReceita(financaConsulta.getReceita() == null ? 0. : financaConsulta.getReceita() + total);
         financaConsulta.setLucro(financaConsulta.getLucro() == null ? 0. : financaConsulta.getLucro() + total);
-        financaConsulta.setServicosData(datas);
-        financaConsulta.setServicosPreco(precos);
+        financaConsulta.definiMatriz(qtdDias);
+        financaConsulta.setServicos(servicosMatriz);
 
 
-        financaConsulta.setLucratividade((total / financaConsulta.getSaldo()) * 100);
+        financaConsulta.setLucratividade((financaConsulta.getLucro() / financaConsulta.getReceita() ) * 100);
 
         return financaConsulta;
     }

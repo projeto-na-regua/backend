@@ -19,10 +19,9 @@ public interface FinanceiroRepository extends JpaRepository<Financa, Integer> {
 
 
     @Query("SELECT new projetopi.projetopi.dto.response.FinancaConsulta( " +
-            "    SUM(CASE WHEN f.despesas = true THEN f.valor ELSE 0 END), " +
-            "    SUM(CASE WHEN f.despesas = false THEN f.valor ELSE 0 END), " +
-            "    SUM(CASE WHEN f.despesas = false THEN f.valor ELSE 0 END) - " +
-            "    SUM(CASE WHEN f.despesas = true THEN f.valor ELSE 0 END)) " +
+            "SUM(CASE WHEN f.despesas = true THEN f.valor ELSE 0 END) as despesa, " +
+            "SUM(f.valor) - SUM(CASE WHEN f.despesas = true THEN f.valor ELSE 0 END) as receita, " +
+            "(SUM(f.valor) - SUM(CASE WHEN f.despesas = true THEN f.valor ELSE 0 END)) - SUM(CASE WHEN f.despesas = true THEN f.valor ELSE 0 END) as lucro) " +
             "FROM Financa f " +
             "WHERE f.barbearia.id = :id " +
             "AND f.dtLancamento BETWEEN :dataInicial AND :dataFinal")
