@@ -17,6 +17,7 @@ import projetopi.projetopi.repository.BarbeariasRepository;
 import projetopi.projetopi.repository.ClienteRepository;
 import projetopi.projetopi.repository.DiaSemanaRepository;
 import projetopi.projetopi.repository.EnderecoRepository;
+import projetopi.projetopi.util.Dia;
 import projetopi.projetopi.util.Global;
 import projetopi.projetopi.util.Token;
 
@@ -27,8 +28,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import static org.springframework.http.ResponseEntity.status;
 
@@ -333,41 +336,65 @@ public class BarbeariaService {
         return  enderecoRepository.save(endereco);
     }
 
-    public List<BarbeariaServico> getAllByLocalizacao(String token, String servico, LocalDate date, LocalTime time) {
+    public List<BarbeariaPesquisa> getAllByLocalizacao(String token, String servico, LocalDate date, LocalTime time) {
 
         Cliente cliente = clienteRepository.findById(Integer.valueOf(tk.getUserIdByToken(token))).get();
-        List<BarbeariaServico> barbearias = barbeariasRepository.findBarbeariasByTipoServico(servico);
+        List<Barbearia> barbearias = barbeariasRepository.findBarbeariasByTipoServico(servico);
         Double raio = 3000.0;
-        List<BarbeariaServico> barbeariasProximas = new ArrayList<>();
+        List<BarbeariaPesquisa> barbeariasProximas = new ArrayList<>();
+        String dia3Letras = date.format(DateTimeFormatter.ofPattern("EEE", new Locale("pt")))
+                .substring(0, 3).toUpperCase();
 
-        for (BarbeariaServico b : barbearias){
+        for (Barbearia b : barbearias){
 
             Double distancia = calcularDistancia(cliente.getEndereco().getLatitude(), cliente.getEndereco().getLongitude(),
-                    b.getBarbearia().getLatitude(), b.getBarbearia().getLongitude());
+                    b.getEndereco().getLatitude(), b.getEndereco().getLongitude());
 
-            if (distancia <= raio){
-                b.getBarbearia().setDistancia(distancia);
-                barbeariasProximas.add(b);
+            DiaSemana diaSemana = diaSemanaRepository.findByNomeAndBarbeariaId(Dia.valueOf(dia3Letras), b.getId());
+
+            LocalTime horaAbertura = diaSemana.getHoraAbertura();
+            LocalTime horaFechamento = diaSemana.getHoraFechamento();
+
+
+            if (horaAbertura != null && horaFechamento != null){
+                if (distancia <= raio && !time.isBefore(horaAbertura) && !time.isAfter(horaFechamento)){
+                    BarbeariaPesquisa dto = new BarbeariaPesquisa(b, distancia);
+                    barbeariasProximas.add(dto);
+                }
             }
+
         }
+
 
         return barbeariasProximas;
     }
 
-    public List<BarbeariaServico> getAllByLocalizacaoSemCadastro(String servico, LocalDate date, LocalTime time, Double lat, Double lngt) {
+    public List<BarbeariaPesquisa> getAllByLocalizacaoSemCadastro(String servico, LocalDate date, LocalTime time, Double lat, Double lngt) {
 
-        List<BarbeariaServico> barbearias = barbeariasRepository.findBarbeariasByTipoServico(servico);
+        List<Barbearia> barbearias = barbeariasRepository.findBarbeariasByTipoServico(servico);
         Double raio = 3000.0;
-        List<BarbeariaServico> barbeariasProximas = new ArrayList<>();
+        List<BarbeariaPesquisa> barbeariasProximas = new ArrayList<>();
 
-        for (BarbeariaServico b : barbearias){
+        List<BarbeariaServicoPesquisa> barbeariaServicoPesquisas = new ArrayList<>();
+        String dia3Letras = date.format(DateTimeFormatter.ofPattern("EEE", new Locale("pt")))
+                .substring(0, 3).toUpperCase();
+
+        for (Barbearia b : barbearias){
 
             Double distancia = calcularDistancia(lat, lngt,
-                    b.getBarbearia().getLatitude(), b.getBarbearia().getLongitude());
+                    b.getEndereco().getLatitude(), b.getEndereco().getLongitude());
 
-            if (distancia <= raio){
-                b.getBarbearia().setDistancia(distancia);
-                barbeariasProximas.add(b);
+
+            DiaSemana diaSemana = diaSemanaRepository.findByNomeAndBarbeariaId(Dia.valueOf(dia3Letras), b.getId());
+
+            LocalTime horaAbertura = diaSemana.getHoraAbertura();
+            LocalTime horaFechamento = diaSemana.getHoraFechamento();
+
+            if (horaAbertura != null && horaFechamento != null){
+                if (distancia <= raio && !time.isBefore(horaAbertura) && !time.isAfter(horaFechamento)){
+                    BarbeariaPesquisa dto = new BarbeariaPesquisa(b, distancia);
+                    barbeariasProximas.add(dto);
+                }
             }
         }
 
