@@ -89,7 +89,7 @@ public interface AgendaRepository extends JpaRepository<Agendamento, Integer> {
             "GROUP BY CAST(a.dataHoraConcluido AS date)")
     List<Object[]> debugCountConcluidoByDay(@Param("barbeariaId") Integer barbeariaId, @Param("startDate") LocalDateTime startDate);
 
-    @Query("SELECT new projetopi.projetopi.dto.response.AvaliacaoConsulta(a.cliente.nome, av.resultadoAvaliacao, av.comentario) " +
+    @Query("SELECT new projetopi.projetopi.dto.response.AvaliacaoConsulta(CAST(a.dataHoraConcluido AS java.time.LocalDate), a.barbeiro.nome, a.cliente.nome, av.resultadoAvaliacao, av.comentario) " +
             "FROM Avaliacao av " +
             "JOIN Agendamento a " +
             "ON av.id = a.avaliacao.id " +
