@@ -44,6 +44,11 @@ public class AgendamentoController{
         return status(200).body(service.getAgendamento(token, status));
     }
 
+    @GetMapping("/list-all-by-status-all-barbearia/{status}")
+    public ResponseEntity<List<AgendamentoConsulta>> getAgendamentosBarbearia(@RequestHeader("Authorization") String token, @PathVariable String status){
+        return status(200).body(service.getAgendamentoBarbearia(token, status));
+    }
+
     @GetMapping("/list-horarios-disponiveis")
     public ResponseEntity<List<HorarioDiaSemana>> getAgendamentos(
             @RequestHeader("Authorization") String token,
