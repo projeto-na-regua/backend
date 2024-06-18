@@ -1,10 +1,12 @@
 package projetopi.projetopi.dto.response;
 
 import lombok.Getter;
+import lombok.Setter;
 import projetopi.projetopi.entity.Endereco;
 import projetopi.projetopi.entity.Usuario;
 
 @Getter
+@Setter
 public class PerfilUsuarioConsulta {
 
     private String nome;

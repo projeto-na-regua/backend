@@ -193,7 +193,9 @@ public class UsuarioService {
     public PerfilUsuarioConsulta getPerfil(String t){
         Integer id = Integer.valueOf(token.getUserIdByToken(t));
         validarUsuarioExiste(id);
-        return new PerfilUsuarioConsulta(usuarioRepository.findById(id).get());
+        PerfilUsuarioConsulta dto  = new PerfilUsuarioConsulta(usuarioRepository.findById(id).get());
+        dto.setImgPerfil(azureStorageService.getBlobUrl(dto.getImgPerfil()));
+        return dto;
 
     }
 

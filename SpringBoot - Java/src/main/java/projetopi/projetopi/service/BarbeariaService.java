@@ -354,6 +354,28 @@ public class BarbeariaService {
         return barbeariasProximas;
     }
 
+    public List<BarbeariaServico> getAllByLocalizacaoSemCadastro(String servico, LocalDate date, LocalTime time, Double lat, Double lngt) {
+
+        List<BarbeariaServico> barbearias = barbeariasRepository.findBarbeariasByTipoServico(servico);
+        Double raio = 3000.0;
+        List<BarbeariaServico> barbeariasProximas = new ArrayList<>();
+
+        for (BarbeariaServico b : barbearias){
+
+            Double distancia = calcularDistancia(lat, lngt,
+                    b.getBarbearia().getLatitude(), b.getBarbearia().getLongitude());
+
+            if (distancia <= raio){
+                b.getBarbearia().setDistancia(distancia);
+                barbeariasProximas.add(b);
+            }
+        }
+
+        return barbeariasProximas;
+    }
+
+
+
     public List<BarbeariaAvaliacao> getTop3Melhores() {
         List<BarbeariaAvaliacao> lista = barbeariasRepository.findTopBarbearias();
 
