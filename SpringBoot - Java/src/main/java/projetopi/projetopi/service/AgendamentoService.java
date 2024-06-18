@@ -67,6 +67,9 @@ public class AgendamentoService {
     private Global global;
 
     @Autowired
+    private StorageService azureStorageService;
+
+    @Autowired
     private Token tk;
 
     private final Map<Integer, FilaHistorico> historicoPorCliente;
@@ -123,13 +126,14 @@ public class AgendamentoService {
             throw new ResponseStatusException(HttpStatus.NO_CONTENT, "Nenhum agendamento encontrado");
         }
 
-
-        List<AgendamentoConsulta> dto = new ArrayList<>();
+        List<AgendamentoConsulta> dtos = new ArrayList<>();
         for (Agendamento a : agendamentos) {
-            dto.add(AgendamentoMapper.toDto(a));
-        }
+                AgendamentoConsulta dto = AgendamentoMapper.toDto(a);
+                dto.setImgPerfilBarbearia(azureStorageService.getBlobUrl(a.getBarbearia().getImgPerfil()));
+                dtos.add(dto);
 
-        return dto;
+        }
+        return dtos;
     }
 
     public List<AgendamentoConsulta> getAgendamentoBarbearia(String token, String status) {
@@ -150,14 +154,16 @@ public class AgendamentoService {
             throw new ResponseStatusException(HttpStatus.NO_CONTENT, "Nenhum agendamento encontrado");
         }
 
-        List<AgendamentoConsulta> dto = new ArrayList<>();
+        List<AgendamentoConsulta> dtos = new ArrayList<>();
         for (Agendamento a : agendamentos) {
             if(!(a.getStatus().equalsIgnoreCase("Concluido"))){
-                dto.add(AgendamentoMapper.toDto(a));
+                AgendamentoConsulta dto = AgendamentoMapper.toDto(a);
+                dto.setImgPerfilBarbearia(azureStorageService.getBlobUrl(a.getBarbearia().getImgPerfil()));
+                dtos.add(dto);
             }
         }
 
-        return dto;
+        return dtos;
     }
 
 
@@ -171,7 +177,12 @@ public class AgendamentoService {
             throw new RecursoNaoEncontradoException("Agendamento", id);
         }
 
-        return AgendamentoMapper.toDto(repository.findById(id).get());
+
+        AgendamentoConsulta dto = AgendamentoMapper.toDto(repository.findById(id).get());
+        dto.setImgPerfilBarbearia(azureStorageService.getBlobUrl(repository.findById(id).get().getBarbearia().getImgPerfil()));
+
+
+        return dto;
     }
 
     public static void main(String[] args) {
@@ -293,6 +304,8 @@ public class AgendamentoService {
         Barbearia barbearia = barbeariasRepository.findById(a.getIdBarbearia()).get();
         Agendamento nvAgendamento = new Agendamento(a.getDataHora(), servico, barbeiro, cliente, barbearia);
         nvAgendamento.setStatus("Pendente");
+
+
         return AgendamentoMapper.toDto(repository.save(nvAgendamento));
     }
 
@@ -318,6 +331,7 @@ public class AgendamentoService {
 
         for (Agendamento a : agendamentosConcluidos) {
             AgendamentoConsulta agendamentoConsulta = AgendamentoMapper.toDto(a);
+            agendamentoConsulta.setImgPerfilBarbearia(azureStorageService.getBlobUrl(a.getBarbearia().getImgPerfil()));
             fila.adicionar(agendamentoConsulta);
         }
 
@@ -422,7 +436,9 @@ public class AgendamentoService {
 
         List<AgendamentoConsulta> dtos = new ArrayList<>();
         for (Agendamento a : lista){
-            dtos.add(AgendamentoMapper.toDto(a));
+            AgendamentoConsulta dto = AgendamentoMapper.toDto(a);
+            dto.setImgPerfilBarbearia(azureStorageService.getBlobUrl(a.getBarbearia().getImgPerfil()));
+            dtos.add(dto);
         }
         return dtos;
     }
