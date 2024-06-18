@@ -9,10 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
-import projetopi.projetopi.dto.response.BarbeariaConsulta;
-import projetopi.projetopi.dto.response.BarbeariaPesquisa;
-import projetopi.projetopi.dto.response.BarbeariaServico;
-import projetopi.projetopi.dto.response.ImgConsulta;
+import projetopi.projetopi.dto.response.*;
 import projetopi.projetopi.entity.*;
 import projetopi.projetopi.exception.ErroServidorException;
 import projetopi.projetopi.exception.RecursoNaoEncontradoException;
@@ -355,5 +352,18 @@ public class BarbeariaService {
         }
 
         return barbeariasProximas;
+    }
+
+    public List<BarbeariaAvaliacao> getTop3Melhores() {
+        List<BarbeariaAvaliacao> lista = barbeariasRepository.findTopBarbearias();
+
+        if (lista.isEmpty()){
+            throw new ResponseStatusException(HttpStatus.NO_CONTENT);
+        }
+
+        for (BarbeariaAvaliacao ba : lista){
+            ba.setImgPerfilBarbearia(azureStorageService.getBlobUrl(ba.getImgPerfilBarbearia()));
+        }
+        return lista;
     }
 }
