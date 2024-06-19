@@ -50,6 +50,12 @@ public class ServicoController {
         return status(200).body(service.getServico(token, id));
     }
 
+    @GetMapping("/find-by-name")
+    public ResponseEntity<List<ServicoConsulta>> findByName(@RequestHeader("Authorization") String token,
+                                                                @RequestParam String nomeServico){
+        return status(200).body(service.findByName(token, nomeServico));
+    }
+
     @PutMapping("/disassociate-barbeiro/{email}/{id}")
     public ResponseEntity<BarbeiroServico> desassociarBarbeiro(@RequestHeader("Authorization") String token,
                                                                @PathVariable String email,

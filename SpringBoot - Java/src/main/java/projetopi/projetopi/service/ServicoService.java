@@ -4,6 +4,7 @@ package projetopi.projetopi.service;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -16,6 +17,7 @@ import projetopi.projetopi.repository.*;
 import projetopi.projetopi.util.Global;
 import projetopi.projetopi.util.Token;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.http.ResponseEntity.status;
@@ -168,6 +170,24 @@ public class ServicoService {
             throw  new RecursoNaoEncontradoException("Relação entre barbeiro e servico", barbeiroServicoId);
         }
         barbeiroServicoRepository.deleteById(barbeiroServicoId);
+    }
+
+
+    public List<ServicoConsulta> findByName(String token, String tipoServico){
+        global.validaBarbeiro(token, "Barbeiro");
+        global.validaBarbearia(token);
+        List<Servico> servicos = servicoRepository.findByTipoServicoContaining(tipoServico);
+
+        if(servicos.isEmpty()){
+            throw new ResponseStatusException(HttpStatus.NO_CONTENT);
+        }
+
+        List<ServicoConsulta> dto = new ArrayList<>();
+        for (Servico s : servicos){
+            dto.add(new ServicoConsulta(s));
+        }
+
+        return dto;
     }
 
     public Integer getIdBarbearia(String token){

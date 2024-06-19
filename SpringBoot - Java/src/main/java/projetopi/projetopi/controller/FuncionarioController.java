@@ -68,6 +68,13 @@ public class FuncionarioController {
 
         }
 
+        @GetMapping("/find-by-name")
+        public ResponseEntity<List<BarbeiroConsulta>> findByName(@RequestHeader("Authorization") String token,
+                                                               @RequestParam String nome){
+            return status(200).body(service.findByName(nome, token));
+
+        }
+
         @PostMapping("/criar")
         public ResponseEntity<BarbeiroConsulta> criarBarbeiro(@RequestHeader("Authorization") String token,
                                                               @Valid @RequestBody BarbeiroCriacao barbeiro){
@@ -105,5 +112,12 @@ public class FuncionarioController {
         public ResponseEntity<byte[]> gerarRelatorioBarbeiro(@RequestHeader("Authorization") String token) {
             return new ResponseEntity<>(service.gerarRelatorio(token), service.configurarHeadears(), HttpStatus.OK);
         }
+
+
+        @PutMapping("/editar-nome/{id}")
+        public ResponseEntity<String> editarNomes(@PathVariable Integer id, @RequestParam String nome){
+            return ok().body(service.editarNome(id, nome));
+        }
+
 }
 

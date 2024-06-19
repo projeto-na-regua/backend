@@ -30,6 +30,8 @@ public interface ServicoRepository extends JpaRepository<Servico, Integer> {
             "AND a.dataHoraConcluido BETWEEN ?2 AND ?3")
     Double totalServicoByBarbearia(Integer barbeariaId, LocalDateTime dataInicial, LocalDateTime dataFinal);
 
+    List<Servico> findByTipoServicoContaining(String tipoServico);
+
 
 
 }
