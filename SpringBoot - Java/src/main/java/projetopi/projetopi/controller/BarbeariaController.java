@@ -30,8 +30,6 @@ import static org.springframework.http.ResponseEntity.*;
 @RequestMapping("/barbearias")
 public class BarbeariaController {
 
-
-
     @Autowired
     private BarbeariaService service;
 
@@ -55,7 +53,7 @@ public class BarbeariaController {
                                                                         @RequestParam Double lngt,
                                                                         @RequestParam String servico,
                                                                         @RequestParam LocalDate date,
-                                                                        @RequestParam LocalTime time){
+                                                                        @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)LocalTime time){
 
         return status(200).body(service.getAllByLocalizacaoSemCadastro(servico, date, time, lat, lngt));
     }

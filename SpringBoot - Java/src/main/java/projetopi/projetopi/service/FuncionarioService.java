@@ -231,7 +231,6 @@ public class FuncionarioService {
         if(isCliente(token) ||
            getBarbeariaByToken(token) == null ||
            !getBarbeiroByToken(token).isAdm()){
-
             throw new AcessoNegadoException("Usuario");
 
         }
@@ -257,5 +256,30 @@ public class FuncionarioService {
     }
 
 
+    public List<BarbeiroConsulta> findByName(String nome, String token) {
+        validarPermissioes(token);
 
+        List<Barbeiro> funcionarios = barbeiroRepository.findByNomeContaining(nome);
+
+        if (funcionarios.isEmpty()){
+            throw new ResponseStatusException(HttpStatus.NO_CONTENT);
+        }
+
+        List<BarbeiroConsulta> dtos = new ArrayList<>();
+        for (Barbeiro b : funcionarios){
+            dtos.add(new BarbeiroConsulta(b));
+        }
+
+        return dtos;
+    }
+
+    public String editarNome(Integer id, String nome) {
+
+        Barbeiro barbeiro = barbeiroRepository.findById(id).get();
+        barbeiro.setNome(nome);
+        barbeiro.setId(barbeiro.getId());
+        barbeiroRepository.save(barbeiro);
+
+        return nome;
+    }
 }
