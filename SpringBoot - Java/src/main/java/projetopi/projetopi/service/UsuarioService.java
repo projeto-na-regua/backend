@@ -23,6 +23,7 @@ import projetopi.projetopi.exception.ConflitoException;
 import projetopi.projetopi.exception.ErroServidorException;
 import projetopi.projetopi.exception.RecursoNaoEncontradoException;
 import projetopi.projetopi.repository.*;
+import projetopi.projetopi.util.Dia;
 import projetopi.projetopi.util.Global;
 import projetopi.projetopi.util.Token;
 
@@ -129,6 +130,22 @@ public class UsuarioService {
         Integer id = Integer.valueOf(token.getUserIdByToken(tk));
         Endereco endereco = cadastroEndereco(nvBarbearia);
         Barbearia barbearia = cadastroBarbearia(nvBarbearia, endereco);
+
+        DiaSemana seg = new DiaSemana(Dia.SEG);
+        DiaSemana ter = new DiaSemana(Dia.TER);
+        DiaSemana qua = new DiaSemana(Dia.QUA);
+        DiaSemana qui = new DiaSemana(Dia.QUI);
+        DiaSemana sex = new DiaSemana(Dia.SEX);
+        DiaSemana sab = new DiaSemana(Dia.SAB);
+        DiaSemana dom = new DiaSemana(Dia.DOM);
+
+
+        DiaSemana[] diaSemanas = {seg, ter, qua, qui, sex, sab, dom};
+
+        for (DiaSemana diaSemana : diaSemanas){
+            diaSemana.setBarbearia(barbearia);
+            diaSemanaRepository.save(diaSemana);
+        }
         clienteRepository.atualizarClienteParaBarbeiro(id, barbearia, true);
         return barbearia;
     }
