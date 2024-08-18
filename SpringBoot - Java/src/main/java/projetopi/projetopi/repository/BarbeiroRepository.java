@@ -17,8 +17,8 @@ public interface BarbeiroRepository extends JpaRepository<Barbeiro, Integer> {
 
     List<Barbeiro> findByBarbeariaId(Integer barbeariaId);
 
-    @Query("SELECT b FROM Barbeiro b WHERE b.barbearia.id = ?1 AND b.id <> ?2")
-    List<Barbeiro> findByBarbeariaIdAndUsuarioIdNot(Integer barbeariaId, Integer usuarioId);
+    @Query("SELECT b FROM Barbeiro b WHERE b.barbearia.id = ?1")
+    List<Barbeiro> findByBarbeariaIdAndUsuarioIdNot(Integer barbeariaId);
 
     @Query("select new Barbeiro(b.nome, b.email, b.celular) from Barbeiro b where b.id = :id")
     List<UsuarioConsulta> findByInfoUsuario(@Param("id") Integer id);
