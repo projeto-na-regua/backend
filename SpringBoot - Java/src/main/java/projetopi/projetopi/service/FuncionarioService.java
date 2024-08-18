@@ -76,7 +76,7 @@ public class FuncionarioService {
     public List<BarbeiroConsulta> getFuncionarios(String token){
         validarPermissioes(token);
 
-        List<Barbeiro> barbeiros = barbeiroRepository.findByBarbeariaIdAndUsuarioIdNot(getBarbeariaByToken(token).getId(), getBarbeiroByToken(token).getId());
+        List<Barbeiro> barbeiros = barbeiroRepository.findByBarbeariaIdAndUsuarioIdNot(getBarbeariaByToken(token).getId());
         if (barbeiros.isEmpty()) {
             throw new ResponseStatusException(HttpStatusCode.valueOf(204));
         }

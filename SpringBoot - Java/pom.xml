@@ -86,6 +86,7 @@
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 
 		<dependency>
@@ -130,7 +131,8 @@
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
 
-		<dependency>
+		<!-- Remove these as they are already included by the Spring Boot starters -->
+		<!-- <dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-core</artifactId>
 			<version>6.2.2</version>
@@ -146,7 +148,7 @@
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-config</artifactId>
 			<version>6.2.2</version>
-		</dependency>
+		</dependency> -->
 
 		<dependency>
 			<groupId>org.springdoc</groupId>
@@ -165,14 +167,13 @@
 			<artifactId>hibernate-core</artifactId>
 			<version>6.4.2.Final</version>
 		</dependency>
+
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-spatial</artifactId>
 			<version>6.4.2.Final</version>
 		</dependency>
 
-
-		<!-- JTS Topology Suite -->
 		<dependency>
 			<groupId>org.locationtech.jts</groupId>
 			<artifactId>jts-core</artifactId>
