@@ -50,13 +50,9 @@ public class UsuarioService {
     private final DiaSemanaRepository diaSemanaRepository;
 
     private final UsuarioRepository usuarioRepository;
-
     private final Global global;
-
     private final Token token;
-
     public ModelMapper mapper;
-
     private final StorageService azureStorageService;
 
 
