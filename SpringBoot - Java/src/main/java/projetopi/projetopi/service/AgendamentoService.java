@@ -185,10 +185,6 @@ public class AgendamentoService {
         return dto;
     }
 
-    public static void main(String[] args) {
-        System.out.println(ChronoUnit.MINUTES.between(LocalTime.now(), LocalTime.now().plusMinutes(60)));
-    }
-
     public List<HorarioDiaSemana> getHorarios(String token, BarbeiroServicoId barbeiroServicoId, LocalDate date){
 
         String dia3Letras = date.format(DateTimeFormatter.ofPattern("EEE", new Locale("pt")))
@@ -382,7 +378,6 @@ public class AgendamentoService {
             throw new ResponseStatusException(HttpStatus.NO_CONTENT, "Nenhum agendamento concluído encontrado");
         }
 
-
         return dto;
     }
 
@@ -449,9 +444,8 @@ public class AgendamentoService {
 
         Avaliacao avaliacaoSalva = avaliacaoRepository.save(a);
 
-        if (!repository.existsById(idAgendamento)){
-            throw new  ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
+        if (!repository.existsById(idAgendamento)) throw new  ResponseStatusException(HttpStatus.BAD_REQUEST);
+
         Agendamento agendamento = repository.findById(idAgendamento).get();
 
 

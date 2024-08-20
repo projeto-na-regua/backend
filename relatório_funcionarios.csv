@@ -1,6 +1,2 @@
-NOME_BARBEARIA      ;DT_LANÇAMENTO;       VALOR
-Barbearia Teste 1   ;2024-04-28T17:13:34;     1000,50
-Barbearia Teste 1   ;2024-05-01T12:00;     1200,75
-Barbearia Teste 1   ;2024-05-02T15:30;      950,00
-Barbearia Teste 1   ;2024-05-03T09:45;     1100,20
-Barbearia Teste 1   ;2024-05-04T14:20;     1050,55
+NOME_BARBEIRO;CELULAR;E-MAIL;ADMINISTRADOR
+Douglas;null;douglas.melissanegocios@gmail.com;Não
