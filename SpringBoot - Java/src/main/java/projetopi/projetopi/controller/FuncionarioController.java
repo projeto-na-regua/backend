@@ -99,7 +99,6 @@ public class FuncionarioController {
         }
 
 
-
         @DeleteMapping("/{email}")
         public ResponseEntity<BarbeiroConsulta> deleteBarbeiro(@RequestHeader("Authorization") String token,
                                                                @PathVariable String email){

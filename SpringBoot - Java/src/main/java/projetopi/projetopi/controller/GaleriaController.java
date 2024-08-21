@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.http.ResponseEntity.*;
 
-import projetopi.projetopi.dto.request.GaleriaCriacao;
-import projetopi.projetopi.dto.response.ServicoConsulta;
+import org.springframework.web.multipart.MultipartFile;
+import projetopi.projetopi.dto.response.GaleriaConsulta;
 import projetopi.projetopi.entity.ImgsGaleria;
 import projetopi.projetopi.service.GaleriaService;
 
@@ -21,14 +21,25 @@ public class GaleriaController {
 
     @Autowired
     private GaleriaService service;
+
     @GetMapping
-    public ResponseEntity<List<ImgsGaleria>> getImages(){
-        return status(200).body(service.getImages());
+    public ResponseEntity<List<GaleriaConsulta>> getImages(@RequestHeader("Authorization") String token){
+        return status(200).body(service.getImages(token));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<GaleriaConsulta> getOneImage(@RequestHeader("Authorization") String token,
+                                                       @PathVariable Integer id){
+
+        return status(200).body(service.getOneImageGalery(token, id));
     }
 
     @PostMapping
-    public ResponseEntity<ImgsGaleria> uploadImge(String token, GaleriaCriacao criacao){
-        return status(201).body(service.uploadImg(token, criacao));
+    public ResponseEntity<GaleriaConsulta> uploadImage(@RequestHeader("Authorization") String token,
+                                                  @RequestParam("imagem") MultipartFile imagem,
+                                                  @RequestParam("descricao") String descricao){
+
+        return status(201).body(service.uploadImg(token, imagem, descricao));
     }
 
 

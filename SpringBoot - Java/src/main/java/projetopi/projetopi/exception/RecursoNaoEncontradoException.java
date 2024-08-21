@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class RecursoNaoEncontradoException extends RuntimeException{
 
     public RecursoNaoEncontradoException(String recurso, Object identificador) {
-        super("%s de identificador %s não encontrado".formatted(recurso, identificador));
+        super("%s de idit entificador %s não encontrado".formatted(recurso, identificador));
     }
 
 }
