@@ -17,7 +17,7 @@ public class ImgsGaleria {
     @Column(name = "id_imgs_galeria")
     private Integer id;
 
-    @Column(name="iamgem")
+    @Column(name="imagem")
     private String imagem;
 
     @Column(name="descricao")
@@ -31,5 +31,8 @@ public class ImgsGaleria {
         this.imagem = imagem;
         this.descricao = descricao;
         this.cliente = cliente;
+    }
+
+    public ImgsGaleria() {
     }
 }
