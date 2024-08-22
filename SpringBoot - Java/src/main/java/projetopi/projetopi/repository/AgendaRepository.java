@@ -98,6 +98,24 @@ public interface AgendaRepository extends JpaRepository<Agendamento, Integer> {
             "FETCH FIRST :quantidade ROWS ONLY")
     List<AvaliacaoConsulta> findUltimasAvaliacoes(@Param("barbeariaId") Integer barbeariaId, @Param("quantidade") Integer quantidade);
 
+//    @Query("SELECT new projetopi.projetopi.dto.response.AvaliacaoConsulta(" +
+//            "a.barbearia.id, " +
+//            "CAST(a.dataHoraConcluido AS java.time.LocalDate), " +
+//            "a.barbeiro.nome, " +
+//            "a.cliente.nome, " +
+//            "av.resultadoAvaliacao, " +
+//            "av.comentario) " +
+//            "FROM Avaliacao av " +
+//            "JOIN Agendamento a ON av.id = a.avaliacao.id " +
+//            "WHERE a.barbearia.id IN :barbeariaIds " +
+//            "AND av.resultadoAvaliacao IS NOT NULL " +
+//            "ORDER BY a.dataHoraConcluido DESC " +
+//            "FETCH FIRST :quantidade ROWS ONLY")
+//    List<AvaliacaoConsulta> findAllUltimasAvaliacoes(@Param("barbeariaIds") List<Integer> barbeariaIds, @Param("quantidade") Integer quantidade);
+
+
+
+
 
 
 }
