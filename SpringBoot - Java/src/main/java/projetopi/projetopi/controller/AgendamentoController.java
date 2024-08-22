@@ -117,5 +117,15 @@ public class AgendamentoController{
         return ResponseEntity.ok(service.getAvaliacoesClienteSide(token, qtd, idBarbearia));
     }
 
+//    @GetMapping("/cliente-side/all-ultimas-avaliacoes")
+//    public ResponseEntity<List<AvaliacaoConsulta>> getAllAvaliacoes(
+//            @RequestHeader("Authorization") String token,
+//            @RequestParam Integer qtd,
+//            @RequestParam List<Integer> idBarbearias) {
+//
+//        return ResponseEntity.ok(service.getAllAvaliacoesClienteSide(token, qtd, idBarbearias));
+//    }
+
+
 
 }

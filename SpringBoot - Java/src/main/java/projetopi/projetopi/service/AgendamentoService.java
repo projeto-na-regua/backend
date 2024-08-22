@@ -400,6 +400,25 @@ public class AgendamentoService {
         return dto;
     }
 
+//    public List<AvaliacaoConsulta> getAllAvaliacoesClienteSide(String token, Integer quantidade, List<Integer> idBarbearias) {
+//
+//        global.validaCliente(token, "Cliente");
+//
+//        for (Integer idBarbearia : idBarbearias) {
+//            if (!barbeariasRepository.existsById(idBarbearia)){
+//                throw new RecursoNaoEncontradoException("Barbearia", idBarbearia);
+//            }
+//        }
+//
+//        List<AvaliacaoConsulta> dto = repository.findAllUltimasAvaliacoes(idBarbearias, quantidade);
+//
+//        if (dto.isEmpty()) {
+//            throw new ResponseStatusException(HttpStatus.NO_CONTENT, "Nenhum agendamento concluído encontrado");
+//        }
+//
+//        return dto;
+//    }
+
 
 
     public List<TotalValorPorDia> countConcluidoByDayForLastDays(Integer barbeariaId, int days) {
