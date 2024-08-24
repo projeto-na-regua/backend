@@ -43,7 +43,8 @@ public class UsuarioController {
     @PostMapping("/cadastro-barbearia") // CADASTRO BARBEIRO
     private ResponseEntity<Barbearia> cadastrarBarbeiro(@RequestHeader("Authorization") String token,
                                                         @Valid @RequestBody CadastroBarbearia nvBarbearia){
-        return status(201).body(service.cadastrarBarbeariaByDto(nvBarbearia, token));
+        service.cadastrarBarbeariaByDto(nvBarbearia, token);
+        return status(201).build();
     }
 
 
@@ -61,12 +62,7 @@ public class UsuarioController {
 
     @GetMapping("/get-image")
     public ResponseEntity<String> getImage(@RequestHeader("Authorization") String token){
-//        ByteArrayResource resource = service.getImage(token);
-//
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.setContentType(MediaType.IMAGE_PNG);
-
-        return ResponseEntity.ok().body(service.getImagePerfilClienteSide(token));
+        return ResponseEntity.ok().body(service.getImagePerfil(token));
     }
 
     @GetMapping("/perfil")

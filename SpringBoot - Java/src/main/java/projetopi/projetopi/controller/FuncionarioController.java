@@ -59,8 +59,6 @@ public class FuncionarioController {
                     .body(imageBytes);
         }
 
-
-
         @GetMapping("/{email}")
         public ResponseEntity<BarbeiroConsulta> getFuncionario(@RequestHeader("Authorization") String token,
                                                                @PathVariable String email){

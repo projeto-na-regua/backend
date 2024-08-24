@@ -1,7 +1,7 @@
 package projetopi.projetopi.entity;
 
 
-import com.microsoft.sqlserver.jdbc.Geography;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -40,10 +40,8 @@ public class Endereco {
     private String cidade;
     @Column(name = "estado")
     private String estado;
-    @Column(name = "longitude")
-    private Double longitude;
-    @Column(name = "latitude")
-    private Double latitude;
+    @Column(name = "localizacao", nullable = false, columnDefinition = "POINT")
+    private Point localizacao;
 
     public Endereco() {
     }

@@ -2,6 +2,8 @@ package projetopi.projetopi.service;
 
 
 import lombok.RequiredArgsConstructor;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Point;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -22,11 +24,14 @@ import projetopi.projetopi.util.Global;
 import projetopi.projetopi.util.Token;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -59,26 +64,16 @@ public class BarbeariaService {
 
     private final Token tk;
 
+    @Autowired
+    private EnderecoService enderecoService;
+
     private final AgendamentoService agendamentoService;
 
 
-
-    public static double calcularDistancia(double lat1, double lon1, double lat2, double lon2) {
-        int raioTerra = 6371; // Raio da Terra em quilômetros
-
-
-        double dLat = Math.toRadians(lat2 - lat1);
-        double dLon = Math.toRadians(lon2 - lon1);
-
-        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
-                        Math.sin(dLon / 2) * Math.sin(dLon / 2);
-
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        double distancia = raioTerra * c;
-
-        return distancia;
-    }
+//
+//    public static double calcularDistancia(Point point, Double raio) {
+//
+//    }
 
     public List<Barbearia> getBarbeariaByEndereco(String token, double raio){
         global.validaCliente(token, "Cliente");
@@ -89,10 +84,7 @@ public class BarbeariaService {
 
 
         for (Barbearia b : barbearias){
-            if (calcularDistancia(cliente.getEndereco().getLatitude(), cliente.getEndereco().getLongitude(),
-                    b.getEndereco().getLatitude(), b.getEndereco().getLongitude()) <= raio){
-                barbeariasProximas.add(b);
-            }
+            barbeariasProximas.add(b);
         }
 
 
@@ -106,9 +98,9 @@ public class BarbeariaService {
         List<BarbeariaPesquisa> barbeariasProximas = new ArrayList<>();
 
 
-        for (Barbearia b : barbearias){
-            barbeariasProximas.add(new BarbeariaPesquisa(b, 0.0));
-        }
+//        for (Barbearia b : barbearias){
+//            barbeariasProximas.add(new BarbeariaPesquisa(b));
+//        }
 
 
         return barbeariasProximas;
@@ -124,14 +116,18 @@ public class BarbeariaService {
 
         Barbearia barbearia = barbeariasRepository.findById(barbeariaId).get();
         DiaSemana[] semana = diaSemanaRepository.findByBarbeariaId(barbearia.getId());
-        return new BarbeariaConsulta(barbearia, semana);
+        String banner = azureStorageService.getBlobUrl(barbearia.getImgBanner());
+        String imgPerfil = azureStorageService.getBlobUrl(barbearia.getImgBanner());
+        return new BarbeariaConsulta(barbearia, semana, banner, imgPerfil);
     }
 
     public BarbeariaConsulta getPerfil(String token){
         global.validaBarbearia(token);
         Barbearia barbearia = barbeariasRepository.findById(global.getBarbeariaByToken(token).getId()).get();
         DiaSemana[] semana = diaSemanaRepository.findByBarbeariaId(barbearia.getId());
-        return new BarbeariaConsulta(barbearia, semana);
+        String banner = azureStorageService.getBlobUrl(barbearia.getImgBanner());
+        String imgPerfil = azureStorageService.getBlobUrl(barbearia.getImgBanner());
+        return new BarbeariaConsulta(barbearia, semana, banner, imgPerfil);
     }
 
 
@@ -154,8 +150,9 @@ public class BarbeariaService {
             nvBarbearia.getDiaSemanas()[i].setBarbearia(barbearia);
             diaSemanaRepository.save(nvBarbearia.getDiaSemanas()[i]);
         }
-
-        return new BarbeariaConsulta(barbeariasRepository.save(b), nvBarbearia.getDiaSemanas());
+        String banner = azureStorageService.getBlobUrl(barbearia.getImgBanner());
+        String imgPerfil = azureStorageService.getBlobUrl(barbearia.getImgBanner());
+        return new BarbeariaConsulta(barbeariasRepository.save(b), nvBarbearia.getDiaSemanas(),banner, imgPerfil);
     }
 
     public ImgConsulta editarImgPerfil(String token, MultipartFile file){
@@ -292,21 +289,9 @@ public class BarbeariaService {
         }
 
         String imageName = barbeariasRepository.findById(idBarbearia).get().getImgPerfil();
-//            byte[] blobBytes = azureStorageService.getBlob(imageName);
-//
-//            BufferedImage image = ImageIO.read(new ByteArrayInputStream(blobBytes));
-//
-//            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//            ImageIO.write(image, "png", baos);
-//            byte[] imageBytes = baos.toByteArray();
-//
-//            ByteArrayResource resource = new ByteArrayResource(imageBytes);
-
-
         return azureStorageService.getBlobUrl(imageName);
-
-
     }
+
 
     void validacoesPermissoes(String token){
         global.validaBarbeiro(token, "Servico");
@@ -314,105 +299,4 @@ public class BarbeariaService {
         global.validaBarbearia(token);
     }
 
-
-    public List<BarbeariaPesquisa> filtroBarberiasNome(String token, String nomeBarbearia) {
-
-        global.validaCliente(token, "Cliente");
-
-        List<Barbearia> barbearias = barbeariasRepository.findByNomeNegocioContaining(nomeBarbearia);
-        List<BarbeariaPesquisa> dtos = new ArrayList<>();
-
-        for (Barbearia b : barbearias){
-            dtos.add(new BarbeariaPesquisa(b, 0.0));
-        }
-
-
-        return dtos;
-    }
-
-    public Endereco editarEndereco(Endereco endereco, Integer id) {
-        Endereco endereco1 = enderecoRepository.findById(id).get();
-        endereco1.setId(id);
-        return  enderecoRepository.save(endereco);
-    }
-
-    public List<BarbeariaPesquisa> getAllByLocalizacao(String token, String servico, LocalDate date, LocalTime time) {
-
-        Cliente cliente = clienteRepository.findById(Integer.valueOf(tk.getUserIdByToken(token))).get();
-        List<Barbearia> barbearias = barbeariasRepository.findBarbeariasByTipoServico(servico);
-        Double raio = 3000.0;
-        List<BarbeariaPesquisa> barbeariasProximas = new ArrayList<>();
-        String dia3Letras = date.format(DateTimeFormatter.ofPattern("EEE", new Locale("pt")))
-                .substring(0, 3).toUpperCase();
-
-        for (Barbearia b : barbearias){
-
-            Double distancia = calcularDistancia(cliente.getEndereco().getLatitude(), cliente.getEndereco().getLongitude(),
-                    b.getEndereco().getLatitude(), b.getEndereco().getLongitude());
-
-            DiaSemana diaSemana = diaSemanaRepository.findByNomeAndBarbeariaId(Dia.valueOf(dia3Letras), b.getId());
-
-            LocalTime horaAbertura = diaSemana.getHoraAbertura();
-            LocalTime horaFechamento = diaSemana.getHoraFechamento();
-
-
-            if (horaAbertura != null && horaFechamento != null){
-                if (distancia <= raio && !time.isBefore(horaAbertura) && !time.isAfter(horaFechamento)){
-                    BarbeariaPesquisa dto = new BarbeariaPesquisa(b, distancia);
-                    barbeariasProximas.add(dto);
-                }
-            }
-
-        }
-
-
-        return barbeariasProximas;
-    }
-
-    public List<BarbeariaPesquisa> getAllByLocalizacaoSemCadastro(String servico, LocalDate date, LocalTime time, Double lat, Double lngt) {
-
-        List<Barbearia> barbearias = barbeariasRepository.findBarbeariasByTipoServico(servico);
-        Double raio = 3000.0;
-        List<BarbeariaPesquisa> barbeariasProximas = new ArrayList<>();
-
-        List<BarbeariaServicoPesquisa> barbeariaServicoPesquisas = new ArrayList<>();
-        String dia3Letras = date.format(DateTimeFormatter.ofPattern("EEE", new Locale("pt")))
-                .substring(0, 3).toUpperCase();
-
-        for (Barbearia b : barbearias){
-
-            Double distancia = calcularDistancia(lat, lngt,
-                    b.getEndereco().getLatitude(), b.getEndereco().getLongitude());
-
-
-            DiaSemana diaSemana = diaSemanaRepository.findByNomeAndBarbeariaId(Dia.valueOf(dia3Letras), b.getId());
-
-            LocalTime horaAbertura = diaSemana.getHoraAbertura();
-            LocalTime horaFechamento = diaSemana.getHoraFechamento();
-
-            if (horaAbertura != null && horaFechamento != null){
-                if (distancia <= raio && !time.isBefore(horaAbertura) && !time.isAfter(horaFechamento)){
-                    BarbeariaPesquisa dto = new BarbeariaPesquisa(b, distancia);
-                    barbeariasProximas.add(dto);
-                }
-            }
-        }
-
-        return barbeariasProximas;
-    }
-
-
-
-    public List<BarbeariaAvaliacao> getTop3Melhores() {
-        List<BarbeariaAvaliacao> lista = barbeariasRepository.findTopBarbearias();
-
-        if (lista.isEmpty()){
-            throw new ResponseStatusException(HttpStatus.NO_CONTENT);
-        }
-
-        for (BarbeariaAvaliacao ba : lista){
-            ba.setImgPerfilBarbearia(azureStorageService.getBlobUrl(ba.getImgPerfilBarbearia()));
-        }
-        return lista;
-    }
 }

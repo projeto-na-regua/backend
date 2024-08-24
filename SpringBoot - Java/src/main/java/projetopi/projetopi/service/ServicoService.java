@@ -95,7 +95,8 @@ public class ServicoService {
     public ServicoConsulta getServico(String token, Integer idServico){
         validacoesPermissoes(token);
         validarServico(idServico); // Lança exceção se o serviço não for encontrado
-        Servico servico = servicoRepository.findByBarbeariaIdAndId(getIdBarbearia(token), idServico);
+        Barbearia barbearia = global.getBarbeariaByToken(token);
+        Servico servico = servicoRepository.findByBarbeariaIdAndId(barbearia.getId(), idServico);
         if (servico == null) {
             throw new RecursoNaoEncontradoException("Serviço", idServico);
         }

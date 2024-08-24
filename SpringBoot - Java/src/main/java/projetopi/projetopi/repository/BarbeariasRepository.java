@@ -45,10 +45,33 @@ public interface BarbeariasRepository extends JpaRepository<Barbearia, Integer> 
               "GROUP BY b.id, b.nomeNegocio, b.imgPerfil " +
               "ORDER BY media DESC")
       List<BarbeariaAvaliacao> findTopBarbearias();
+
+      @Query(value = "SELECT b FROM Barbearia b " +
+              "JOIN b.endereco e " +
+              "WHERE ST_Distance_Sphere(e.localizacao, ST_GeomFromText(:ponto, 4326)) <= :raio")
+      List<Barbearia> findBarbeariasProximas(@Param("ponto") String ponto, @Param("raio") Double raio);
+
+      @Query(value = "SELECT DISTINCT b.*, AVG(a.resultado_avaliacao) AS media_avaliacao " +
+              "FROM barbearia b " +
+              "JOIN endereco e ON b.barbearia_fk_endereco = e.id_endereco " +
+              "JOIN servico s ON b.id_barbearia = s.servico_fk_barbearia " +
+              "JOIN dia_semana ds ON b.id_barbearia = ds.ds_id_barbearia " +
+              "LEFT JOIN agendamento ag ON b.id_barbearia = ag.barbearia_id_barbearia " +
+              "LEFT JOIN avaliacao a ON ag.ag_fk_avaliacao = a.id_avaliacao " +
+              "WHERE (:ponto IS NULL OR ST_Distance_Sphere(e.localizacao, ST_GeomFromText(:ponto, 4326)) <= :raio) " +
+              "AND (:tipoServico IS NULL OR LOWER(s.tipo_servico) LIKE LOWER(CONCAT('%', :tipoServico, '%'))) " +
+              "AND (:diaSemana IS NULL OR ds.nome = :diaSemana) " +
+              "AND (:hora IS NULL OR (ds.hora_abertura <= :hora AND ds.hora_fechamento >= :hora)) " +
+              "GROUP BY b.id_barbearia",
+              nativeQuery = true)
+      List<Object[]> findBarbeariasProximasByTipoServicoEDisponibilidadeComMedia(
+              @Param("ponto") String ponto,
+              @Param("raio") Double raio,
+              @Param("tipoServico") String tipoServico,
+              @Param("diaSemana") String diaSemana,
+              @Param("hora") LocalTime hora);
+
+
 }
 
-//      @Query("SELECT b FROM Barbearia b WHERE " +
-//              "distance(geography::Point(:latitude, :longitude, 4326), b.endereco.location) <= :raio")
-//      List<Barbearia> encontrarBarbeariasProximas(@Param("latitude") Double latitude,
-//                                                  @Param("longitude") Double longitude,
-//                                                  @Param("raio") Double raio);
+

@@ -27,6 +27,9 @@ public class ImgsGaleria {
     @JoinColumn(name="usuario_id_usuario", nullable = false)
     private Cliente cliente;
 
+    @Column(name="is_active")
+    private Boolean isActive;
+
     public ImgsGaleria(String imagem, String descricao, Cliente cliente) {
         this.imagem = imagem;
         this.descricao = descricao;

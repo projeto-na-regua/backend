@@ -29,6 +29,4 @@ public class EspecialidadeController {
         return of(especialidadeRepository.findById(id));
     }
 
-
-
 }

@@ -20,19 +20,27 @@ public class BarbeariaPesquisa {
 
     private Integer numero;
 
-    private Double latitude;
-    private Double longitude;
+    private Double mediaAvaliacao;
 
-    private Double distancia;
 
-    public BarbeariaPesquisa(Barbearia barbearia, Double distancia) {
+
+    public BarbeariaPesquisa(Barbearia barbearia, Double mediaAvaliacao, String linkImgPerfil) {
         this.id = barbearia.getId();
         this.nomeNegocio = barbearia.getNomeNegocio();
         this.logradouro = barbearia.getEndereco().getLogradouro();
         this.numero = barbearia.getEndereco().getNumero();
-        this.distancia = distancia;
+        this.imgPerfil = linkImgPerfil;
+        this.mediaAvaliacao = mediaAvaliacao;
+    }
+
+    public BarbeariaPesquisa(Barbearia barbearia) {
+        this.id = barbearia.getId();
+        this.nomeNegocio = barbearia.getNomeNegocio();
+        this.logradouro = barbearia.getEndereco().getLogradouro();
+        this.numero = barbearia.getEndereco().getNumero();
         this.imgPerfil = barbearia.getImgPerfil();
-        this.latitude = barbearia.getEndereco().getLatitude();
-        this.longitude = barbearia.getEndereco().getLongitude();
+    }
+
+    public BarbeariaPesquisa() {
     }
 }
