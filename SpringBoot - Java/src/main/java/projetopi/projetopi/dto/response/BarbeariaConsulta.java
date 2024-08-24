@@ -30,7 +30,7 @@ public class BarbeariaConsulta {
     public BarbeariaConsulta() {
     }
 
-    public BarbeariaConsulta(Barbearia barbearia, DiaSemana[] semana) {
+    public BarbeariaConsulta(Barbearia barbearia, DiaSemana[] semana, String linkImgBanner, String linkImagemPerfil) {
         this.id = barbearia.getId();
         this.nomeNegocio = barbearia.getNomeNegocio();
         this.emailNegocio = barbearia.getEmailNegocio();
@@ -43,8 +43,8 @@ public class BarbeariaConsulta {
         this.cidade = barbearia.getEndereco().getCidade();
         this.estado = barbearia.getEndereco().getEstado();
         this.diaSemanas = semana;
-        this.imgPerfil = barbearia.getImgPerfil();
-        this.imgBanner = barbearia.getImgBanner();
+        this.imgPerfil = linkImgBanner;
+        this.imgBanner = linkImagemPerfil;
     }
 
 }

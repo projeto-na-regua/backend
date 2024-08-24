@@ -53,24 +53,18 @@ public class AgendamentoService {
     private final DiaSemanaRepository diaSemanaRepository;
 
     @Autowired
-    private final AvaliacaoRepository avaliacaoRepository;
-
-    @Autowired
-    private final BarbeiroServicoRepository barbeiroServicoRepository;
     private final UsuarioRepository usuarioRepository;
 
-    private final FuncionarioService funcionarioService;
-
     private ModelMapper mapper;
-
-    @Autowired
-    private Global global;
 
     @Autowired
     private StorageService azureStorageService;
 
     @Autowired
     private Token tk;
+
+    @Autowired
+    private Global global;
 
     private final Map<Integer, FilaHistorico> historicoPorCliente;
 
@@ -79,111 +73,77 @@ public class AgendamentoService {
     }
 
     public String definirStatus(String status){
-        String stt = null;
-
-        if (status.equalsIgnoreCase("Pendente")){
-            stt = "Pendente";
-        }else if (status.equalsIgnoreCase("Concluido")){
-            stt = "Concluido";
-        }else if (status.equalsIgnoreCase("Agendado")){
-            stt = "Agendado";
-        }else if (status.equalsIgnoreCase("Cancelado")){
-            stt = "Cancelado";
-        }
-
-        return stt;
+        return switch (status.toLowerCase()){
+            case "pendente", "concluido", "agendado", "cancelado", "none" ->
+                status.substring(0,1).toUpperCase() + status.substring(1).toLowerCase();
+            default -> null;
+        };
     }
 
-    public List<AgendamentoConsulta> getAgendamento(String token, String status) {
-        List<Agendamento> agendamentos = new ArrayList<>();
+    public List<AgendamentoConsulta> getAgendamento(String token, String inputStatus) {
+
+        String status = Optional.ofNullable(definirStatus(inputStatus))
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Status de agendamento inválido"));
+
+        Usuario usuario = usuarioRepository.findById(Integer.valueOf(tk.getUserIdByToken(token)))
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Usuário", tk.getUserIdByToken(token)));
 
 
-        if (!(status.equalsIgnoreCase("Pendente") ||
-                status.equalsIgnoreCase("Agendado") ||
-                status.equalsIgnoreCase("Concluido") ||
-                status.equalsIgnoreCase("Cancelado") ||
-                status.equalsIgnoreCase("none"))) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Status de agendamento inválido");
-        }
-
-        String stt = definirStatus(status);
-
-
-        Integer userId = Integer.valueOf(tk.getUserIdByToken(token));
-        Usuario usuario = usuarioRepository.findById(userId).get();
-        if (usuario.getDtype().equalsIgnoreCase("Barbeiro")) {
-            Barbeiro barbeiro = barbeiroRepository.findById(userId).get();
-            agendamentos = stt == null ? repository.findByBarbeiroId(barbeiro.getId())
-                    : repository.findByBarbeiroIdAndStatus(barbeiro.getId(), stt);
-        } else {
-            Cliente cliente = clienteRepository.findById(userId).get();
-            agendamentos = stt == null ? repository.findByClienteId(cliente.getId())
-                    : repository.findByClienteIdAndStatus(cliente.getId(), stt);
-        }
-
-
-        if (agendamentos.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NO_CONTENT, "Nenhum agendamento encontrado");
-        }
-
-        List<AgendamentoConsulta> dtos = new ArrayList<>();
-        for (Agendamento a : agendamentos) {
-                AgendamentoConsulta dto = AgendamentoMapper.toDto(a);
-                dto.setImgPerfilBarbearia(azureStorageService.getBlobUrl(a.getBarbearia().getImgPerfil()));
-                dtos.add(dto);
-
-        }
-        return dtos;
-    }
-
-    public List<AgendamentoConsulta> getAgendamentoBarbearia(String token, String status) {
         List<Agendamento> agendamentos;
+        if (status.equals("None")){
 
-        if (!(status.equalsIgnoreCase("Pendente") ||
-                status.equalsIgnoreCase("Agendado") ||
-                status.equalsIgnoreCase("Concluido") ||
-                status.equalsIgnoreCase("Cancelado") ||
-                status.equalsIgnoreCase("none"))) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Status de agendamento inválido");
+            agendamentos = Global.isBarbeiro(usuario)
+                    ? repository.findByBarbeiroId(usuario.getId())
+                    : repository.findByClienteId(usuario.getId());
+        }else{
+            agendamentos = Global.isBarbeiro(usuario)
+                    ? repository.findByBarbeiroIdAndStatus(usuario.getId(), status)
+                    : repository.findByClienteIdAndStatus(usuario.getId(), status);
         }
 
-        agendamentos = repository.findAgendamentosByBarbeariaIdAndStatus(global.getBarbeariaByToken(token).getId());
-        System.out.println(agendamentos);
+        if (agendamentos.isEmpty()) throw new ResponseStatusException(HttpStatus.NO_CONTENT, "Nenhum agendamento encontrado");
 
-        if (agendamentos.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NO_CONTENT, "Nenhum agendamento encontrado");
-        }
+        return agendamentos.stream()
+                .map(ag -> {
+                    AgendamentoConsulta dto = AgendamentoMapper.toDto(ag);
+                    String imgPerfilUrl = azureStorageService.getBlobUrl(ag.getBarbearia().getImgPerfil());
+                    dto.setImgPerfilBarbearia(imgPerfilUrl);
+                    return dto;                })
+                .collect(Collectors.toList());
+    }
 
-        List<AgendamentoConsulta> dtos = new ArrayList<>();
-        for (Agendamento a : agendamentos) {
-            if(!(a.getStatus().equalsIgnoreCase("Concluido"))){
-                AgendamentoConsulta dto = AgendamentoMapper.toDto(a);
-                dto.setImgPerfilBarbearia(azureStorageService.getBlobUrl(a.getBarbearia().getImgPerfil()));
-                dtos.add(dto);
-            }
-        }
 
-        return dtos;
+
+    public List<AgendamentoConsulta> getAgendamentoBarbearia(String token, String inputStatus) {
+
+        String status = Optional.ofNullable(definirStatus(inputStatus))
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Status de agendamento inválido"));
+
+        List<Agendamento> agendamentos = repository.findAgendamentosByBarbeariaIdAndStatus(global.getBarbeariaByToken(token).getId());
+
+        if (agendamentos.isEmpty()) throw new ResponseStatusException(HttpStatus.NO_CONTENT, "Nenhum agendamento encontrado");
+
+        return agendamentos.stream()
+            .filter(ag -> !ag.getStatus().equalsIgnoreCase("Concluido"))
+            .map(ag -> {
+                AgendamentoConsulta dto = AgendamentoMapper.toDto(ag);
+                dto.setImgPerfilBarbearia(azureStorageService.getBlobUrl(ag.getBarbearia().getImgPerfil()));
+                return dto;
+        }).collect(Collectors.toList());
     }
 
 
     public AgendamentoConsulta getOneAgendamento(String token, Integer id){
 
-        if (!usuarioRepository.existsById(Integer.valueOf(tk.getUserIdByToken(token)))){
-            throw new AcessoNegadoException("Usuário");
-        }
+        if (!usuarioRepository.existsById(Integer.valueOf(tk.getUserIdByToken(token)))) throw new AcessoNegadoException("Usuário");
 
-        if (!repository.existsById(id)){
-            throw new RecursoNaoEncontradoException("Agendamento", id);
-        }
-
+        if (!repository.existsById(id)) throw new RecursoNaoEncontradoException("Agendamento", id);
 
         AgendamentoConsulta dto = AgendamentoMapper.toDto(repository.findById(id).get());
         dto.setImgPerfilBarbearia(azureStorageService.getBlobUrl(repository.findById(id).get().getBarbearia().getImgPerfil()));
-
-
         return dto;
     }
+
 
     public List<HorarioDiaSemana> getHorarios(String token, BarbeiroServicoId barbeiroServicoId, LocalDate date){
 
@@ -192,7 +152,8 @@ public class AgendamentoService {
 
         DiaSemana diaSemana = diaSemanaRepository.findByNomeAndBarbeariaId(Dia.valueOf(dia3Letras), barbeiroServicoId.getBarbearia());
 
-        Servico servico = servicoRepository.findById(barbeiroServicoId.getServico()).get();
+        Servico servico = servicoRepository.findById(barbeiroServicoId.getServico())
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Serviço", barbeiroServicoId.getServico()));
 
         Integer tempoEstimado = servico.getTempoEstimado();
 
@@ -224,55 +185,48 @@ public class AgendamentoService {
     }
 
 
-    public AgendamentoConsulta updateStatus(String token, Integer id, String status) {
-        Integer userId = Integer.valueOf(tk.getUserIdByToken(token));
-        if (!repository.existsById(id)) {
-            throw new RecursoNaoEncontradoException("Agendamento", id);
-        }
+    public AgendamentoConsulta updateStatus(String token, Integer id, String inputStatus) {
 
-        if (!usuarioRepository.existsById(userId)) {
-            throw new AcessoNegadoException("Usuário");
-        }
+        Usuario user = usuarioRepository.findById(Integer.valueOf(tk.getUserIdByToken(token)))
+                .orElseThrow(() -> new AcessoNegadoException("Usuário"));
 
-        Agendamento agendamento = repository.findById(id).get();
+        Agendamento agendamento = repository.findById(id)
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Agendamento", id));
 
-        if (usuarioRepository.findById(userId).get().getDtype().equalsIgnoreCase("Barbeiro")) {
+        String newStatus = definirStatus(inputStatus);
+
+        if (Global.isBarbeiro(user)) {
             global.validaBarbearia(token);
-            if (!status.equalsIgnoreCase("Concluido")
-                    && !status.equalsIgnoreCase("Agendado")
-                    && !status.equalsIgnoreCase("Cancelado")) {
+            if (newStatus.equalsIgnoreCase("Pendente") || newStatus.equalsIgnoreCase("None")){
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Status de agendamento inválido");
             }
+
         } else {
-            if (!status.equalsIgnoreCase("Cancelado")) {
+            global.validaCliente(token, "Cliente");
+            if (!newStatus.equalsIgnoreCase("Cancelado")) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Status de agendamento inválido");
             }
         }
 
-        if (!(agendamento.getStatus().equalsIgnoreCase("Pendente")) &&
-                !(agendamento.getStatus().equalsIgnoreCase("Agendado"))) {
+        String currentStatus = agendamento.getStatus();
+
+        boolean isValidCurrentStatus = "Pendente".equalsIgnoreCase(currentStatus) || "Agendado".equalsIgnoreCase(currentStatus);
+        boolean isInvalidTransition = "Pendente".equalsIgnoreCase(currentStatus) && "Concluido".equalsIgnoreCase(newStatus);
+        boolean isSameStatus = currentStatus.equalsIgnoreCase(newStatus);
+
+        if (!isValidCurrentStatus || isInvalidTransition || isSameStatus) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Status de agendamento inválido");
         }
 
-        if (agendamento.getStatus().equalsIgnoreCase("Pendente")
-                && definirStatus(status).equalsIgnoreCase("Concluido")) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Status de agendamento inválido");
-        }
-
-        if (agendamento.getStatus().equalsIgnoreCase(definirStatus(status))) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Status de agendamento inválido");
-        }
-
-        if (definirStatus(status).equalsIgnoreCase("Concluido")) {
+        if (newStatus.equalsIgnoreCase("Concluido")) {
             agendamento.setDataHoraConcluido(LocalDateTime.now());
             AgendamentoConsulta agendamentoConsulta = AgendamentoMapper.toDto(agendamento);
-            FilaHistorico fila = getFilaHistoricoParaCliente(userId);
+            FilaHistorico fila = getFilaHistoricoParaCliente(user.getId());
             fila.adicionar(agendamentoConsulta);
         }
 
-        agendamento.setStatus(definirStatus(status));
+        agendamento.setStatus(newStatus);
         repository.save(agendamento);
-
         return AgendamentoMapper.toDto(agendamento);
     }
 
@@ -280,33 +234,26 @@ public class AgendamentoService {
     public AgendamentoConsulta adicionarAgendamento(AgendamentoCriacao a, String token){
 
         global.validaCliente(token, "Usuário");
-        Cliente cliente = clienteRepository.findById(Integer.valueOf(tk.getUserIdByToken(token))).get();
 
+        Cliente cliente = clienteRepository.findById(Integer.valueOf(tk.getUserIdByToken(token)))
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Cliente", tk.getUserIdByToken(token)));
 
-        if (!barbeariasRepository.existsById(a.getIdBarbearia())){
-            throw new RecursoNaoEncontradoException("Barbearia", a.getIdBarbearia());
-        }
+        Servico servico = servicoRepository.findById(a.getIdServico())
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Serviço", a.getIdServico()));
 
-        if (!barbeiroRepository.existsById(a.getIdBarbeiro())){
-            throw new RecursoNaoEncontradoException("Barbeiro", a.getIdBarbeiro());
-        }
+        Barbeiro barbeiro = barbeiroRepository.findById(a.getIdBarbeiro())
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Barbeiro", a.getIdBarbeiro()));
 
-        if (!servicoRepository.existsById(a.getIdServico())){
-            throw new RecursoNaoEncontradoException("Serviço", a.getIdServico());
-        }
+        Barbearia barbearia = barbeariasRepository.findById(a.getIdBarbearia())
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Barbearia", a.getIdBarbearia()));
 
-        Servico servico = servicoRepository.findById(a.getIdServico()).get();
-        Barbeiro barbeiro = barbeiroRepository.findById(a.getIdBarbeiro()).get();
-        Barbearia barbearia = barbeariasRepository.findById(a.getIdBarbearia()).get();
-        Agendamento nvAgendamento = new Agendamento(a.getDataHora(), servico, barbeiro, cliente, barbearia);
-        nvAgendamento.setStatus("Pendente");
-
-
-        return AgendamentoMapper.toDto(repository.save(nvAgendamento));
+        return AgendamentoMapper.toDto(repository.save(new Agendamento(a.getDataHora(), servico, barbeiro, cliente, barbearia)));
     }
+
 
     public List<AgendamentoConsulta> getHistoricoPorCliente(String token) {
         Integer userId = Integer.valueOf(tk.getUserIdByToken(token));
+
         if (!usuarioRepository.existsById(userId)) {
             throw new AcessoNegadoException("Usuário");
         }
@@ -325,113 +272,14 @@ public class AgendamentoService {
 
         fila.getFila().clear();
 
-        for (Agendamento a : agendamentosConcluidos) {
-            AgendamentoConsulta agendamentoConsulta = AgendamentoMapper.toDto(a);
-            agendamentoConsulta.setImgPerfilBarbearia(azureStorageService.getBlobUrl(a.getBarbearia().getImgPerfil()));
-            fila.adicionar(agendamentoConsulta);
-        }
-
-        return new ArrayList<>(fila.getHistorico());
-    }
-
-    public DashboardConsulta getMetricasDash(String token, LocalDate dateInicial, LocalDate dateFinal, Integer qtdDias) {
-
-        global.validarBarbeiroAdm(token, "Barbeiro");
-        global.validaBarbearia(token);
-        Barbearia barbearia = global.getBarbeariaByToken(token);
-
-        LocalDateTime dataInicialDateTime = dateInicial.atStartOfDay();
-        LocalDateTime dataFinalDateTime = dateFinal.atTime(LocalTime.MAX);
-
-        List<TotalValorPorDia> agendamentosdByDay = countConcluidoByDayForLastDays(barbearia.getId(), qtdDias);
-
-
-        List<LocalDate> datas = new ArrayList<>();
-        List<Long> precos = new ArrayList<>();
-
-        for(TotalValorPorDia a : agendamentosdByDay){
-            datas.add(a.getData());
-            precos.add(a.getTotal());
-        }
-
-        DashboardConsulta dto = repository.findDashboardData(barbearia.getId(), dataInicialDateTime, dataFinalDateTime);
-
-
-        dto.setMediaAvaliacoes(repository.findAverageResultadoAvaliacao(barbearia.getId()));
-        dto.setValoresGrafico(precos);
-        dto.setDatasGrafico(datas);
-
-
-        return dto;
-    }
-
-    public List<AvaliacaoConsulta> getAvaliacoes(String token, Integer quantidade) {
-
-        global.validarBarbeiroAdm(token, "Barbeiro");
-        global.validaBarbearia(token);
-        Barbearia barbearia = global.getBarbeariaByToken(token);
-
-
-        List<AvaliacaoConsulta> dto = repository.findUltimasAvaliacoes(barbearia.getId(), quantidade);
-
-        if (dto.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NO_CONTENT, "Nenhum agendamento concluído encontrado");
-        }
-
-        return dto;
-    }
-
-    public List<AvaliacaoConsulta> getAvaliacoesClienteSide(String token, Integer quantidade, Integer idBarbearia) {
-
-        global.validaCliente(token, "Cliente");
-
-        if (!barbeariasRepository.existsById(idBarbearia)){
-            throw new RecursoNaoEncontradoException("Barbearia", idBarbearia);
-        }
-        Barbearia barbearia = barbeariasRepository.findById(idBarbearia).get();
-
-
-        List<AvaliacaoConsulta> dto = repository.findUltimasAvaliacoes(barbearia.getId(), quantidade);
-
-        if (dto.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NO_CONTENT, "Nenhum agendamento concluído encontrado");
-        }
-
-        return dto;
-    }
-
-//    public List<AvaliacaoConsulta> getAllAvaliacoesClienteSide(String token, Integer quantidade, List<Integer> idBarbearias) {
-//
-//        global.validaCliente(token, "Cliente");
-//
-//        for (Integer idBarbearia : idBarbearias) {
-//            if (!barbeariasRepository.existsById(idBarbearia)){
-//                throw new RecursoNaoEncontradoException("Barbearia", idBarbearia);
-//            }
-//        }
-//
-//        List<AvaliacaoConsulta> dto = repository.findAllUltimasAvaliacoes(idBarbearias, quantidade);
-//
-//        if (dto.isEmpty()) {
-//            throw new ResponseStatusException(HttpStatus.NO_CONTENT, "Nenhum agendamento concluído encontrado");
-//        }
-//
-//        return dto;
-//    }
-
-
-
-    public List<TotalValorPorDia> countConcluidoByDayForLastDays(Integer barbeariaId, int days) {
-        LocalDateTime startDate = LocalDateTime.now().minus(days, ChronoUnit.DAYS);
-        List<Object[]> results = repository.debugCountConcluidoByDay(barbeariaId, startDate);
-
-        return results.stream().map(result -> {
-            LocalDate date = ((java.sql.Date) result[0]).toLocalDate();
-            Long count = (Long) result[1];
-            return new TotalValorPorDia(date, count);
+        fila = (FilaHistorico) agendamentosConcluidos.stream().map(ag -> {
+            AgendamentoConsulta agendamentoConsulta = AgendamentoMapper.toDto(ag);
+            agendamentoConsulta.setImgPerfilBarbearia(azureStorageService.getBlobUrl(ag.getBarbearia().getImgPerfil()));
+            return agendamentoConsulta;
         }).collect(Collectors.toList());
-    }
 
+        return fila.getHistorico();
+    }
 
 
     public List<AgendamentoConsulta> getAvaliacoes(String token) {
@@ -457,19 +305,5 @@ public class AgendamentoService {
         return dtos;
     }
 
-    public Avaliacao postAvaliacao(String token, Avaliacao a, Integer idAgendamento){
-        global.validaCliente(token, "Cliente");
 
-
-        Avaliacao avaliacaoSalva = avaliacaoRepository.save(a);
-
-        if (!repository.existsById(idAgendamento)) throw new  ResponseStatusException(HttpStatus.BAD_REQUEST);
-
-        Agendamento agendamento = repository.findById(idAgendamento).get();
-
-
-        agendamento.setAvaliacao(avaliacaoSalva);
-        repository.save(agendamento);
-        return avaliacaoSalva;
-    }
 }

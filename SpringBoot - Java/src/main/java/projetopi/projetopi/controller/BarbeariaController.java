@@ -39,101 +39,32 @@ public class BarbeariaController {
         return status(200).body(service.findAll(token));
     }
 
-    @GetMapping("/client-side/pesquisa-by-localizacao")
-    public ResponseEntity<List<BarbeariaPesquisa>> getBarbeariasByToken(@RequestHeader("Authorization") String token,
-                                                                        @RequestParam String servico,
-                                                                        @RequestParam LocalDate date,
-                                                                        @RequestParam LocalTime time){
-
-        return status(200).body(service.getAllByLocalizacao(token, servico, date, time));
-    }
-
-    @GetMapping("/no-token/pesquisa-by-localizacao")
-    public ResponseEntity<List<BarbeariaPesquisa>> getBarbeariasByToken(@RequestParam Double lat,
-                                                                        @RequestParam Double lngt,
-                                                                        @RequestParam String servico,
-                                                                        @RequestParam LocalDate date,
-                                                                        @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)LocalTime time){
-
-        return status(200).body(service.getAllByLocalizacaoSemCadastro(servico, date, time, lat, lngt));
-    }
-
-    @GetMapping("/client-side/perfil/{idBarbearia}")
-    public ResponseEntity<BarbeariaConsulta> getPerfilByCliente(@RequestHeader("Authorization") String token,
-                                                       @PathVariable Integer idBarbearia){
-        return status(200).body(service.getPerfilForCliente(token, idBarbearia));
-    }
-
-    @GetMapping("/client-side/filtro")
-    public ResponseEntity<List<BarbeariaPesquisa>> getPerfilByCliente(@RequestHeader("Authorization") String token,
-                                                                @RequestParam String nomeBarbearia){
-        return status(200).body(service.filtroBarberiasNome(token, nomeBarbearia));
-    }
 
     @GetMapping("/perfil")
     public ResponseEntity<BarbeariaConsulta> getPerfil(@RequestHeader("Authorization") String token){
         return status(200).body(service.getPerfil(token));
     }
 
-    @GetMapping("/get-image-perfil")
-    public ResponseEntity<ByteArrayResource> getImagePerfil(@RequestHeader("Authorization") String token){
-        ByteArrayResource resource = service.getImagePerfil(token);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.IMAGE_PNG);
-
-        return ResponseEntity.ok().headers(headers).contentLength(resource.contentLength()).body(resource);
-    }
-
-    @GetMapping("/client-side/get-one-image-perfil/{idBarbearia}")
-    public ResponseEntity<String> getImagePerfilClienteSide(@RequestHeader("Authorization") String token, @PathVariable Integer idBarbearia){
-
-
-//        ByteArrayResource resource = service.getImagePerfilClienteSide(token, idBarbearia);
+//    @GetMapping("/client-side/get-one-image-perfil/{idBarbearia}")
+//    public ResponseEntity<String> getImagePerfilClienteSide(@RequestHeader("Authorization") String token, @PathVariable Integer idBarbearia){
+//        return ResponseEntity.ok().body(service.getImagePerfilClienteSide(token, idBarbearia));
+//    }
 //
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.setContentType(MediaType.IMAGE_PNG);
-
-        return ResponseEntity.ok().body(service.getImagePerfilClienteSide(token, idBarbearia));
-    }
-
-    @GetMapping("/client-side/get-image-banner/{idBarbearia}")
-    public ResponseEntity<String> getImageBanner(@RequestHeader("Authorization") String token, @PathVariable Integer idBarbearia){
-//        ByteArrayResource resource = service.getImageBannerClieteSide(token, idBarbearia);
+//    @GetMapping("/client-side/get-image-banner/{idBarbearia}")
+//    public ResponseEntity<String> getImageBanner(@RequestHeader("Authorization") String token, @PathVariable Integer idBarbearia){
+//        return ResponseEntity.ok().body(service.getImageBannerClieteSide(token, idBarbearia));
+//    }
 //
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.setContentType(MediaType.IMAGE_PNG);
-
-        return ResponseEntity.ok().body(service.getImageBannerClieteSide(token, idBarbearia));
-    }
-
-
-
-    @GetMapping("/client-side/get-image-perfil")
-    public ResponseEntity<List<String>> getImagePerfilCliente(@RequestHeader("Authorization") String token) {
-        List<String> imageBytes = service.getImagePerfilCliente(token);
-
-        return ResponseEntity.ok()
-                .body(imageBytes);
-    }
-
-//    @GetMapping("/client-side/get-image-perfil/agendamento-concluido")
-//    public ResponseEntity<List<String>> getImagePerfilClienteAgendamentoConcluido(@RequestHeader("Authorization") String token) {
-//        List<String> imageBytes = service.getImagePerfilClienteAgendamentoConcluido(token);
+//
+//    @GetMapping("/client-side/get-image-perfil")
+//    public ResponseEntity<List<String>> getImagePerfilCliente(@RequestHeader("Authorization") String token) {
+//        List<String> imageBytes = service.getImagePerfilCliente(token);
 //
 //        return ResponseEntity.ok()
 //                .body(imageBytes);
 //    }
 
-    @GetMapping("/get-image-banner")
-    public ResponseEntity<ByteArrayResource> getImageBanner(@RequestHeader("Authorization") String token){
-        ByteArrayResource resource = service.getImageBanner(token);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.IMAGE_PNG);
-
-        return ResponseEntity.ok().headers(headers).contentLength(resource.contentLength()).body(resource);
-    }
 
     @PutMapping("/image-perfil")
     public ResponseEntity<ImgConsulta> getPerfil(@RequestHeader("Authorization") String token,
@@ -155,16 +86,12 @@ public class BarbeariaController {
     }
 
 
-    @PutMapping("/editar-endereco/{id}")
-    public ResponseEntity<Endereco> editarPerfilInfo(@Valid @RequestBody Endereco endereco, @PathVariable Integer id){
-        return status(200).body(service.editarEndereco(endereco, id));
+    @GetMapping("/client-side/perfil/{idBarbearia}")
+    public ResponseEntity<BarbeariaConsulta> getPerfilByCliente(@RequestHeader("Authorization") String token,
+                                                                @PathVariable Integer idBarbearia){
+        return status(200).body(service.getPerfilForCliente(token, idBarbearia));
     }
 
-
-    @GetMapping("/top-3-barbarias-avaliacoes")
-    public ResponseEntity<List<BarbeariaAvaliacao>> getTop3MelhoreAvaliacoes(){
-        return ok().body(service.getTop3Melhores());
-    }
 
 
 

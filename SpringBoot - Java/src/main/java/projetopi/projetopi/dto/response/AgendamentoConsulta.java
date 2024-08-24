@@ -45,8 +45,6 @@ public class AgendamentoConsulta {
     private String comentario;
 
 
-
-
     public AgendamentoConsulta(Integer id, String status, LocalDateTime dataHora, String tipoServico, String descricao, Double valorServico, String nomeCliente, String nomeBarbeiro, String nomeNegocio, Endereco enderecoBarbearia,
        Integer tempoEstimado, Double avaliacao, String comentario) {
         this.dataHora = dataHora;

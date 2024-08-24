@@ -54,6 +54,8 @@ public class StorageService {
     }
 
     public String getBlobUrl(String blobName) {
+
+        if (blobName == null) return null;
         String containerName = "upload";
         BlobContainerClient containerClient = azureStorageManager.setCliente(containerName).getContainerClient();
         BlobClient blobClient = containerClient.getBlobClient(blobName);

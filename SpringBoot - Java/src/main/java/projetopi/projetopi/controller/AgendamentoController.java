@@ -11,6 +11,8 @@ import projetopi.projetopi.dto.response.*;
 import projetopi.projetopi.entity.*;
 import projetopi.projetopi.repository.AgendaRepository;
 import projetopi.projetopi.service.AgendamentoService;
+import projetopi.projetopi.service.AvaliacaoService;
+import projetopi.projetopi.service.DashboardService;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -24,10 +26,13 @@ import static org.springframework.http.ResponseEntity.status;
 public class AgendamentoController{
 
     @Autowired
-    private AgendaRepository repository;
+    private AgendamentoService service;
 
     @Autowired
-    private AgendamentoService service;
+    private AvaliacaoService avaliacaoService;
+
+    @Autowired
+    private DashboardService dashboardService;
 
     @PostMapping
     public ResponseEntity<AgendamentoConsulta> adicionarAgendamento(@RequestHeader("Authorization") String token,
@@ -60,8 +65,6 @@ public class AgendamentoController{
 
 
 
-
-
     @GetMapping("/{id}")
     public ResponseEntity<AgendamentoConsulta> getOneAgendamento(@RequestHeader("Authorization") String token,
                                                                     @PathVariable Integer id){
@@ -85,7 +88,7 @@ public class AgendamentoController{
                                                              @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateFinal,
                                                              @RequestParam Integer qtdDiasParaGrafico){
 
-        return status(200).body(service.getMetricasDash(token, dateInicial, dateFinal, qtdDiasParaGrafico));
+        return status(200).body(dashboardService.getMetricasDash(token, dateInicial, dateFinal, qtdDiasParaGrafico));
 
     }
 
@@ -99,7 +102,7 @@ public class AgendamentoController{
     public  ResponseEntity<Avaliacao> getAllAvaliacoes(@RequestHeader("Authorization") String token,
                                                              @RequestBody Avaliacao a,
                                                              @PathVariable Integer idAgendamento){
-        return ok().body(service.postAvaliacao(token, a, idAgendamento));
+        return ok().body(avaliacaoService.postAvaliacao(token, a, idAgendamento));
     }
 
 
@@ -107,14 +110,14 @@ public class AgendamentoController{
     public ResponseEntity<List<AvaliacaoConsulta>> getAgendamentos(
             @RequestHeader("Authorization") String token, @PathVariable Integer qtd) {
 
-        return ResponseEntity.ok(service.getAvaliacoes(token, qtd));
+        return ResponseEntity.ok(avaliacaoService.getAvaliacoes(token, qtd));
     }
 
     @GetMapping("/cliente-side/ultimas-avaliacoes")
     public ResponseEntity<List<AvaliacaoConsulta>> getAgendamentos(
             @RequestHeader("Authorization") String token, @RequestParam Integer qtd, @RequestParam Integer idBarbearia) {
 
-        return ResponseEntity.ok(service.getAvaliacoesClienteSide(token, qtd, idBarbearia));
+        return ResponseEntity.ok(avaliacaoService.getAvaliacoesClienteSide(token, qtd, idBarbearia));
     }
 
 //    @GetMapping("/cliente-side/all-ultimas-avaliacoes")

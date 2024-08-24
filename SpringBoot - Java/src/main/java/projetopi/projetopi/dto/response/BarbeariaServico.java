@@ -11,7 +11,7 @@ public class BarbeariaServico {
     private ServicoConsulta servico;
 
     public BarbeariaServico(Barbearia barbearia, Servico servico) {
-        this.barbearia = new BarbeariaPesquisa(barbearia, 0.);
+        this.barbearia = new BarbeariaPesquisa(barbearia);
         this.servico = new ServicoConsulta(servico);
     }
 }

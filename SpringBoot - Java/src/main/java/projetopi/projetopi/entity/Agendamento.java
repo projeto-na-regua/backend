@@ -78,6 +78,7 @@ public class Agendamento {
         this.barbeiro = barbeiro;
         this.cliente = cliente;
         this.barbearia = barbearia;
+        this.status = "Pendente";
     }
 
     public Agendamento(LocalDateTime dataHora, Servico servico, Barbeiro barbeiro, Barbearia barbearia) {

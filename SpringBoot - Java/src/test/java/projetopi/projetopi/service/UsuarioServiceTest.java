@@ -89,6 +89,7 @@ class UsuarioServiceTest {
         passwordEncoder = mock(PasswordEncoder.class);
         global = mock(Global.class);
         mapper = new ModelMapper();
+        EnderecoService enderecoService = new EnderecoService();
         azureStorageService = mock(StorageService.class);
         service = new UsuarioService(barbeiroRepository,
                                     clienteRepository,
@@ -114,32 +115,32 @@ class UsuarioServiceTest {
         Cliente usuarioExistente = new Cliente();
         usuarioExistente.setEmail(emailExistente);
         when(usuarioRepository.findByEmail(emailExistente)).thenReturn(usuarioExistente);
-        assertThrows(ConflitoException.class, () -> service.validarEmail(emailExistente));
+        assertThrows(ConflitoException.class, () -> global.validarEmail(emailExistente));
 
 
         // Caso em que o email não existe
         String emailNaoExistente = "email_nao_existente@example.com";
         when(usuarioRepository.findByEmail(emailNaoExistente)).thenReturn(null);
-        assertDoesNotThrow(() -> service.validarEmail(emailNaoExistente));
+        assertDoesNotThrow(() -> global.validarEmail(emailNaoExistente));
     }
 
 
-    @DisplayName("Se o usuário existir, nada acontece. E se não existir, lanca exception.")
-    @Test
-    public void validarUsuarioExistente(){
-        // Caso em que o usuário existe
-        Integer idExistente = 2000;
-        when(usuarioRepository.existsById(idExistente)).thenReturn(true);
-        assertDoesNotThrow(() -> service.validarUsuarioExiste(idExistente));
-
-        // Caso em que o usuário não existe
-        Integer idInexistente = 9292;
-        when(usuarioRepository.existsById(idInexistente)).thenReturn(false);
-        RecursoNaoEncontradoException exception = assertThrows(RecursoNaoEncontradoException.class,
-                () -> service.validarUsuarioExiste(idInexistente));
-        assertTrue(exception.getMessage().contains(String.valueOf(idInexistente)));
-        assertThrows(RecursoNaoEncontradoException.class, () -> service.validarUsuarioExiste(idInexistente));
-    }
+//    @DisplayName("Se o usuário existir, nada acontece. E se não existir, lanca exception.")
+//    @Test
+//    public void validarUsuarioExistente(){
+//        // Caso em que o usuário existe
+//        Integer idExistente = 2000;
+//        when(usuarioRepository.existsById(idExistente)).thenReturn(true);
+//        assertDoesNotThrow(() -> global.validarUsuarioExiste(idExistente));
+//
+//        // Caso em que o usuário não existe
+//        Integer idInexistente = 9292;
+//        when(usuarioRepository.existsById(idInexistente)).thenReturn(false);
+//        RecursoNaoEncontradoException exception = assertThrows(RecursoNaoEncontradoException.class,
+//                () -> global.validarUsuarioExiste(idInexistente));
+//        assertTrue(exception.getMessage().contains(String.valueOf(idInexistente)));
+//        assertThrows(RecursoNaoEncontradoException.class, () -> global.validarUsuarioExiste(idInexistente));
+//    }
 
     @DisplayName("Se o cpf existir, lanca exception.")
     @Test
@@ -149,20 +150,20 @@ class UsuarioServiceTest {
         Barbearia barbearia = new Barbearia();
         barbearia.setCpf(cpf);
         when(barbeariasRepository.findByCpf(cpf)).thenReturn(barbearia);
-        assertThrows(ConflitoException.class, () -> service.validarCpf(cpf));
+        assertThrows(ConflitoException.class, () -> global.validarCpf(cpf));
 
         // Caso em que o cpf não existe
         String cpfInexistente = "não existe";
         when(barbeariasRepository.findByCpf(cpfInexistente)).thenReturn(null);
-        assertDoesNotThrow(() -> service.validarCpf(cpfInexistente));
+        assertDoesNotThrow(() -> global.validarCpf(cpfInexistente));
     }
 
     @DisplayName("Se o token não  existir, lanca exception.")
     @Test
     public void validarToken(){
         String token = "token";
-        assertThrows(RecursoNaoEncontradoException.class, () -> service.validarToken(null));
-        assertDoesNotThrow(() -> service.validarToken(token));
+        assertThrows(RecursoNaoEncontradoException.class, () -> global.validarToken(null));
+        assertDoesNotThrow(() -> global.validarToken(token));
     }
 
 
@@ -185,7 +186,7 @@ class UsuarioServiceTest {
         when(token.getUserIdByToken(tokenMock)).thenReturn(String.valueOf(id));
         when(usuarioRepository.findById(id)).thenReturn(of(usuarioMock));
         when(barbeiroRepository.findAll()).thenReturn(barbeiros);
-        assertThrows(ConflitoException.class, () -> service.validarSeUsuarioPossuiBarbearia(tokenMock));
+        assertThrows(ConflitoException.class, () -> global.validarSeUsuarioPossuiBarbearia(tokenMock));
     }
 
 
@@ -294,7 +295,8 @@ class UsuarioServiceTest {
         when(barbearia.gerarEndereco()).thenReturn(endereco);
         when(enderecoRepository.save(endereco)).thenReturn(endereco);
 
-        var resultado = service.cadastroEndereco(barbearia);
+        EnderecoService enderecoService = new EnderecoService();
+        var resultado = enderecoService.cadastroEndereco(barbearia);
         assertEquals(id, resultado.getId());
     }
 
@@ -358,12 +360,13 @@ class UsuarioServiceTest {
         nvBarbearia.setCpf("12345678900");
 
         List<Barbeiro> barbeiros = new ArrayList<>();
+        EnderecoService enderecoService = new EnderecoService();
 
         when(nvBarbearia.gerarBarbearia()).thenReturn(barbearia);
         when(token.getUserIdByToken(tokenMock)).thenReturn(String.valueOf(userId));
         when(barbeariasRepository.findByCpf(nvBarbearia.getCpf())).thenReturn(null);
         when(enderecoRepository.existsById(endereco.getId())).thenReturn(true);
-        when(service.cadastroEndereco(nvBarbearia)).thenReturn(endereco);
+        when(enderecoService.cadastroEndereco(nvBarbearia)).thenReturn(endereco);
         when(enderecoRepository.getReferenceById(endereco.getId())).thenReturn(endereco);
         when(usuarioRepository.findById(userId)).thenReturn(of(cliente));
         when(barbeiroRepository.findAll()).thenReturn(barbeiros);

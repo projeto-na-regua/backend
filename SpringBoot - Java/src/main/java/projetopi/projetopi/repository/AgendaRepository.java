@@ -26,9 +26,10 @@ public interface AgendaRepository extends JpaRepository<Agendamento, Integer> {
 
     List<Agendamento> findByBarbeariaIdAndStatus(Integer barbeariaId, String status);
 
-    List<Agendamento> findByClienteId(Integer clienteId);
 
-    List<Agendamento> findByBarbeiroId(Integer BarbeiroId);
+    List<Agendamento> findByClienteId(Integer clienteId);
+    List<Agendamento> findByBarbeiroId(Integer barbeiroId);
+
 
     List<Agendamento> findByBarbeariaId(Integer barbeariaId);
 
