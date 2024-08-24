@@ -90,10 +90,24 @@ public class PesquisaService {
         List<BarbeariaPesquisa> barbeariasProximas = new ArrayList<>();
 
         Coordenada coordenada  = enderecoService.gerarCoordenadas(cep);
+        if (coordenada == null) {
+            throw new IllegalArgumentException("Coordenada não pode ser nula para o CEP fornecido.");
+        }
+
+
+        double latitude = Double.parseDouble(coordenada.getLat());
+        double longitude = Double.parseDouble(coordenada.getLng());
+
+
+        if (latitude == 0 || longitude == 0) {
+            throw new IllegalArgumentException("Latitude ou Longitude inválidos.");
+        }
+
+        String ponto = String.format("POINT(%f %f)", longitude, latitude);
         String dia3Letras = date.format(DateTimeFormatter.ofPattern("EEE", new Locale("pt")))
                 .substring(0, 3).toUpperCase();
 
-        String ponto = String.format("POINT(%f %f)", coordenada.getLat(), coordenada.getLng());
+
         List<Object[]> resultados = barbeariasRepository.findBarbeariasProximasByTipoServicoEDisponibilidadeComMedia(
                 ponto,
                 raio == null ? 2000 : raio,
