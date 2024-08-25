@@ -83,6 +83,7 @@ public class EnderecoService {
         if (!repository.existsById(id)){
             throw  new RecursoNaoEncontradoException("Endereço", id);
         }
+        endereco.setId(id);
         setCoordenadas(endereco);
         return repository.save(endereco);
     }
