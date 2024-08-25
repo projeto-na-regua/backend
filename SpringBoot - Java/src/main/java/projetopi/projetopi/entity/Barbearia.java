@@ -82,6 +82,7 @@ public class Barbearia {
         this.emailNegocio = barbeariaConsulta.getEmailNegocio();
         this.celularNegocio = barbeariaConsulta.getCelularNegocio();
         this.descricao = barbeariaConsulta.getDescricao();
+        this.endereco = new Endereco(barbeariaConsulta);
     }
 
 

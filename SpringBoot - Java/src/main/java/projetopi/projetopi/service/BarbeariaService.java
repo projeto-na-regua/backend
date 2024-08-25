@@ -1,6 +1,7 @@
 package projetopi.projetopi.service;
 
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
 import lombok.RequiredArgsConstructor;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Point;
@@ -140,10 +141,8 @@ public class BarbeariaService {
         Barbearia b = new Barbearia(nvBarbearia);
         Endereco endereco = new Endereco(nvBarbearia);
 
-        endereco.setId(barbearia.getEndereco().getId());
-        b.setId(barbearia.getId());
-        b.setEndereco(enderecoRepository.save(endereco));
-
+        enderecoService.updateEndereco(endereco, barbearia.getEndereco().getId());
+        b.setEndereco(endereco);
 
         for (int i = 0; i < semana.length; i++) {
             nvBarbearia.getDiaSemanas()[i].setId(semana[i].getId());

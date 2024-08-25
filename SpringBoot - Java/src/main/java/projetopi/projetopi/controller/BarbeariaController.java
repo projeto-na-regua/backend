@@ -80,7 +80,7 @@ public class BarbeariaController {
 
 
     @PutMapping("/perfil")
-    public ResponseEntity<BarbeariaConsulta> editarPerfilInfo(@RequestHeader("Authorization") String token, @Valid
+    public ResponseEntity<BarbeariaConsulta> editarPerfilInfo(@RequestHeader("Authorization") String token,
                                                               @RequestBody BarbeariaConsulta nvBarbearia){
         return status(200).body(service.editarPerfilInfo(token, nvBarbearia));
     }
