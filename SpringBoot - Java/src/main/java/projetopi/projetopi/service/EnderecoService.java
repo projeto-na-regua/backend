@@ -4,6 +4,7 @@ package projetopi.projetopi.service;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.PrecisionModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,7 @@ public class EnderecoService {
 
     private static final Logger log = LoggerFactory.getLogger(UsuarioController.class);
 
-    private GeometryFactory geometryFactory = new GeometryFactory();
+    private GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
 
     public Coordenada gerarCoordenadas(String postalcode){
         String url = String.format(
@@ -62,7 +63,7 @@ public class EnderecoService {
         double longitude = Double.parseDouble(coordenada.getLng());
 
         // Criação do ponto com a ordem correta (longitude, latitude)
-        Point ponto = geometryFactory.createPoint(new Coordinate(longitude, latitude));
+        Point ponto = geometryFactory.createPoint(new Coordinate(latitude, longitude));
         endereco.setLocalizacao(ponto);
     }
 
