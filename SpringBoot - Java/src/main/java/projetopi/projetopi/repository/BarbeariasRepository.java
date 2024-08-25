@@ -72,6 +72,7 @@ public interface BarbeariasRepository extends JpaRepository<Barbearia, Integer> 
               @Param("hora") LocalTime hora);
 
 
+
 }
 
 

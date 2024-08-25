@@ -71,8 +71,11 @@ public class PesquisaService {
 
         String ponto = String.format("POINT(%f %f)", endereco.getLocalizacao().getY(), endereco.getLocalizacao().getX());
 
-        String dia3Letras = date.format(DateTimeFormatter.ofPattern("EEE", new Locale("pt")))
+
+        String dia3Letras = date == null ? null : date.format(DateTimeFormatter.ofPattern("EEE", new Locale("pt")))
                 .substring(0, 3).toUpperCase();
+
+
 
         List<Object[]> resultados = barbeariasRepository.findBarbeariasProximasByTipoServicoEDisponibilidadeComMedia(
                 ponto,
@@ -80,6 +83,7 @@ public class PesquisaService {
                 servico,
                 dia3Letras,
                 time);
+
 
         return dtoList(resultados);
     }
@@ -89,22 +93,21 @@ public class PesquisaService {
         List<Barbearia> barbearias = barbeariasRepository.findBarbeariasByTipoServico(servico);
         List<BarbeariaPesquisa> barbeariasProximas = new ArrayList<>();
 
-        Coordenada coordenada  = enderecoService.gerarCoordenadas(cep);
-        if (coordenada == null) {
-            throw new IllegalArgumentException("Coordenada não pode ser nula para o CEP fornecido.");
-        }
 
+
+        Coordenada coordenada  = enderecoService.gerarCoordenadas(cep);
 
         double latitude = Double.parseDouble(coordenada.getLat());
         double longitude = Double.parseDouble(coordenada.getLng());
-
 
         if (latitude == 0 || longitude == 0) {
             throw new IllegalArgumentException("Latitude ou Longitude inválidos.");
         }
 
         String ponto = String.format("POINT(%f %f)", longitude, latitude);
-        String dia3Letras = date.format(DateTimeFormatter.ofPattern("EEE", new Locale("pt")))
+
+
+        String dia3Letras = date == null ? null :date.format(DateTimeFormatter.ofPattern("EEE", new Locale("pt")))
                 .substring(0, 3).toUpperCase();
 
 

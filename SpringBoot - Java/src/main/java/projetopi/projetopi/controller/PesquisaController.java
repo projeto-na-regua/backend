@@ -25,23 +25,26 @@ public class PesquisaController {
     private PesquisaService service;
 
     @GetMapping("/client-side")
-    public ResponseEntity<List<BarbeariaPesquisa>> getBarbeariasByToken(@RequestHeader("Authorization") String token,
-                                                                        @RequestParam String servico,
-                                                                        @RequestParam LocalDate date,
-                                                                        @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime time ,
-                                                                        @RequestParam Double raio){
+    public ResponseEntity<List<BarbeariaPesquisa>> getBarbeariasByToken(
+            @RequestHeader("Authorization") String token,
+            @RequestParam(required = false) String servico,
+            @RequestParam(required = false) LocalDate date,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime time,
+            @RequestParam(required = false) Double raio) {
 
         return status(200).body(service.getAllByLocalizacao(token, servico, date, time, raio));
     }
 
-    @GetMapping("/no-token")
-    public ResponseEntity<List<BarbeariaPesquisa>> getBarbeariasByToken(@RequestParam String cep,
-                                                                        @RequestParam String servico,
-                                                                        @RequestParam Double raio,
-                                                                        @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)LocalDate date,
-                                                                        @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)LocalTime time){
 
-        return status(200).body(service.getAllByLocalizacaoSemCadastro(servico, date, time, cep, raio));
+    @GetMapping("/no-token")
+    public ResponseEntity<List<BarbeariaPesquisa>> getBarbeariasByToken(
+            @RequestParam(required = false) String cep,
+            @RequestParam(required = false) String servico,
+            @RequestParam(required = false) Double raio,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime time) {
+
+        return ResponseEntity.status(200).body(service.getAllByLocalizacaoSemCadastro(servico, date, time, cep, raio));
     }
 
     @GetMapping("/client-side/filtro")

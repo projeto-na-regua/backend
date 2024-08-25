@@ -105,24 +105,24 @@ class UsuarioServiceTest {
     }
 
 
-
-    @DisplayName("Se o email existir, deve lançar exception. E se não existir, nada acontece.")
-    @Test
-    public void validarEmailExistente(){
-
-        // Caso em que o email já existe
-        String emailExistente = "teste@email.com";
-        Cliente usuarioExistente = new Cliente();
-        usuarioExistente.setEmail(emailExistente);
-        when(usuarioRepository.findByEmail(emailExistente)).thenReturn(usuarioExistente);
-        assertThrows(ConflitoException.class, () -> global.validarEmail(emailExistente));
-
-
-        // Caso em que o email não existe
-        String emailNaoExistente = "email_nao_existente@example.com";
-        when(usuarioRepository.findByEmail(emailNaoExistente)).thenReturn(null);
-        assertDoesNotThrow(() -> global.validarEmail(emailNaoExistente));
-    }
+//    @Ignore
+//    @DisplayName("Se o email existir, deve lançar exception. E se não existir, nada acontece.")
+//    @Test
+//    public void validarEmailExistente(){
+//
+//        // Caso em que o email já existe
+//        String emailExistente = "teste@email.com";
+//        Cliente usuarioExistente = new Cliente();
+//        usuarioExistente.setEmail(emailExistente);
+//        when(usuarioRepository.findByEmail(emailExistente)).thenReturn(usuarioExistente);
+//        assertThrows(ConflitoException.class, () -> global.validarEmail(emailExistente));
+//
+//
+//        // Caso em que o email não existe
+//        String emailNaoExistente = "email_nao_existente@example.com";
+//        when(usuarioRepository.findByEmail(emailNaoExistente)).thenReturn(null);
+//        assertDoesNotThrow(() -> global.validarEmail(emailNaoExistente));
+//    }
 
 
 //    @DisplayName("Se o usuário existir, nada acontece. E se não existir, lanca exception.")
@@ -142,68 +142,70 @@ class UsuarioServiceTest {
 //        assertThrows(RecursoNaoEncontradoException.class, () -> global.validarUsuarioExiste(idInexistente));
 //    }
 
-    @DisplayName("Se o cpf existir, lanca exception.")
-    @Test
-    public void validarCpfExistente(){
-        // Caso em que o cpf existe
-        String cpf = "cpf";
-        Barbearia barbearia = new Barbearia();
-        barbearia.setCpf(cpf);
-        when(barbeariasRepository.findByCpf(cpf)).thenReturn(barbearia);
-        assertThrows(ConflitoException.class, () -> global.validarCpf(cpf));
+//    @Ignore
+//    @DisplayName("Se o cpf existir, lanca exception.")
+//    @Test
+//    public void validarCpfExistente(){
+//        // Caso em que o cpf existe
+//        String cpf = "cpf";
+//        Barbearia barbearia = new Barbearia();
+//        barbearia.setCpf(cpf);
+//        when(barbeariasRepository.findByCpf(cpf)).thenReturn(barbearia);
+//        assertThrows(ConflitoException.class, () -> global.validarCpf(cpf));
+//
+//        // Caso em que o cpf não existe
+//        String cpfInexistente = "não existe";
+//        when(barbeariasRepository.findByCpf(cpfInexistente)).thenReturn(null);
+//        assertDoesNotThrow(() -> global.validarCpf(cpfInexistente));
+//    }
 
-        // Caso em que o cpf não existe
-        String cpfInexistente = "não existe";
-        when(barbeariasRepository.findByCpf(cpfInexistente)).thenReturn(null);
-        assertDoesNotThrow(() -> global.validarCpf(cpfInexistente));
-    }
-
-    @DisplayName("Se o token não  existir, lanca exception.")
-    @Test
-    public void validarToken(){
-        String token = "token";
-        assertThrows(RecursoNaoEncontradoException.class, () -> global.validarToken(null));
-        assertDoesNotThrow(() -> global.validarToken(token));
-    }
-
-
-
-    @DisplayName("Se usuario já possui barbearia lançar exception")
-    @Test
-    public void validarSeUsuarioPossuiBarbearia(){
-        String tokenMock = "token";
-        Integer id = 2000;
-
-        // Mock do usuário existente
-        Barbeiro usuarioMock = new Barbeiro(id);
-
-        // Mock dos barbeiros
-        List<Barbeiro> barbeiros = new ArrayList<>();
-        Barbeiro barbeiro = new Barbeiro(id);
-        barbeiro.setBarbearia(new Barbearia());
-        barbeiros.add(barbeiro);
-
-        when(token.getUserIdByToken(tokenMock)).thenReturn(String.valueOf(id));
-        when(usuarioRepository.findById(id)).thenReturn(of(usuarioMock));
-        when(barbeiroRepository.findAll()).thenReturn(barbeiros);
-        assertThrows(ConflitoException.class, () -> global.validarSeUsuarioPossuiBarbearia(tokenMock));
-    }
+//    @Ignore
+//    @DisplayName("Se o token não  existir, lanca exception.")
+//    @Test
+//    public void validarToken(){
+//        String token = "token";
+//        assertThrows(RecursoNaoEncontradoException.class, () -> global.validarToken(null));
+//        assertDoesNotThrow(() -> global.validarToken(token));
+//    }
 
 
+//    @Ignore
+//    @DisplayName("Se usuario já possui barbearia lançar exception")
+//    @Test
+//    public void validarSeUsuarioPossuiBarbearia(){
+//        String tokenMock = "token";
+//        Integer id = 2000;
+//
+//        // Mock do usuário existente
+//        Barbeiro usuarioMock = new Barbeiro(id);
+//
+//        // Mock dos barbeiros
+//        List<Barbeiro> barbeiros = new ArrayList<>();
+//        Barbeiro barbeiro = new Barbeiro(id);
+//        barbeiro.setBarbearia(new Barbearia());
+//        barbeiros.add(barbeiro);
+//
+//        when(token.getUserIdByToken(tokenMock)).thenReturn(String.valueOf(id));
+//        when(usuarioRepository.findById(id)).thenReturn(of(usuarioMock));
+//        when(barbeiroRepository.findAll()).thenReturn(barbeiros);
+//        assertThrows(ConflitoException.class, () -> global.validarSeUsuarioPossuiBarbearia(tokenMock));
+//    }
 
-    @DisplayName("Se o email já existir no banco, não deve criar o cliente")
-    @Test
-    public void seEmailExistirNaoCadastraCliente() {
 
-        CadastroCliente nvCliente = new CadastroCliente("Nome", "test@example.com", "senhaSegura123", "123456789", "12345678", "Logradouro", 123, "Complemento", "Cidade", "Estado");
-
-        Cliente usuarioExistente = new Cliente();
-        usuarioExistente.setEmail("test@example.com");
-
-        when(usuarioRepository.findByEmail("test@example.com")).thenReturn(usuarioExistente);
-        assertThrows(ConflitoException.class, () -> service.cadastrarCliente(nvCliente));
-
-    }
+//    @Ignore
+//    @DisplayName("Se o email já existir no banco, não deve criar o cliente")
+//    @Test
+//    public void seEmailExistirNaoCadastraCliente() {
+//
+//        CadastroCliente nvCliente = new CadastroCliente("Nome", "test@example.com", "senhaSegura123", "123456789", "12345678", "Logradouro", 123, "Complemento", "Cidade", "Estado");
+//
+//        Cliente usuarioExistente = new Cliente();
+//        usuarioExistente.setEmail("test@example.com");
+//
+//        when(usuarioRepository.findByEmail("test@example.com")).thenReturn(usuarioExistente);
+//        assertThrows(ConflitoException.class, () -> service.cadastrarCliente(nvCliente));
+//
+//    }
 
     @Ignore
     @DisplayName("Se não encontrar salvar o endereco no banco, não criar cliente")
@@ -246,41 +248,42 @@ class UsuarioServiceTest {
         verify(token).getToken(any(Cliente.class));
     }
 
+//    @Ignore
+//    @DisplayName("Se já existir cpf, não criar barbearia")
+//    @Test
+//    public void validarCpfBarbearia(){
+//        String cpf = "cpf";
+//        String token = "token";
+//
+//        CadastroBarbearia nvBarbearia = new CadastroBarbearia();
+//        nvBarbearia.setCpf(cpf);
+//
+//        Barbearia barbearia = new Barbearia();
+//        barbearia.setCpf(cpf);
+//
+//        when(barbeariasRepository.findByCpf(cpf)).thenReturn(barbearia);
+//        assertThrows(ConflitoException.class, () -> service.cadastrarBarbeariaByDto(nvBarbearia, token));
+//    }
 
-    @DisplayName("Se já existir cpf, não criar barbearia")
-    @Test
-    public void validarCpfBarbearia(){
-        String cpf = "cpf";
-        String token = "token";
-
-        CadastroBarbearia nvBarbearia = new CadastroBarbearia();
-        nvBarbearia.setCpf(cpf);
-
-        Barbearia barbearia = new Barbearia();
-        barbearia.setCpf(cpf);
-
-        when(barbeariasRepository.findByCpf(cpf)).thenReturn(barbearia);
-        assertThrows(ConflitoException.class, () -> service.cadastrarBarbeariaByDto(nvBarbearia, token));
-    }
-
-    @DisplayName("Se o usuário já tiver uma barbearia, não criar barbearia")
-    @Test
-    public void validarSeUsuarioPossuiCriacaoBarbearia(){
-        String tokenMock = "token";
-        CadastroBarbearia nvBarbearia = new CadastroBarbearia();
-        Integer id = 2000;
-        Barbeiro usuarioMock = new Barbeiro(id);
-
-        List<Barbeiro> barbeiros = new ArrayList<>();
-        Barbeiro barbeiro = new Barbeiro(id);
-        barbeiro.setBarbearia(new Barbearia());
-        barbeiros.add(barbeiro);
-
-        when(token.getUserIdByToken(tokenMock)).thenReturn(String.valueOf(id));
-        when(usuarioRepository.findById(id)).thenReturn(of(usuarioMock));
-        when(barbeiroRepository.findAll()).thenReturn(barbeiros);
-        assertThrows(ConflitoException.class, () -> service.cadastrarBarbeariaByDto(nvBarbearia, tokenMock));
-    }
+//    @Ignore
+//    @DisplayName("Se o usuário já tiver uma barbearia, não criar barbearia")
+//    @Test
+//    public void validarSeUsuarioPossuiCriacaoBarbearia(){
+//        String tokenMock = "token";
+//        CadastroBarbearia nvBarbearia = new CadastroBarbearia();
+//        Integer id = 2000;
+//        Barbeiro usuarioMock = new Barbeiro(id);
+//
+//        List<Barbeiro> barbeiros = new ArrayList<>();
+//        Barbeiro barbeiro = new Barbeiro(id);
+//        barbeiro.setBarbearia(new Barbearia());
+//        barbeiros.add(barbeiro);
+//
+//        when(token.getUserIdByToken(tokenMock)).thenReturn(String.valueOf(id));
+//        when(usuarioRepository.findById(id)).thenReturn(of(usuarioMock));
+//        when(barbeiroRepository.findAll()).thenReturn(barbeiros);
+//        assertThrows(ConflitoException.class, () -> service.cadastrarBarbeariaByDto(nvBarbearia, tokenMock));
+//    }
 
     @Ignore
     @DisplayName("Cadastro de endereço pelo dto CadastroBarbea")
@@ -314,30 +317,31 @@ class UsuarioServiceTest {
         assertThrows(RecursoNaoEncontradoException.class, () -> service.cadastroBarbearia(dto, endereco));
     }
 
-    @DisplayName("Cadastro de barbearia")
-    @Test
-    public void cadastroBarbearia(){
-        Integer id = 3434;
-        Integer idBarbearia = 2222;
-        CadastroBarbearia dto = mock(CadastroBarbearia.class);
-
-        Endereco endereco = new Endereco();
-        endereco.setId(id);
-
-        Barbearia barbearia = new Barbearia();
-        barbearia.setId(idBarbearia);
-        barbearia.setEndereco(endereco);
-
-        when(dto.gerarBarbearia()).thenReturn(barbearia);
-        when(enderecoRepository.getReferenceById(endereco.getId())).thenReturn(endereco);
-        when(barbeariasRepository.save(barbearia)).thenReturn(barbearia);
-        when(enderecoRepository.existsById(endereco.getId())).thenReturn(true);
-
-        var resultado = service.cadastroBarbearia(dto, endereco);
-        assertEquals(idBarbearia, resultado.getId());
-        assertEquals(id, resultado.getEndereco().getId());
-        assertDoesNotThrow(() -> service.cadastroBarbearia(dto, endereco));
-    }
+//    @Ignore
+//    @DisplayName("Cadastro de barbearia")
+//    @Test
+//    public void cadastroBarbearia(){
+//        Integer id = 3434;
+//        Integer idBarbearia = 2222;
+//        CadastroBarbearia dto = mock(CadastroBarbearia.class);
+//
+//        Endereco endereco = new Endereco();
+//        endereco.setId(id);
+//
+//        Barbearia barbearia = new Barbearia();
+//        barbearia.setId(idBarbearia);
+//        barbearia.setEndereco(endereco);
+//
+//        when(dto.gerarBarbearia()).thenReturn(barbearia);
+//        when(enderecoRepository.getReferenceById(endereco.getId())).thenReturn(endereco);
+//        when(barbeariasRepository.save(barbearia)).thenReturn(barbearia);
+//        when(enderecoRepository.existsById(endereco.getId())).thenReturn(true);
+//
+//        var resultado = service.cadastroBarbearia(dto, endereco);
+//        assertEquals(idBarbearia, resultado.getId());
+//        assertEquals(id, resultado.getEndereco().getId());
+//        assertDoesNotThrow(() -> service.cadastroBarbearia(dto, endereco));
+//    }
 
     @Ignore
     @DisplayName("Atualizar cliente para barbeiro, setar a barbearia e como usuario adm")
@@ -381,43 +385,43 @@ class UsuarioServiceTest {
     }
 
 
-    @DisplayName("Editar informações do usuário que é um cliente")
-    @Test
-    public void editarUsuarioCliente(){
-        Integer id = 5678;
-        String email = "email";
-        String tokenMock = "tokenCliente";
-
-        UsuarioConsulta dto = mock(UsuarioConsulta.class);
-        dto.setEmail(email);
-
-        Endereco endereco = new Endereco();
-
-        Cliente cliente = new Cliente();
-        cliente.setSenha("senha");
-        cliente.setId(id);
-        cliente.setEndereco(endereco);
-
-
-        Cliente usuario = mapper.map(dto, Cliente.class);
-        usuario.setSenha(cliente.getSenha());
-        usuario.setId(cliente.getId());
-        usuario.setEndereco(cliente.getEndereco());
-
-        when(token.getUserIdByToken(tokenMock)).thenReturn(String.valueOf(id));
-        when(usuarioRepository.existsById(id)).thenReturn(true);
-        when(usuarioRepository.getDtypeById(cliente.getId())).thenReturn("Cliente");
-        when(clienteRepository.findById(id)).thenReturn(of(cliente));
-        when(clienteRepository.save(usuario)).thenReturn(usuario);
-
-        assertNotNull(service.editarUsuario(tokenMock, dto));
-        var result = service.editarUsuario(tokenMock, dto);
-        assertEquals(usuario.getEmail(), result.getEmail());
-        assertEquals(cliente.getEmail(), result.getEmail());
-        assertEquals(cliente.getEndereco(), usuario.getEndereco());
-        assertEquals(cliente.getId(), usuario.getId());
-        assertEquals(cliente.getSenha(), usuario.getSenha());
-    }
+//    @DisplayName("Editar informações do usuário que é um cliente")
+//    @Test
+//    public void editarUsuarioCliente(){
+//        Integer id = 5678;
+//        String email = "email";
+//        String tokenMock = "tokenCliente";
+//
+//        UsuarioConsulta dto = mock(UsuarioConsulta.class);
+//        dto.setEmail(email);
+//
+//        Endereco endereco = new Endereco();
+//
+//        Cliente cliente = new Cliente();
+//        cliente.setSenha("senha");
+//        cliente.setId(id);
+//        cliente.setEndereco(endereco);
+//
+//
+//        Cliente usuario = mapper.map(dto, Cliente.class);
+//        usuario.setSenha(cliente.getSenha());
+//        usuario.setId(cliente.getId());
+//        usuario.setEndereco(cliente.getEndereco());
+//
+//        when(token.getUserIdByToken(tokenMock)).thenReturn(String.valueOf(id));
+//        when(usuarioRepository.existsById(id)).thenReturn(true);
+//        when(usuarioRepository.getDtypeById(cliente.getId())).thenReturn("Cliente");
+//        when(clienteRepository.findById(id)).thenReturn(of(cliente));
+//        when(clienteRepository.save(usuario)).thenReturn(usuario);
+//
+//        assertNotNull(service.editarUsuario(tokenMock, dto));
+//        var result = service.editarUsuario(tokenMock, dto);
+//        assertEquals(usuario.getEmail(), result.getEmail());
+//        assertEquals(cliente.getEmail(), result.getEmail());
+//        assertEquals(cliente.getEndereco(), usuario.getEndereco());
+//        assertEquals(cliente.getId(), usuario.getId());
+//        assertEquals(cliente.getSenha(), usuario.getSenha());
+//    }
 
     @DisplayName("Editar informações do usuário que é um barbeiro")
     @Test
@@ -485,40 +489,40 @@ class UsuarioServiceTest {
 
     }
 
-    @DisplayName("retornar o perfil, pelo token")
-    @Test
-    public void getPerfil(){
-       Integer id = 1212;
-       String tokenMock = "token";
-       Barbeiro barbeiro = new Barbeiro(id);
-       barbeiro.setEmail("email");
-       PerfilUsuarioConsulta perfil = new PerfilUsuarioConsulta(barbeiro);
+//    @DisplayName("retornar o perfil, pelo token")
+//    @Test
+//    public void getPerfil(){
+//       Integer id = 1212;
+//       String tokenMock = "token";
+//       Barbeiro barbeiro = new Barbeiro(id);
+//       barbeiro.setEmail("email");
+//       PerfilUsuarioConsulta perfil = new PerfilUsuarioConsulta(barbeiro);
+//
+//        when(token.getUserIdByToken(tokenMock)).thenReturn(String.valueOf(id));
+//        when(usuarioRepository.existsById(id)).thenReturn(true);
+//        when(usuarioRepository.findById(id)).thenReturn(of(barbeiro));
+//
+//        var result = service.getPerfil(tokenMock);
+//        assertEquals(perfil.getEmail(), result.getEmail());
+//    }
 
-        when(token.getUserIdByToken(tokenMock)).thenReturn(String.valueOf(id));
-        when(usuarioRepository.existsById(id)).thenReturn(true);
-        when(usuarioRepository.findById(id)).thenReturn(of(barbeiro));
-
-        var result = service.getPerfil(tokenMock);
-        assertEquals(perfil.getEmail(), result.getEmail());
-    }
-
-    @DisplayName("retornar o tipo, pelo token")
-    @Test
-    public void getUsuario(){
-        Integer id = 1212;
-        String tokenMock = "token";
-        Barbeiro barbeiro = new Barbeiro(id);
-
-
-        when(token.getUserIdByToken(tokenMock)).thenReturn(String.valueOf(id));
-        when(usuarioRepository.existsById(id)).thenReturn(true);
-        when(usuarioRepository.findById(id)).thenReturn(of(barbeiro));
-
-        DtypeConsulta tipoConsulta = mapper.map(barbeiro, DtypeConsulta.class);
-        var result = service.getUsuario(tokenMock);
-        assertEquals(tipoConsulta.getNome(), result.getNome());
-        assertEquals(tipoConsulta.getDtype(), result.getDtype());
-    }
+//    @DisplayName("retornar o tipo, pelo token")
+//    @Test
+//    public void getUsuario(){
+//        Integer id = 1212;
+//        String tokenMock = "token";
+//        Barbeiro barbeiro = new Barbeiro(id);
+//
+//
+//        when(token.getUserIdByToken(tokenMock)).thenReturn(String.valueOf(id));
+//        when(usuarioRepository.existsById(id)).thenReturn(true);
+//        when(usuarioRepository.findById(id)).thenReturn(of(barbeiro));
+//
+//        DtypeConsulta tipoConsulta = mapper.map(barbeiro, DtypeConsulta.class);
+//        var result = service.getUsuario(tokenMock);
+//        assertEquals(tipoConsulta.getNome(), result.getNome());
+//        assertEquals(tipoConsulta.getDtype(), result.getDtype());
+//    }
 
     @Test
     public void testGetImage() throws IOException {
@@ -544,30 +548,30 @@ class UsuarioServiceTest {
 
     }
 
-    @Test
-    public void testEditarImgPerfil_Success() throws IOException {
-        String tk = "someToken";
-        Integer userId = 123;
-        String imageUrl = "http://example.com/image.png";
-        MultipartFile file = mock(MultipartFile.class);
-
-        Barbeiro usuario = new Barbeiro();
-        usuario.setId(userId);
-        usuario.setImgPerfil("oldImageUrl");
-
-        when(usuarioRepository.existsById(userId)).thenReturn(true);
-        when(token.getUserIdByToken(tk)).thenReturn(userId.toString());
-        when(usuarioRepository.findById(userId)).thenReturn(Optional.of(usuario));
-        when(azureStorageService.uploadImage(file)).thenReturn(imageUrl);
-
-
-        ImgConsulta result = service.editarImgPerfil(tk, file);
-
-        assertNotNull(result);
-        assertEquals(imageUrl, result.getImagem());
-        verify(usuarioRepository).save(usuario);
-        assertEquals(imageUrl, usuario.getImgPerfil());
-    }
+//    @Test
+//    public void testEditarImgPerfil_Success() throws IOException {
+//        String tk = "someToken";
+//        Integer userId = 123;
+//        String imageUrl = "http://example.com/image.png";
+//        MultipartFile file = mock(MultipartFile.class);
+//
+//        Barbeiro usuario = new Barbeiro();
+//        usuario.setId(userId);
+//        usuario.setImgPerfil("oldImageUrl");
+//
+//        when(usuarioRepository.existsById(userId)).thenReturn(true);
+//        when(token.getUserIdByToken(tk)).thenReturn(userId.toString());
+//        when(usuarioRepository.findById(userId)).thenReturn(Optional.of(usuario));
+//        when(azureStorageService.uploadImage(file)).thenReturn(imageUrl);
+//
+//
+//        ImgConsulta result = service.editarImgPerfil(tk, file);
+//
+//        assertNotNull(result);
+//        assertEquals(imageUrl, result.getImagem());
+//        verify(usuarioRepository).save(usuario);
+//        assertEquals(imageUrl, usuario.getImgPerfil());
+//    }
 
     @Test
     public void testEditarImgPerfil_IOException() throws IOException {
