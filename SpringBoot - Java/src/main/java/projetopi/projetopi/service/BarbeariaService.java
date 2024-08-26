@@ -121,7 +121,7 @@ public class BarbeariaService {
         Barbearia barbearia = barbeariasRepository.findById(barbeariaId).get();
         DiaSemana[] semana = diaSemanaRepository.findByBarbeariaId(barbearia.getId());
         String banner = azureStorageService.getBlobUrl(barbearia.getImgBanner());
-        String imgPerfil = azureStorageService.getBlobUrl(barbearia.getImgBanner());
+        String imgPerfil = azureStorageService.getBlobUrl(barbearia.getImgPerfil());
         return new BarbeariaConsulta(barbearia, semana, banner, imgPerfil);
     }
 
