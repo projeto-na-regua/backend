@@ -62,6 +62,8 @@ public interface BarbeariasRepository extends JpaRepository<Barbearia, Integer> 
               "AND (:tipoServico IS NULL OR LOWER(s.tipo_servico) LIKE LOWER(CONCAT('%', :tipoServico, '%'))) " +
               "AND (:diaSemana IS NULL OR ds.nome = :diaSemana) " +
               "AND (:hora IS NULL OR (ds.hora_abertura <= :hora AND ds.hora_fechamento >= :hora)) " +
+              "AND ds.hora_abertura IS NOT NULL " +
+              "AND ds.hora_fechamento IS NOT NULL " +
               "GROUP BY b.id_barbearia",
               nativeQuery = true)
       List<Object[]> findBarbeariasProximasByTipoServicoEDisponibilidadeComMedia(
@@ -70,6 +72,7 @@ public interface BarbeariasRepository extends JpaRepository<Barbearia, Integer> 
               @Param("tipoServico") String tipoServico,
               @Param("diaSemana") String diaSemana,
               @Param("hora") LocalTime hora);
+
 
 
 
