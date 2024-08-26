@@ -75,4 +75,5 @@ public class UsuarioController {
         return ok(service.getUsuario(token));
     }
 
+
 }
