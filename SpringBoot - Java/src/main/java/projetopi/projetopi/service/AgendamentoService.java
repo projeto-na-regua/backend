@@ -272,13 +272,13 @@ public class AgendamentoService {
 
         fila.getFila().clear();
 
-        fila = (FilaHistorico) agendamentosConcluidos.stream().map(ag -> {
-            AgendamentoConsulta agendamentoConsulta = AgendamentoMapper.toDto(ag);
-            agendamentoConsulta.setImgPerfilBarbearia(azureStorageService.getBlobUrl(ag.getBarbearia().getImgPerfil()));
-            return agendamentoConsulta;
-        }).collect(Collectors.toList());
+        for (Agendamento a : agendamentosConcluidos) {
+            AgendamentoConsulta agendamentoConsulta = AgendamentoMapper.toDto(a);
+            agendamentoConsulta.setImgPerfilBarbearia(azureStorageService.getBlobUrl(a.getBarbearia().getImgPerfil()));
+            fila.adicionar(agendamentoConsulta);
+        }
 
-        return fila.getHistorico();
+        return new ArrayList<>(fila.getHistorico());
     }
 
 

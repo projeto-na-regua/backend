@@ -32,6 +32,16 @@ public class EnderecoConsulta {
         this.estado = barbearia.getEndereco().getEstado();
     }
 
+    public EnderecoConsulta(Endereco barbearia) {
+        this.cep = barbearia.getCep();
+        this.logradouro = barbearia.getLogradouro();
+        this.numero = barbearia.getNumero();
+        this.complemento = barbearia.getComplemento();
+        this.cidade = barbearia.getCidade();
+        this.estado = barbearia.getEstado();
+    }
+
+
     public EnderecoConsulta(Cliente cliente) {
         this.cep = cliente.getEndereco().getCep();
         this.logradouro = cliente.getEndereco().getLogradouro();

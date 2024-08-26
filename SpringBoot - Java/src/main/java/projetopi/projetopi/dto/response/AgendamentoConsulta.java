@@ -35,7 +35,7 @@ public class AgendamentoConsulta {
 
     private String status;
 
-    private Endereco enderecoBarbearia;
+    private EnderecoConsulta enderecoBarbearia;
 
     private Integer tempoEstimado;
 
@@ -54,7 +54,7 @@ public class AgendamentoConsulta {
         this.nomeCliente = nomeCliente;
         this.nomeBarbeiro = nomeBarbeiro;
         this.nomeNegocio = nomeNegocio;
-        this.enderecoBarbearia = enderecoBarbearia;
+        this.enderecoBarbearia = new EnderecoConsulta(enderecoBarbearia);
         this.status = status;
         this.id = id;
         this.tempoEstimado = tempoEstimado;
