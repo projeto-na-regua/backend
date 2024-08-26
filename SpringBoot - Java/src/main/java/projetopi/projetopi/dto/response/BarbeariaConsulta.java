@@ -43,8 +43,8 @@ public class BarbeariaConsulta {
         this.cidade = barbearia.getEndereco().getCidade();
         this.estado = barbearia.getEndereco().getEstado();
         this.diaSemanas = semana;
-        this.imgBanner = linkImgBanner;
         this.imgPerfil = linkImagemPerfil;
+        this.imgBanner = linkImgBanner;
     }
 
 }
