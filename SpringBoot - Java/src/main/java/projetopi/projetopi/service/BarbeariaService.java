@@ -70,6 +70,9 @@ public class BarbeariaService {
 
     private final AgendamentoService agendamentoService;
 
+    @Autowired
+    private UsuarioService usuarioService;
+
 
 //
 //    public static double calcularDistancia(Point point, Double raio) {
@@ -127,31 +130,56 @@ public class BarbeariaService {
         Barbearia barbearia = barbeariasRepository.findById(global.getBarbeariaByToken(token).getId()).get();
         DiaSemana[] semana = diaSemanaRepository.findByBarbeariaId(barbearia.getId());
         String banner = azureStorageService.getBlobUrl(barbearia.getImgBanner());
-        String imgPerfil = azureStorageService.getBlobUrl(barbearia.getImgBanner());
+        String imgPerfil = azureStorageService.getBlobUrl(barbearia.getImgPerfil());
         return new BarbeariaConsulta(barbearia, semana, banner, imgPerfil);
     }
 
 
     public BarbeariaConsulta editarPerfilInfo(String token, BarbeariaConsulta nvBarbearia){
 
+        // Valida o token e obtém a barbearia associada
         global.validaBarbearia(token);
-        Barbearia barbearia = barbeariasRepository.findById(global.getBarbeariaByToken(token).getId()).get();
-        DiaSemana[] semana = diaSemanaRepository.findByBarbeariaId(barbearia.getId());
+        Barbearia barbeariaExistente = global.getBarbeariaByToken(token);
 
-        Barbearia b = new Barbearia(nvBarbearia);
-        Endereco endereco = new Endereco(nvBarbearia);
+        // Atualiza as informações do endereço
+        Endereco enderecoAtualizado = new Endereco(nvBarbearia);
+        enderecoService.updateEndereco(enderecoAtualizado, barbeariaExistente.getEndereco().getId());
+        barbeariaExistente.setEndereco(enderecoAtualizado);
 
-        enderecoService.updateEndereco(endereco, barbearia.getEndereco().getId());
-        b.setEndereco(endereco);
+        // Atualiza as informações da barbearia existente
+        barbeariaExistente.setNomeNegocio(nvBarbearia.getNomeNegocio());
+        barbeariaExistente.setCelularNegocio(nvBarbearia.getCelularNegocio());
+        barbeariaExistente.setEmailNegocio(nvBarbearia.getEmailNegocio());
+        barbeariaExistente.setImgBanner(nvBarbearia.getImgBanner());
+        barbeariaExistente.setImgPerfil(nvBarbearia.getImgPerfil());
 
-        for (int i = 0; i < semana.length; i++) {
-            nvBarbearia.getDiaSemanas()[i].setId(semana[i].getId());
-            nvBarbearia.getDiaSemanas()[i].setBarbearia(barbearia);
+        // Atualiza os dias da semana associados à barbearia
+        DiaSemana[] semanaExistente = diaSemanaRepository.findByBarbeariaId(barbeariaExistente.getId());
+
+        if (semanaExistente.length == 0){
+            semanaExistente  = usuarioService.definirDiasDaSemanda();
+
+            for (DiaSemana diaSemana : semanaExistente){
+                diaSemana.setBarbearia(barbeariaExistente);
+                diaSemanaRepository.save(diaSemana);
+            }
+        }
+
+        for (int i = 0; i < semanaExistente.length; i++) {
+            nvBarbearia.getDiaSemanas()[i].setId(semanaExistente[i].getId());
+            nvBarbearia.getDiaSemanas()[i].setBarbearia(barbeariaExistente);
             diaSemanaRepository.save(nvBarbearia.getDiaSemanas()[i]);
         }
-        String banner = azureStorageService.getBlobUrl(barbearia.getImgBanner());
-        String imgPerfil = azureStorageService.getBlobUrl(barbearia.getImgBanner());
-        return new BarbeariaConsulta(barbeariasRepository.save(b), nvBarbearia.getDiaSemanas(),banner, imgPerfil);
+
+        // Atualiza a barbearia no repositório
+        Barbearia barbeariaSalva = barbeariasRepository.save(barbeariaExistente);
+
+        // Obtem as URLs das imagens atualizadas
+        String bannerUrl = azureStorageService.getBlobUrl(barbeariaSalva.getImgBanner());
+        String imgPerfilUrl = azureStorageService.getBlobUrl(barbeariaSalva.getImgPerfil());
+
+        // Retorna as informações atualizadas
+        return new BarbeariaConsulta(barbeariaSalva, nvBarbearia.getDiaSemanas(), bannerUrl, imgPerfilUrl);
     }
 
     public ImgConsulta editarImgPerfil(String token, MultipartFile file){
@@ -205,20 +233,6 @@ public class BarbeariaService {
         }
     }
 
-//    public List<String> getImagePerfilClienteAgendamentoConcluido(String token) {
-//        global.validaCliente(token, "Cliente");
-//        try {
-//            List<String> imageUrlList = new ArrayList<>();
-//            for (BarbeariaConsulta barbearia : barbeariasRepository.findImagensBarbeariaAgendamentoConcluido(Integer.valueOf(tk.getUserIdByToken(token)))) {
-//                String imageUrl = azureStorageService.getBlobUrl(barbearia.getImgPerfil());
-//                imageUrlList.add(imageUrl);
-//            }
-//            System.out.println(Integer.valueOf(tk.getUserIdByToken(token)));
-//            return imageUrlList;
-//        } catch (Exception e) {
-//            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    }
 
 
     public ImgConsulta editarImgBanner(String token, MultipartFile file){
@@ -237,26 +251,6 @@ public class BarbeariaService {
         }
     }
 
-    public ByteArrayResource getImageBanner(String token) {
-        validacoesPermissoes(token);
-        try {
-            String imageName = barbeariasRepository.findById(global.getBarbeariaByToken(token).getId()).get().getImgBanner();
-            byte[] blobBytes = azureStorageService.getBlob(imageName);
-
-            BufferedImage image = ImageIO.read(new ByteArrayInputStream(blobBytes));
-
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ImageIO.write(image, "png", baos);
-            byte[] imageBytes = baos.toByteArray();
-
-            ByteArrayResource resource = new ByteArrayResource(imageBytes);
-            return resource;
-
-
-        } catch (IOException e) {
-            throw new ErroServidorException("ao resgatar imagem");
-        }
-    }
 
     public String getImageBannerClieteSide(String token, Integer idBarbearia) {
         global.validaCliente(token, "Cliente");
