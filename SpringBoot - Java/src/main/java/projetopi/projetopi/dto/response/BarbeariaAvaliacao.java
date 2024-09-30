@@ -4,7 +4,6 @@ package projetopi.projetopi.dto.response;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
-import projetopi.projetopi.service.StorageService;
 
 @Getter
 @Setter

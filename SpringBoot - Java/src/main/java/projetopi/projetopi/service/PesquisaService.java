@@ -18,6 +18,7 @@ import projetopi.projetopi.repository.EnderecoRepository;
 import projetopi.projetopi.util.Global;
 import projetopi.projetopi.util.Token;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -151,7 +152,7 @@ public class PesquisaService {
             Integer barbeariaFkEndereco = (Integer) resultado[7];
             String imgPerfil = (String) resultado[8];
             String imgBanner = (String) resultado[9];
-            Double mediaAvaliacoes = (Double) resultado[10];
+            BigDecimal mediaAvaliacoes = (BigDecimal) resultado[10];
 
             // Criar um novo objeto Barbearia com os dados retornados
             Barbearia barbearia = new Barbearia();

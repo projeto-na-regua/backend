@@ -1,11 +1,10 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://naregua-mysql-server.mysql.database.azure.com:3306/db_naregua?serverTimezone=UTC&useSSL=true&requireSSL=false
+    url: jdbc:mysql://:10.0.0.230:3306/db_naregua?serverTimezone=UTC&useSSL=true&requireSSL=false
     username: ${DB_USER}
     password: ${DB_PASSWORD}
     auto-commit: false
-
 
   jpa:
     database-platform: org.hibernate.dialect.MySQL8Dialect
@@ -17,8 +16,14 @@ spring:
         hibernate:
           dialect: org.hibernate.dialect.MySQL8Dialect
 
-azure:
-  storage:
-    blob:
-      endpoint: https://upload0naregua.blob.core.windows.net/
-      account-name: upload0naregua
+cloud:
+  aws:
+    credentials:
+      access-key: ${AWS_ACCESS_KEY_ID}
+      secret-key: ${AWS_SECRET_ACCESS_KEY}
+    region:
+      static: us-east-1
+    stack:
+      auto: false
+  s3:
+    bucket: ${BUCKET_NAME} # Nome do bucket S

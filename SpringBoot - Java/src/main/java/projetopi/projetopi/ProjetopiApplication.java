@@ -12,7 +12,7 @@ import org.springframework.core.env.Environment;
 import java.io.InputStream;
 import java.util.Properties;
 
-@Configuration
+
 @SpringBootApplication
 public class ProjetopiApplication {
 

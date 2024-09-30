@@ -72,10 +72,6 @@ public interface BarbeariasRepository extends JpaRepository<Barbearia, Integer> 
               @Param("tipoServico") String tipoServico,
               @Param("diaSemana") String diaSemana,
               @Param("hora") LocalTime hora);
-
-
-
-
 }
 
 
