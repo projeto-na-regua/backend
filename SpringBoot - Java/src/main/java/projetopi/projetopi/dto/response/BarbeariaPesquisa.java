@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 import projetopi.projetopi.entity.Barbearia;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 public class BarbeariaPesquisa {
@@ -20,11 +22,11 @@ public class BarbeariaPesquisa {
 
     private Integer numero;
 
-    private Double mediaAvaliacao;
+    private BigDecimal mediaAvaliacao;
 
 
 
-    public BarbeariaPesquisa(Barbearia barbearia, Double mediaAvaliacao, String linkImgPerfil) {
+    public BarbeariaPesquisa(Barbearia barbearia, BigDecimal mediaAvaliacao, String linkImgPerfil) {
         this.id = barbearia.getId();
         this.nomeNegocio = barbearia.getNomeNegocio();
         this.logradouro = barbearia.getEndereco().getLogradouro();

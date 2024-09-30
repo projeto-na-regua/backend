@@ -1,4 +1,4 @@
-package projetopi.projetopi;
+package projetopi.projetopi.configuration;
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;

@@ -1,43 +1,37 @@
 package projetopi.projetopi.service;
 
-import com.azure.storage.blob.BlobClient;
-import com.azure.storage.blob.BlobClientBuilder;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.util.UUID;
 
-
-
-@Service("azureStorageManager")
+@Service("s3StorageManager")
 public class StorageManager {
 
-    private String conectionString = "DefaultEndpointsProtocol=https;AccountName=upload0naregua;AccountKey=pjZHirndf8IoR10ThS02jU+yC7JHN55QtIdPkv4XnK+SfDD8MhLf/2tZgwt1/51vlhivKMzsXwr4+AStG7Jsiw==;EndpointSuffix=core.windows.net";
+    @Autowired
+    private AmazonS3 amazonS3;
 
-    private String blobContainerName = "upload";
-
-    private String blobName = "upload0naregua";
+    private final String bucketName = "nareguabucket"; // Substitua pelo nome do seu bucket S3
 
 
     public String uploadFileToBlobStorage(String fileName, String filePath) {
         String uniqueFileName = UUID.randomUUID().toString() + "-" + fileName;
-        BlobClient blobClient = new BlobClientBuilder()
-                .connectionString(conectionString)
-                .containerName(blobContainerName)
-                .blobName(uniqueFileName).buildClient();
 
-        blobClient.uploadFromFile(filePath);
+        // Cria um objeto de metadados se necessário (opcional)
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentLength(new File(filePath).length()); // Define o tamanho do arquivo
+
+        // Cria um PutObjectRequest e faz o upload
+        PutObjectRequest request = new PutObjectRequest(bucketName, uniqueFileName, new File(filePath));
+        amazonS3.putObject(request);
+
+        // Retorna o nome único do arquivo
         return uniqueFileName;
     }
 
-    public BlobClient setCliente(String blobContainerName) {
-
-        BlobClient blobClient = new BlobClientBuilder()
-                .connectionString(conectionString)
-                .containerName(blobContainerName)
-                .blobName(blobName)
-                .buildClient();
-
-        return blobClient;
-    }
+    // Não há necessidade de um método setCliente para o S3; as operações são feitas através de AmazonS3.
 }
-
