@@ -115,8 +115,10 @@ public class ServicoService {
         servico.setStatus(true);
         Integer servicoId = servicoRepository.save(servico).getId();
 
-        for (int i = 0; i < nvServico.getBarbeirosEmails().size(); i++) {
-            relacionarSericoBarbeiro(token, nvServico.getBarbeirosEmails().get(i), servicoId);
+        if (nvServico.getBarbeirosEmails() != null && !nvServico.getBarbeirosEmails().isEmpty()) {
+            for (int i = 0; i < nvServico.getBarbeirosEmails().size(); i++) {
+                relacionarSericoBarbeiro(token, nvServico.getBarbeirosEmails().get(i), servicoId);
+            }
         }
         return new ServicoConsulta(servicoRepository.findById(servicoId).get());
     }
