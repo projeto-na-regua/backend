@@ -11,10 +11,12 @@ import projetopi.projetopi.dto.response.Coordenada;
 import projetopi.projetopi.entity.Barbearia;
 import projetopi.projetopi.entity.Cliente;
 import projetopi.projetopi.entity.Endereco;
+import projetopi.projetopi.entity.Usuario;
 import projetopi.projetopi.exception.RecursoNaoEncontradoException;
 import projetopi.projetopi.repository.BarbeariasRepository;
 import projetopi.projetopi.repository.ClienteRepository;
 import projetopi.projetopi.repository.EnderecoRepository;
+import projetopi.projetopi.repository.UsuarioRepository;
 import projetopi.projetopi.util.Global;
 import projetopi.projetopi.util.Token;
 
@@ -40,6 +42,8 @@ public class PesquisaService {
     @Autowired
     private ClienteRepository clienteRepository;
     @Autowired
+    private UsuarioRepository usuarioRepository;
+    @Autowired
     private EnderecoService enderecoService;
     @Autowired
     private Token tk;
@@ -63,7 +67,7 @@ public class PesquisaService {
 
     public List<BarbeariaPesquisa> getAllByLocalizacao(String token, String servico, LocalDate date, LocalTime time, Double raio) {
 
-        Cliente cliente = clienteRepository.findById(Integer.valueOf(tk.getUserIdByToken(token)))
+        Usuario cliente = usuarioRepository.findById(Integer.valueOf(tk.getUserIdByToken(token)))
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Cliente", Integer.valueOf(tk.getUserIdByToken(token))));
 
 
