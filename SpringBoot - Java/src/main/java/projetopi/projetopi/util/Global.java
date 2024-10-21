@@ -1,16 +1,7 @@
 package projetopi.projetopi.util;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import org.geolatte.geom.Point;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestClient;
-import projetopi.projetopi.controller.UsuarioController;
-import projetopi.projetopi.dto.response.Coordenada;
 import projetopi.projetopi.entity.Barbearia;
 import projetopi.projetopi.entity.Barbeiro;
 import projetopi.projetopi.entity.Endereco;
@@ -20,7 +11,6 @@ import projetopi.projetopi.exception.ConflitoException;
 import projetopi.projetopi.exception.RecursoNaoEncontradoException;
 import projetopi.projetopi.repository.*;
 
-import javax.imageio.spi.ServiceRegistry;
 import java.util.List;
 
 
@@ -119,9 +109,20 @@ public class Global {
         }
     }
 
+    public boolean validarSeUsuarioPossuiBarbearia(Integer id) {
+        return barbeiroRepository.findById(id).isPresent();
+    }
+
+
     public void validarUsuarioExiste(String token){
         if (!usuarioRepository.existsById(Integer.valueOf(tk.getUserIdByToken(token)))){
             throw new RecursoNaoEncontradoException("Usuário", token);
+        }
+    }
+
+    public void validarBarbeariaExisteById(Integer id){
+        if (!barbeariasRepository.existsById(id)){
+            throw new RecursoNaoEncontradoException("Barbearia", id);
         }
     }
 
