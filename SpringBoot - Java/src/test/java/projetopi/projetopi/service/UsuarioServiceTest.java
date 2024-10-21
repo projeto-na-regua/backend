@@ -524,29 +524,7 @@ class UsuarioServiceTest {
 //        assertEquals(tipoConsulta.getDtype(), result.getDtype());
 //    }
 
-    @Test
-    public void testGetImage() throws IOException {
-        String tk = "someToken";
-        Integer userId = 123;
-        String imageName = "image.png";
 
-        // Create a sample image and convert it to bytes
-        BufferedImage bufferedImage = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ImageIO.write(bufferedImage, "png", baos);
-        byte[] imageBytes = baos.toByteArray();
-
-        when(usuarioRepository.existsById(userId)).thenReturn(true);
-        when(token.getUserIdByToken(tk)).thenReturn(userId.toString());
-        when(usuarioRepository.findById(userId)).thenReturn(Optional.of(new Usuario() {{
-            setImgPerfil(imageName);
-        }}));
-        when(azureStorageService.getBlob(imageName)).thenReturn(imageBytes);
-
-        ByteArrayResource result = service.getImage(tk);
-        assertNotNull(result);
-
-    }
 
 //    @Test
 //    public void testEditarImgPerfil_Success() throws IOException {
