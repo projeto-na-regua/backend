@@ -42,12 +42,8 @@ public class GaleriaService {
     @Autowired
     private Global global;
 
-    private final StorageService azureStorageService;
-
-
-    public GaleriaService(StorageService azureStorageService) {
-        this.azureStorageService = azureStorageService;
-    }
+    @Autowired
+    private ImageService imageService;
 
 
     public List<GaleriaConsulta> getImages(String tk){
@@ -72,16 +68,11 @@ public class GaleriaService {
         Integer id = Integer.valueOf(token.getUserIdByToken(tk));
         global.validaCliente(tk, "Cliente");
 
-        try {
-            String imageUrl = azureStorageService.uploadImage(imagem);
-            Cliente cliente = clienteRepository.findById(id).orElseThrow(() -> new RecursoNaoEncontradoException("Cliente", id));
-            ImgsGaleria imgsGaleria = galeriaRepository.save(new ImgsGaleria(imageUrl, descricao, cliente));
-            return new GaleriaConsulta(imgsGaleria, imgsGaleria.getImagem());
+        String imageUrl = imageService.upload(imagem, "galeria");
+        Cliente cliente = clienteRepository.findById(id).orElseThrow(() -> new RecursoNaoEncontradoException("Cliente", id));
+        ImgsGaleria imgsGaleria = galeriaRepository.save(new ImgsGaleria(imageUrl, descricao, cliente));
+        return new GaleriaConsulta(imgsGaleria, imgsGaleria.getImagem());
 
-        } catch (IOException e) {
-            throw new ErroServidorException("upload de imagem.");
-
-        }
     }
 
     public GaleriaConsulta getOneImageGalery(String tk, Integer idImg) {
@@ -89,7 +80,7 @@ public class GaleriaService {
         try {
 
             ImgsGaleria imgsGaleria = galeriaRepository.findById(idImg).orElseThrow(() -> new RecursoNaoEncontradoException("Imagem Gaelria", idImg));
-            return new GaleriaConsulta(imgsGaleria, azureStorageService.getBlobUrl(imgsGaleria.getImagem()));
+            return new GaleriaConsulta(imgsGaleria, imageService.getImgURL(imgsGaleria.getImagem(), "galeria"));
 
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);

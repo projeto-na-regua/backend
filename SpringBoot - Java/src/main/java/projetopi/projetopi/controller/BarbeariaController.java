@@ -46,26 +46,6 @@ public class BarbeariaController {
     }
 
 
-//    @GetMapping("/client-side/get-one-image-perfil/{idBarbearia}")
-//    public ResponseEntity<String> getImagePerfilClienteSide(@RequestHeader("Authorization") String token, @PathVariable Integer idBarbearia){
-//        return ResponseEntity.ok().body(service.getImagePerfilClienteSide(token, idBarbearia));
-//    }
-//
-//    @GetMapping("/client-side/get-image-banner/{idBarbearia}")
-//    public ResponseEntity<String> getImageBanner(@RequestHeader("Authorization") String token, @PathVariable Integer idBarbearia){
-//        return ResponseEntity.ok().body(service.getImageBannerClieteSide(token, idBarbearia));
-//    }
-//
-//
-//    @GetMapping("/client-side/get-image-perfil")
-//    public ResponseEntity<List<String>> getImagePerfilCliente(@RequestHeader("Authorization") String token) {
-//        List<String> imageBytes = service.getImagePerfilCliente(token);
-//
-//        return ResponseEntity.ok()
-//                .body(imageBytes);
-//    }
-
-
     @PutMapping("/image-perfil")
     public ResponseEntity<ImgConsulta> getPerfil(@RequestHeader("Authorization") String token,
                                                  @RequestParam("file") MultipartFile file){
