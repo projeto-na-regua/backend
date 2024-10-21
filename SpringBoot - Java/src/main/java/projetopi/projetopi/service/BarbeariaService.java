@@ -57,9 +57,11 @@ public class BarbeariaService {
     @Autowired
     private final EnderecoRepository enderecoRepository;
 
-    private final StorageService azureStorageService;
 
     private final Global global;
+
+    @Autowired
+    private ImageService imageService;
 
     private final ModelMapper mapper;
 
@@ -120,8 +122,8 @@ public class BarbeariaService {
 
         Barbearia barbearia = barbeariasRepository.findById(barbeariaId).get();
         DiaSemana[] semana = diaSemanaRepository.findByBarbeariaId(barbearia.getId());
-        String banner = azureStorageService.getBlobUrl(barbearia.getImgBanner());
-        String imgPerfil = azureStorageService.getBlobUrl(barbearia.getImgPerfil());
+        String banner = imageService.getImgURL(barbearia.getImgBanner(), "barbearia");
+        String imgPerfil = imageService.getImgURL(barbearia.getImgPerfil(), "barbearia");
         return new BarbeariaConsulta(barbearia, semana, banner, imgPerfil);
     }
 
@@ -129,8 +131,10 @@ public class BarbeariaService {
         global.validaBarbearia(token);
         Barbearia barbearia = barbeariasRepository.findById(global.getBarbeariaByToken(token).getId()).get();
         DiaSemana[] semana = diaSemanaRepository.findByBarbeariaId(barbearia.getId());
-        String banner = azureStorageService.getBlobUrl(barbearia.getImgBanner());
-        String imgPerfil = azureStorageService.getBlobUrl(barbearia.getImgPerfil());
+
+        String banner = barbearia.getImgBanner() != null ? imageService.getImgURL(barbearia.getImgBanner(), "barbearia") : barbearia.getImgBanner();
+        String imgPerfil = barbearia.getImgPerfil()  != null ? imageService.getImgURL(barbearia.getImgPerfil() , "barbearia") : barbearia.getImgPerfil();
+
         return new BarbeariaConsulta(barbearia, semana, banner, imgPerfil);
     }
 
@@ -150,8 +154,7 @@ public class BarbeariaService {
         barbeariaExistente.setNomeNegocio(nvBarbearia.getNomeNegocio());
         barbeariaExistente.setCelularNegocio(nvBarbearia.getCelularNegocio());
         barbeariaExistente.setEmailNegocio(nvBarbearia.getEmailNegocio());
-        barbeariaExistente.setImgBanner(nvBarbearia.getImgBanner());
-        barbeariaExistente.setImgPerfil(nvBarbearia.getImgPerfil());
+
 
         // Atualiza os dias da semana associados à barbearia
         DiaSemana[] semanaExistente = diaSemanaRepository.findByBarbeariaId(barbeariaExistente.getId());
@@ -171,119 +174,31 @@ public class BarbeariaService {
             diaSemanaRepository.save(nvBarbearia.getDiaSemanas()[i]);
         }
 
-        // Atualiza a barbearia no repositório
-        Barbearia barbeariaSalva = barbeariasRepository.save(barbeariaExistente);
 
-        // Obtem as URLs das imagens atualizadas
-        String bannerUrl = azureStorageService.getBlobUrl(barbeariaSalva.getImgBanner());
-        String imgPerfilUrl = azureStorageService.getBlobUrl(barbeariaSalva.getImgPerfil());
-
-        // Retorna as informações atualizadas
-        return new BarbeariaConsulta(barbeariaSalva, nvBarbearia.getDiaSemanas(), bannerUrl, imgPerfilUrl);
+        barbeariasRepository.save(barbeariaExistente);
+        return this.getPerfil(token);
     }
 
     public ImgConsulta editarImgPerfil(String token, MultipartFile file){
 
         validacoesPermissoes(token);
-        try {
-            String imageUrl = azureStorageService.uploadImage(file);
-            Barbearia barbearia = barbeariasRepository.findById(global.getBarbeariaByToken(token).getId()).get();
-            barbearia.setImgPerfil(imageUrl);
-            barbeariasRepository.save(barbearia);
-            return new ImgConsulta(barbearia.getImgPerfil());
+        String imageUrl = imageService.upload(file, "barbearia");
+        Barbearia barbearia = barbeariasRepository.findById(global.getBarbeariaByToken(token).getId()).get();
+        barbearia.setImgPerfil(imageUrl);
+        barbeariasRepository.save(barbearia);
+        return new ImgConsulta(barbearia.getImgPerfil());
 
-        } catch (IOException e) {
-            throw new ErroServidorException("upload de imagem.");
-
-        }
     }
-
-    public ByteArrayResource getImagePerfil(String token) {
-        validacoesPermissoes(token);
-        try {
-            String imageName = barbeariasRepository.findById(global.getBarbeariaByToken(token).getId()).get().getImgPerfil();
-            byte[] blobBytes = azureStorageService.getBlob(imageName);
-
-            BufferedImage image = ImageIO.read(new ByteArrayInputStream(blobBytes));
-
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ImageIO.write(image, "png", baos);
-            byte[] imageBytes = baos.toByteArray();
-
-            ByteArrayResource resource = new ByteArrayResource(imageBytes);
-            return resource;
-
-
-        } catch (IOException e) {
-            throw new ErroServidorException("ao resgatar imagem");
-        }
-    }
-
-    public List<String> getImagePerfilCliente(String token) {
-        global.validaCliente(token, "Cliente");
-        try {
-            List<String> imageUrlList = new ArrayList<>();
-            for (Barbearia barbearia : barbeariasRepository.findAll()) {
-                String imageUrl = azureStorageService.getBlobUrl(barbearia.getImgPerfil());
-                imageUrlList.add(imageUrl);
-            }
-            return imageUrlList;
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-
 
     public ImgConsulta editarImgBanner(String token, MultipartFile file){
-
         validacoesPermissoes(token);
-        try {
-            String imageUrl = azureStorageService.uploadImage(file);
-            Barbearia barbearia = barbeariasRepository.findById(global.getBarbeariaByToken(token).getId()).get();
-            barbearia.setImgBanner(imageUrl);
-            barbeariasRepository.save(barbearia);
-            return new ImgConsulta(barbearia.getImgBanner());
-
-        } catch (IOException e) {
-            throw new ErroServidorException("upload de imagem.");
-
-        }
+        String imageUrl = imageService.upload(file, "barbearia");
+        Barbearia barbearia = barbeariasRepository.findById(global.getBarbeariaByToken(token).getId()).get();
+        barbearia.setImgBanner(imageUrl);
+        barbeariasRepository.save(barbearia);
+        return new ImgConsulta(barbearia.getImgBanner());
     }
 
-
-    public String getImageBannerClieteSide(String token, Integer idBarbearia) {
-        global.validaCliente(token, "Cliente");
-
-        if (!barbeariasRepository.existsById(idBarbearia)){
-            throw new RecursoNaoEncontradoException("Barbearia", idBarbearia);
-        }
-
-        String imageName = barbeariasRepository.findById(idBarbearia).get().getImgBanner();
-//            byte[] blobBytes = azureStorageService.getBlob(imageName);
-//
-//            BufferedImage image = ImageIO.read(new ByteArrayInputStream(blobBytes));
-//
-//            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//            ImageIO.write(image, "png", baos);
-//            byte[] imageBytes = baos.toByteArray();
-//
-//            ByteArrayResource resource = new ByteArrayResource(imageBytes);
-        return azureStorageService.getBlobUrl(imageName);
-
-
-    }
-
-    public String getImagePerfilClienteSide(String token, Integer idBarbearia) {
-        global.validaCliente(token, "Cliente");
-
-        if (!barbeariasRepository.existsById(idBarbearia)){
-            throw new RecursoNaoEncontradoException("Barbearia", idBarbearia);
-        }
-
-        String imageName = barbeariasRepository.findById(idBarbearia).get().getImgPerfil();
-        return azureStorageService.getBlobUrl(imageName);
-    }
 
 
     void validacoesPermissoes(String token){
