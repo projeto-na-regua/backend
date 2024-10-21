@@ -12,19 +12,17 @@ import java.io.IOException;
 @RestController
 @RequestMapping("/api/files")
 public class FileController {
-
-    // O caminho onde o EFS está montado na sua instância EC2
-    private final String efsPath = "/mnt/efs/";
-
     @Autowired
     private ImageService imageService;
 
     @PostMapping
     public String upload(@RequestBody MultipartFile file) {
-        return imageService.upload(file);
+        return imageService.upload(file, "usuario");
     }
 
-
-
+    @GetMapping
+    public String getImg(@RequestParam String filename) {
+        return imageService.getImgURL(filename, "usuario");
+    }
 }
 

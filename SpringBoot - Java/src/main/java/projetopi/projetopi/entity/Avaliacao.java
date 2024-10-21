@@ -21,6 +21,5 @@ public class Avaliacao {
     @Column(name="comentario")
     private String comentario;
 
-
 }
 

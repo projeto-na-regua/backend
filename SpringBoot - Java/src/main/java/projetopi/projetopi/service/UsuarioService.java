@@ -53,7 +53,9 @@ public class UsuarioService {
     private final Global global;
     private final Token token;
     public ModelMapper mapper;
-    private final StorageService azureStorageService;
+
+    @Autowired
+    private ImageService imageService;
     @Autowired
     private EnderecoService enderecoService;
 
@@ -68,7 +70,6 @@ public class UsuarioService {
         this.usuarioRepository = usuarioRepository;
         this.token = token;
         this.mapper = mapper;
-        this.azureStorageService = azureStorageService;
         this.global = global;
     }
 
@@ -125,7 +126,7 @@ public class UsuarioService {
 
         String imageName = usuario.getImgPerfil();
 
-        return azureStorageService.getBlobUrl(imageName);
+        return imageService.getImgURL(imageName, "usuario");
     }
 
 
@@ -177,7 +178,7 @@ public class UsuarioService {
     public PerfilUsuarioConsulta getPerfil(String t){
         global.validarUsuarioExiste(t);
         PerfilUsuarioConsulta dto  = new PerfilUsuarioConsulta(global.getBarbeiroByToken(t));
-        dto.setImgPerfil(azureStorageService.getBlobUrl(dto.getImgPerfil()));
+        dto.setImgPerfil(imageService.getImgURL(dto.getImgPerfil(), "usuario"));
         return dto;
 
     }
@@ -191,40 +192,14 @@ public class UsuarioService {
     public ImgConsulta editarImgPerfil(String tk, MultipartFile file){
         global.validarUsuarioExiste(tk);
 
-        try {
-            String imageUrl = azureStorageService.uploadImage(file);
-            Usuario usuario = global.getBarbeiroByToken(tk);
-            usuario.setImgPerfil(imageUrl);
-            usuarioRepository.save(usuario);
-            return new ImgConsulta(usuario.getImgPerfil());
+        String imageUrl = imageService.upload(file, "usuario");
+        Usuario usuario = global.getBarbeiroByToken(tk);
+        usuario.setImgPerfil(imageUrl);
+        usuarioRepository.save(usuario);
+        return new ImgConsulta(usuario.getImgPerfil());
 
-        } catch (IOException e) {
-            throw new ErroServidorException("upload de imagem.");
-
-        }
     }
 
-    public ByteArrayResource getImage(String tk) {
-        Integer id = Integer.valueOf(token.getUserIdByToken(tk));
-        global.validarUsuarioExiste(tk);
-        try {
-            String imageName = usuarioRepository.findById(id).get().getImgPerfil();
-            byte[] blobBytes = azureStorageService.getBlob(imageName);
-
-            BufferedImage image = ImageIO.read(new ByteArrayInputStream(blobBytes));
-
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ImageIO.write(image, "png", baos);
-            byte[] imageBytes = baos.toByteArray();
-
-            ByteArrayResource resource = new ByteArrayResource(imageBytes);
-            return resource;
-
-
-        } catch (IOException e) {
-            throw new ErroServidorException("ao resgatar imagem");
-        }
-    }
 
     public DiaSemana[] definirDiasDaSemanda(){
         DiaSemana seg = new DiaSemana(Dia.SEG);
