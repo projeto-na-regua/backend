@@ -26,21 +26,14 @@ public class ChatController {
     @Autowired
     private MensagemService service;
 
+
+    //ENVIAR MENSAGEM
     @PostMapping
     private ResponseEntity<MensagemResposta> enviar(
             @RequestHeader("Authorization") String token,
             @RequestParam("mensagem") String mensagem,
             @RequestParam("id") Integer id,
-            @RequestParam("tipo") String tipo){
-        return status(201).body(service.sendMessage(token, id, mensagem, tipo));
-    }
-
-    @PostMapping("/plus-image")
-    private ResponseEntity<MensagemResposta> enviar(
-            @RequestHeader("Authorization") String token,
-            @RequestParam("mensagem") String mensagem,
-            @RequestParam("id") Integer id,
-            @RequestParam("imagem") MultipartFile file,
+            @RequestParam( value = "imagem", required = false) MultipartFile file,
             @RequestParam("tipo") String tipo){
         return status(201).body(service.sendMessage(token, id, mensagem, file, tipo));
     }
