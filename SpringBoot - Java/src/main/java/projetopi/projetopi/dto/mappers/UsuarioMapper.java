@@ -23,12 +23,14 @@ public class UsuarioMapper {
     }
 
     public static Cliente toDto(CadastroCliente c) {
+
         return new Cliente(
                 c.getNome(),
                 c.getEmail(),
                 c.getSenha(),
                 c.getCelular(),
-                toDtoEndereco(c)
+                toDtoEndereco(c),
+                c.getUsername()
         );
 
     }

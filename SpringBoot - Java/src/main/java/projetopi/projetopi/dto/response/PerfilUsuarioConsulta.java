@@ -31,6 +31,8 @@ public class PerfilUsuarioConsulta {
 
     private String estado;
 
+    private String username;
+
     public PerfilUsuarioConsulta(Usuario u) {
         this.nome = u.getNome();
         this.email = u.getEmail();
@@ -43,6 +45,7 @@ public class PerfilUsuarioConsulta {
         this.complemento = enderecoIsNull(u.getEndereco())  ? null : u.getEndereco().getComplemento();
         this.cidade = enderecoIsNull(u.getEndereco())  ? null : u.getEndereco().getCidade();
         this.estado = enderecoIsNull(u.getEndereco()) ? null : u.getEndereco().getEstado();
+        this.username = u.getUsername();
     }
 
     public static boolean enderecoIsNull(Endereco end){
