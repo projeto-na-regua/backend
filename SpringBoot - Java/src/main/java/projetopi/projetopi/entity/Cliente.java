@@ -15,8 +15,8 @@ public class Cliente extends Usuario implements iAgendavel {
     public Cliente() {
     }
 
-    public Cliente(String nome, String email, String senha, String celular, Endereco endereco) {
-        super(nome, email, senha, celular, endereco);
+    public Cliente(String nome, String email, String senha, String celular, Endereco endereco, String username) {
+        super(nome, email, senha, celular, endereco, username);
     }
 
     @Override
