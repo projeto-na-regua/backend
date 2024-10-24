@@ -45,6 +45,7 @@ public class UsuarioService {
 
     private final EnderecoRepository enderecoRepository;
 
+
     private final BarbeariasRepository barbeariasRepository;
 
     private final DiaSemanaRepository diaSemanaRepository;
@@ -74,14 +75,20 @@ public class UsuarioService {
     }
 
 
-    public String cadastrarCliente(CadastroCliente nvCliente){
+    public String cadastrarCliente(CadastroCliente nvCliente, MultipartFile file){
         global.validarEmail(nvCliente.getEmail());
+        global.validarUsername(nvCliente.getUsername());
 
         Endereco endereco = enderecoService.cadastroEndereco(nvCliente);
         global.validarEnderecoCadastrado(endereco);
 
         Integer idEndereco = endereco.getId();
         Cliente cliente = UsuarioMapper.toDto(nvCliente);
+
+        if (file != null && !file.isEmpty()) {
+            String fileName = imageService.upload(file, "usuario");
+            cliente.setImgPerfil(fileName);
+        }
 
         cliente.getEndereco().setId(idEndereco);
 
@@ -90,24 +97,38 @@ public class UsuarioService {
     }
 
 
-    public Barbearia cadastroBarbearia(CadastroBarbearia nvBarbearia, Endereco endereco){
+    public Barbearia cadastroBarbearia(CadastroBarbearia nvBarbearia, Endereco endereco,  MultipartFile imgBanner, MultipartFile imgPerfil){
         Barbearia barbearia = nvBarbearia.gerarBarbearia();
+
+        if (imgBanner != null && !imgBanner.isEmpty()) {
+            String fileName = imageService.upload(imgBanner, "barbearia");
+            barbearia.setImgBanner(fileName);
+        }
+
+        if (imgPerfil != null && !imgPerfil.isEmpty()) {
+            String fileName = imageService.upload(imgPerfil, "barbearia");
+            barbearia.setImgPerfil(fileName);
+        }
 
         Endereco newEndereco = enderecoRepository
                 .findById(endereco.getId()).orElseThrow(() -> new RecursoNaoEncontradoException("Endereco", endereco));
+
 
         barbearia.setEndereco(newEndereco);
         return barbeariasRepository.save(barbearia);
     }
 
 
-    public Barbearia cadastrarBarbeariaByDto(CadastroBarbearia nvBarbearia, String tk){
+    public Barbearia cadastrarBarbeariaByDto(CadastroBarbearia nvBarbearia, String tk, MultipartFile imgBanner, MultipartFile imgPerfil){
         global.validarCpf(nvBarbearia.getCpf());
         global.validarSeUsuarioPossuiBarbearia(tk);
 
         Integer id = Integer.valueOf(token.getUserIdByToken(tk));
         Endereco endereco = enderecoService.cadastroEndereco(nvBarbearia);
-        Barbearia barbearia = cadastroBarbearia(nvBarbearia, endereco);
+
+
+
+        Barbearia barbearia = cadastroBarbearia(nvBarbearia, endereco, imgBanner, imgPerfil);
         DiaSemana[] diaSemanas = definirDiasDaSemanda();
 
         for (DiaSemana diaSemana : diaSemanas){
@@ -133,6 +154,7 @@ public class UsuarioService {
     public UsuarioConsulta editarUsuario(String tk, UsuarioConsulta nvUsuario){
         Integer id = Integer.valueOf(token.getUserIdByToken(tk));
         global.validarUsuarioExiste(tk);
+        global.validarUpdate(nvUsuario, usuarioRepository.findById(id).get());
 
         if(global.isCliente(tk)){
             Cliente clienteSalvo = clienteRepository.findById(id).get();

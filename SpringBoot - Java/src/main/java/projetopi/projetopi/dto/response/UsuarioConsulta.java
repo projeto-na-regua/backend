@@ -10,6 +10,8 @@ public class UsuarioConsulta {
 
     private String nome;
 
+    private String username;
+
     private String email;
 
     private String celular;
@@ -17,7 +19,8 @@ public class UsuarioConsulta {
 
     public UsuarioConsulta(Usuario user) {
         this.nome = user.getNome();
-        this.email = user.getNome();
+        this.username = user.getUsername();
+        this.email = user.getEmail();
         this.celular = user.getCelular();
     }
 

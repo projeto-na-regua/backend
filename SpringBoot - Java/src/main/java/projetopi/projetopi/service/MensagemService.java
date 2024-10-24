@@ -50,7 +50,11 @@ public class MensagemService {
         Chat chat = chatService.getOrCreatedChat(token, id, isUsuario);
         Usuario usuario = global.getBarbeiroByToken(token);
         Mensagem novaMensagem = new Mensagem(chat, usuario, mensagem);
-        novaMensagem.setFilename(imageService.upload(file, "chat"));
+
+        if (file != null && !file.isEmpty()) {
+            novaMensagem.setFilename(imageService.upload(file, "chat"));
+        }
+
         return mapper.toDto(mensagemRepository.save(novaMensagem), chat);
     }
 
