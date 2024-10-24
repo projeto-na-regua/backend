@@ -2,6 +2,7 @@ package projetopi.projetopi.util;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import projetopi.projetopi.dto.response.UsuarioConsulta;
 import projetopi.projetopi.entity.Barbearia;
 import projetopi.projetopi.entity.Barbeiro;
 import projetopi.projetopi.entity.Endereco;
@@ -80,6 +81,28 @@ public class Global {
     public void validarEmail(String email){
         if (usuarioRepository.findByEmail(email) != null){
             throw new ConflitoException("Usuário", email);
+        }
+    }
+
+    public void validarUpdate(UsuarioConsulta nvUsuario, Usuario usuario){
+        if(!nvUsuario.getEmail().equals(usuario.getEmail())){
+            if (usuarioRepository.findByEmail(nvUsuario.getEmail()) != null){
+                throw new ConflitoException("Usuário", nvUsuario.getEmail());
+            }
+        }
+
+        if(!nvUsuario.getUsername().equals(usuario.getUsername())){
+            if (usuarioRepository.findByUsername(nvUsuario.getUsername()) != null){
+                throw new ConflitoException("Usuário", nvUsuario.getUsername());
+            }
+        }
+    }
+
+
+
+    public void validarUsername(String username){
+        if (usuarioRepository.findByUsername(username) != null){
+            throw new ConflitoException("Usuário", username);
         }
     }
 

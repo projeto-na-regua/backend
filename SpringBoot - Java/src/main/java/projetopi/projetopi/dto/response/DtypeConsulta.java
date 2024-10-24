@@ -11,4 +11,6 @@ public class DtypeConsulta {
     private String dtype;
 
     private Boolean adm;
+
+    private String username;
 }

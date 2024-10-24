@@ -8,6 +8,8 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Entity
@@ -54,18 +56,23 @@ public abstract class Usuario {
     @JoinColumn(name = "usuario_fk_especialidade", nullable = true)
     private Especialidade especialidade;
 
+    @Column(name="username")
+    private String username;
+
+
     public Usuario(String nome, String email, String celular) {
         this.nome = nome;
         this.email = email;
         this.celular = celular;
     }
 
-    public Usuario(String nome, String email, String senha, String celular, Endereco endereco) {
+    public Usuario(String nome, String email, String senha, String celular, Endereco endereco, String username) {
         this.nome = nome;
         this.email = email;
         this.senha = senha;
         this.celular = celular;
         this.endereco = endereco;
+        this.username = username;
     }
 
     public Usuario(Integer id) {
