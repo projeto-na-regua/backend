@@ -178,7 +178,9 @@ public class UsuarioService {
     public PerfilUsuarioConsulta getPerfil(String t){
         global.validarUsuarioExiste(t);
         PerfilUsuarioConsulta dto  = new PerfilUsuarioConsulta(global.getBarbeiroByToken(t));
-        dto.setImgPerfil(imageService.getImgURL(dto.getImgPerfil(), "usuario"));
+        if(dto.getImgPerfil() != null && !(dto.getImgPerfil().isEmpty())){
+            dto.setImgPerfil(imageService.getImgURL(dto.getImgPerfil(), "usuario"));
+        }
         return dto;
 
     }
