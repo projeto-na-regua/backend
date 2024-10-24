@@ -26,8 +26,6 @@ public class ChatController {
     @Autowired
     private MensagemService service;
 
-
-    //ENVIAR MENSAGEM
     @PostMapping
     private ResponseEntity<MensagemResposta> enviar(
             @RequestHeader("Authorization") String token,
