@@ -47,4 +47,7 @@ public class CadastroCliente {
 
     private String estado;
 
+    private String username;
+
+    private String imagemPerfil;
 }

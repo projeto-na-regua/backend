@@ -1,5 +1,7 @@
 package projetopi.projetopi.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -35,15 +37,31 @@ public class UsuarioController {
         return status(200).body(service.loginIsValid(loginUsuario));
     }
 
-    @PostMapping("/cadastro") // CADASTRO CLIENTE
-    private ResponseEntity<String> cadastrarCliente(@Valid @RequestBody CadastroCliente c){
-        return status(201).body(service.cadastrarCliente(c));
+    @PostMapping(value = "/cadastro", consumes = {"multipart/form-data"})
+    public ResponseEntity<String> cadastrarCliente(
+            @RequestPart(value = "imagem", required = false) MultipartFile file,
+            @RequestParam("user") String userJson) throws Exception {
+
+        // Converter manualmente o JSON para o objeto CadastroCliente
+        ObjectMapper objectMapper = new ObjectMapper();
+        CadastroCliente cadastroCliente = objectMapper.readValue(userJson, CadastroCliente.class);
+
+        // Chamar o serviço passando o objeto convertido e o arquivo
+        return ResponseEntity.status(201).body(service.cadastrarCliente(cadastroCliente, file));
     }
+
 
     @PostMapping("/cadastro-barbearia") // CADASTRO BARBEIRO
     private ResponseEntity<Barbearia> cadastrarBarbeiro(@RequestHeader("Authorization") String token,
-                                                        @Valid @RequestBody CadastroBarbearia nvBarbearia){
-        service.cadastrarBarbeariaByDto(nvBarbearia, token);
+                                                        @RequestParam(value = "barbearia") String barbearia,
+                                                        @RequestParam(value = "perfil", required = false) MultipartFile imgPerfil,
+                                                        @RequestParam(value = "banner", required = false)MultipartFile imgBanner) throws JsonProcessingException {
+
+        // Converter manualmente o JSON para o objeto CadastroCliente
+        ObjectMapper objectMapper = new ObjectMapper();
+        CadastroBarbearia nvBarbearia = objectMapper.readValue(barbearia, CadastroBarbearia.class);
+
+        service.cadastrarBarbeariaByDto(nvBarbearia, token, imgBanner, imgPerfil);
         return status(201).build();
     }
 
