@@ -56,7 +56,7 @@ public class FuncionarioService {
     @Autowired
     private ServicoRepository servicoRepository;
 
-    private final StorageService azureStorageService;
+    private final ImageService imageService;
 
 
     @Autowired
@@ -100,8 +100,11 @@ public class FuncionarioService {
         try {
             List<String> imageUrlList = new ArrayList<>();
             for (Usuario barbeiro : usuarioRepository.findAllByBarbeariaId(idBarbearia)) {
-                    String imageUrl = azureStorageService.getBlobUrl(barbeiro.getImgPerfil());
+                if (barbeiro.getImgPerfil() != null && !barbeiro.getImgPerfil().isEmpty()) {
+                    String imageUrl = imageService.getImgURL(barbeiro.getImgPerfil(), "usuario");
                     imageUrlList.add(imageUrl);
+                }
+
             }
             System.out.println(imageUrlList);
             return imageUrlList;

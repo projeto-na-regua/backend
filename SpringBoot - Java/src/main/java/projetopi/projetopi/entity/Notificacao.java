@@ -24,6 +24,11 @@ public class Notificacao {
     @JoinColumn(name = "notificacao_id_usuario", nullable = false)
     private Usuario usuario;
 
+    // Relacionamento com Usuario
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "notificacao_id_usuario_notificado", nullable = false)
+    private Usuario usuarioNotificado;
+
     // Relacionamento com TipoNotificacao
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "notificacao_id_tipo", nullable = false)
@@ -41,4 +46,13 @@ public class Notificacao {
     @Column(name = "lida", nullable = false, columnDefinition = "BIT(1)")
     private boolean lida;
 
+    public Notificacao(Usuario usuario, TipoNotificacao tipoNotificacao, Integer referenciaId, String mensagem, Usuario usuarioNotificado) {
+        this.usuario = usuario;
+        this.tipoNotificacao = tipoNotificacao;
+        this.referenciaId = referenciaId;
+        this.mensagem = mensagem;
+        this.dataCriacao = LocalDateTime.now();
+        this.lida = false;
+        this.usuarioNotificado = usuarioNotificado;
+    }
 }

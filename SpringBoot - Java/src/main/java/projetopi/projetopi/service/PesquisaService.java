@@ -48,7 +48,7 @@ public class PesquisaService {
     @Autowired
     private Token tk;
     @Autowired
-    private  StorageService azureStorageService;
+    private  ImageService imageService;
 
 
     public List<BarbeariaPesquisa> filtroBarberiasNome(String token, String nomeBarbearia) {
@@ -136,8 +136,11 @@ public class PesquisaService {
         }
 
         for (BarbeariaAvaliacao ba : lista){
-            ba.setImgPerfilBarbearia(azureStorageService.getBlobUrl(ba.getImgPerfilBarbearia()));
+            if (ba.getImgPerfilBarbearia() != null && !ba.getImgPerfilBarbearia().isEmpty()) {
+                ba.setImgPerfilBarbearia(imageService.getImgURL(ba.getImgPerfilBarbearia(), "barbearia"));
+            }
         }
+
         return lista;
     }
 
@@ -170,13 +173,33 @@ public class PesquisaService {
             barbearia.setEndereco(enderecoRepository.findById(barbeariaFkEndereco).get());
             barbearia.setImgPerfil(imgPerfil);
             barbearia.setImgBanner(imgBanner);
+            String linkImg = null;
 
-            String linkImg = azureStorageService.getBlobUrl(barbearia.getImgPerfil());
+            if (barbearia.getImgPerfil() != null && !barbearia.getImgPerfil().isEmpty()) {
+                linkImg = imageService.getImgURL(barbearia.getImgPerfil(), "barbearia");
+            }
             barbeariasPesquisadas.add(new BarbeariaPesquisa(barbearia, mediaAvaliacoes, linkImg));
         }
 
         return barbeariasPesquisadas;
     }
+
+    public List<BarbeariaPesquisa> dtoLisBarbearia(List<Barbearia> resultados){
+        List<BarbeariaPesquisa> barbeariasPesquisadas = new ArrayList<>();
+
+        for (Barbearia barbearia : resultados) {
+            BarbeariaPesquisa barbeariaPesquisa = new BarbeariaPesquisa(barbearia);
+
+            if (barbearia.getImgPerfil() != null && !barbearia.getImgPerfil().isEmpty()) {
+                barbeariaPesquisa.setImgPerfil(imageService.getImgURL(barbearia.getImgPerfil(), "barbearia"));
+            }
+
+            barbeariasPesquisadas.add(barbeariaPesquisa);
+        }
+
+        return barbeariasPesquisadas;
+    }
+
 
 
 

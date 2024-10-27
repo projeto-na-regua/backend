@@ -1,5 +1,6 @@
 package projetopi.projetopi.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,6 +25,8 @@ public class Midia {
     private String arquivo;
 
     @Column(name = "data_criacao", nullable = false)
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime dataCriacao;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -33,5 +36,18 @@ public class Midia {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "midia_id_comentario", nullable = true)
     private Comentario comentario;
+
+    public Midia(String arquivo, Postagem postagem) {
+        this.arquivo = arquivo;
+        this.postagem = postagem;
+        this.dataCriacao = LocalDateTime.now();
+    }
+
+    public Midia(String arquivo, Comentario comentario) {
+        this.arquivo = arquivo;
+        this.comentario = comentario;
+        this.dataCriacao = LocalDateTime.now();
+    }
+
 
 }

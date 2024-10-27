@@ -58,7 +58,7 @@ public class AgendamentoService {
     private ModelMapper mapper;
 
     @Autowired
-    private StorageService azureStorageService;
+    private ImageService imageService;
 
     @Autowired
     private Token tk;
@@ -67,6 +67,9 @@ public class AgendamentoService {
     private Global global;
 
     private final Map<Integer, FilaHistorico> historicoPorCliente;
+
+    @Autowired
+    private NotificacoesService notificacoesService;
 
     private FilaHistorico getFilaHistoricoParaCliente(Integer clienteId) {
         return historicoPorCliente.computeIfAbsent(clienteId, k -> new FilaHistorico());
@@ -106,8 +109,11 @@ public class AgendamentoService {
         return agendamentos.stream()
                 .map(ag -> {
                     AgendamentoConsulta dto = AgendamentoMapper.toDto(ag);
-                    String imgPerfilUrl = azureStorageService.getBlobUrl(ag.getBarbearia().getImgPerfil());
-                    dto.setImgPerfilBarbearia(imgPerfilUrl);
+                    if (ag.getBarbearia().getImgPerfil() != null && !ag.getBarbearia().getImgPerfil().isEmpty()) {
+                        String imgPerfilUrl = imageService.getImgURL(ag.getBarbearia().getImgPerfil(), "barbearia");
+                        dto.setImgPerfilBarbearia(imgPerfilUrl);
+                    }
+
                     return dto;                })
                 .collect(Collectors.toList());
     }
@@ -127,7 +133,10 @@ public class AgendamentoService {
             .filter(ag -> !ag.getStatus().equalsIgnoreCase("Concluido"))
             .map(ag -> {
                 AgendamentoConsulta dto = AgendamentoMapper.toDto(ag);
-                dto.setImgPerfilBarbearia(azureStorageService.getBlobUrl(ag.getBarbearia().getImgPerfil()));
+                if (ag.getBarbearia().getImgPerfil() != null && !ag.getBarbearia().getImgPerfil().isEmpty()) {
+                    String imgPerfilUrl = imageService.getImgURL(ag.getBarbearia().getImgPerfil(), "barbearia");
+                    dto.setImgPerfilBarbearia(imgPerfilUrl);
+                }
                 return dto;
         }).collect(Collectors.toList());
     }
@@ -138,9 +147,13 @@ public class AgendamentoService {
         if (!usuarioRepository.existsById(Integer.valueOf(tk.getUserIdByToken(token)))) throw new AcessoNegadoException("Usuário");
 
         if (!repository.existsById(id)) throw new RecursoNaoEncontradoException("Agendamento", id);
+        Agendamento agendamento = repository.findById(id).get();
+        AgendamentoConsulta dto = AgendamentoMapper.toDto(agendamento);
 
-        AgendamentoConsulta dto = AgendamentoMapper.toDto(repository.findById(id).get());
-        dto.setImgPerfilBarbearia(azureStorageService.getBlobUrl(repository.findById(id).get().getBarbearia().getImgPerfil()));
+        if (agendamento.getBarbearia().getImgPerfil() != null && !agendamento.getBarbearia().getImgPerfil().isEmpty()) {
+            String imgPerfilUrl = imageService.getImgURL(agendamento.getBarbearia().getImgPerfil(), "barbearia");
+            dto.setImgPerfilBarbearia(imgPerfilUrl);
+        }
         return dto;
     }
 
@@ -227,6 +240,7 @@ public class AgendamentoService {
 
         agendamento.setStatus(newStatus);
         repository.save(agendamento);
+        notificacoesService.notificarUpdateAgendamento(token, agendamento);
         return AgendamentoMapper.toDto(agendamento);
     }
 
@@ -247,7 +261,9 @@ public class AgendamentoService {
         Barbearia barbearia = barbeariasRepository.findById(a.getIdBarbearia())
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Barbearia", a.getIdBarbearia()));
 
-        return AgendamentoMapper.toDto(repository.save(new Agendamento(a.getDataHora(), servico, barbeiro, cliente, barbearia)));
+        Agendamento nvAgendamento = repository.save(new Agendamento(a.getDataHora(), servico, barbeiro, cliente, barbearia));
+        notificacoesService.notificarNovoAgendamento(token, nvAgendamento);
+        return AgendamentoMapper.toDto(nvAgendamento);
     }
 
 
@@ -274,7 +290,10 @@ public class AgendamentoService {
 
         for (Agendamento a : agendamentosConcluidos) {
             AgendamentoConsulta agendamentoConsulta = AgendamentoMapper.toDto(a);
-            agendamentoConsulta.setImgPerfilBarbearia(azureStorageService.getBlobUrl(a.getBarbearia().getImgPerfil()));
+            if (a.getBarbearia().getImgPerfil() != null && !a.getBarbearia().getImgPerfil().isEmpty()) {
+                String imgPerfilUrl = imageService.getImgURL(a.getBarbearia().getImgPerfil(), "barbearia");
+                agendamentoConsulta.setImgPerfilBarbearia(imgPerfilUrl);
+            }
             fila.adicionar(agendamentoConsulta);
         }
 
@@ -299,7 +318,10 @@ public class AgendamentoService {
         List<AgendamentoConsulta> dtos = new ArrayList<>();
         for (Agendamento a : lista){
             AgendamentoConsulta dto = AgendamentoMapper.toDto(a);
-            dto.setImgPerfilBarbearia(azureStorageService.getBlobUrl(a.getBarbearia().getImgPerfil()));
+            if (a.getBarbearia().getImgPerfil() != null && !a.getBarbearia().getImgPerfil().isEmpty()) {
+                String imgPerfilUrl = imageService.getImgURL(a.getBarbearia().getImgPerfil(), "barbearia");
+                dto.setImgPerfilBarbearia(imgPerfilUrl);
+            }
             dtos.add(dto);
         }
         return dtos;

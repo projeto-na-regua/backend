@@ -35,4 +35,14 @@ public class Comentario {
     @JoinColumn(name = "comentario_id_usuario", nullable = false)
     private Usuario usuario;
 
+    @Column(name = "is_active")
+    private Boolean isActive;
+
+    public Comentario(String conteudo, Postagem postagem, Usuario usuario) {
+        this.conteudo = conteudo;
+        this.dataCriacao = LocalDateTime.now();
+        this.postagem = postagem;
+        this.usuario = usuario;
+        this.isActive = true;
+    }
 }

@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
+
 public class Curtida {
 
     @Id
@@ -37,6 +38,20 @@ public class Curtida {
     @JoinColumn(name = "curtida_id_comentario")
     private Comentario comentario;
 
-    // Getters e Setters
-    // ...
+    @Column(name = "is_active")
+    private Boolean isActive;
+
+    public Curtida(Usuario usuario, Postagem postagem) {
+        this.dataCriacao = LocalDateTime.now();
+        this.usuario = usuario;
+        this.postagem = postagem;
+        this.isActive = true;
+    }
+
+    public Curtida(Usuario usuario, Comentario comentario) {
+        this.dataCriacao = LocalDateTime.now();
+        this.usuario = usuario;
+        this.comentario = comentario;
+        this.isActive = true;
+    }
 }

@@ -17,6 +17,7 @@ public interface BarbeiroRepository extends JpaRepository<Barbeiro, Integer> {
 
     List<Barbeiro> findByBarbeariaId(Integer barbeariaId);
 
+
     @Query("SELECT b FROM Barbeiro b WHERE b.barbearia.id = ?1")
     List<Barbeiro> findByBarbeariaIdAndUsuarioIdNot(Integer barbeariaId);
 

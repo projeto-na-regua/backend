@@ -41,7 +41,6 @@ public class ChatController {
     private ResponseEntity<List<MensagemResposta>> openChatUser(@RequestHeader("Authorization") String token,
                                                             @RequestParam Integer id,
                                                             @RequestParam String tipo){
-
         return status(200).body(service.openChat(token, id, tipo));
     }
 
