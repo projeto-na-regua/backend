@@ -35,6 +35,14 @@ public class BarbeariaPesquisa {
         this.mediaAvaliacao = mediaAvaliacao;
     }
 
+    public BarbeariaPesquisa(Barbearia barbearia, String linkImgPerfil) {
+        this.id = barbearia.getId();
+        this.nomeNegocio = barbearia.getNomeNegocio();
+        this.logradouro = barbearia.getEndereco().getLogradouro();
+        this.numero = barbearia.getEndereco().getNumero();
+        this.imgPerfil = linkImgPerfil;
+    }
+
     public BarbeariaPesquisa(Barbearia barbearia) {
         this.id = barbearia.getId();
         this.nomeNegocio = barbearia.getNomeNegocio();
