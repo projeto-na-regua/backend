@@ -69,7 +69,7 @@ public class PostagemService {
 
         PostConsulta dto = new PostConsulta(postSalvo, comentarioRepository.countActiveByPostagem_Id(postSalvo.getId()), curtidaRepository.countByPostagem_IdAndIsActiveTrue(postSalvo.getId()));
         dto.setMidia(existeMidia ? imageService.getImgURL(midiaSalvo.getArquivo(), "comunidade") : null);
-        dto.setImgPerfil(existeImagemPerfil ? imageService.getImgURL(dto.getImgPerfil(), "usuario") : null);
+        dto.setImgPerfil(existeImagemPerfil ? imageService.getImgURL(usuario.getImgPerfil(), "usuario") : null);
 
         return dto;
     }
@@ -85,7 +85,7 @@ public class PostagemService {
         List<Midia> midias = midiaRepository.findByPostagem(post);
 
         dto.setMidia(midias.isEmpty() ?  null : imageService.getImgURL(midias.get(0).getArquivo(), "comunidade"));
-        dto.setImgPerfil(post.getUsuario().getImgPerfil() == null? null : imageService.getImgURL(dto.getImgPerfil(), "usuario") );
+        dto.setImgPerfil(post.getUsuario().getImgPerfil() == null? null : imageService.getImgURL(post.getUsuario().getImgPerfil(), "usuario") );
 
         return new PostConsulta(post, comentarioRepository.countActiveByPostagem_Id(post.getId()), curtidaRepository.countByPostagem_IdAndIsActiveTrue(post.getId()));
     }
@@ -149,7 +149,7 @@ public class PostagemService {
                     curtidaRepository.countByPostagem_IdAndIsActiveTrue(post.getId()));
             List<Midia> midias = midiaRepository.findByPostagem(post);
             postConsulta.setMidia(midias.isEmpty() ?  null : imageService.getImgURL(midias.get(0).getArquivo(), "comunidade"));
-            postConsulta.setImgPerfil(post.getUsuario().getImgPerfil() == null? null : imageService.getImgURL(postConsulta.getImgPerfil(), "usuario") );
+            postConsulta.setImgPerfil(post.getUsuario().getImgPerfil() == null? null : imageService.getImgURL(post.getUsuario().getImgPerfil(), "usuario") );
             dtos.add(postConsulta);
         }
 
