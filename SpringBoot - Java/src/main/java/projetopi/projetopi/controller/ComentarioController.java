@@ -24,7 +24,8 @@ public class ComentarioController {
     @PostMapping
     public ResponseEntity<ComentarioConsulta> comentar(@RequestHeader("Authorization") String token,
                                                        @RequestParam(value = "conteudo") String conteudo,
-                                                       @RequestParam(value = "idPostagem") Integer idPostagem,
+                        
+                               @RequestParam(value = "idPostagem") Integer idPostagem,
                                                        @RequestParam(value = "midia", required = false) MultipartFile midia){
 
         return status(201).body(service.comentar(token, conteudo, midia, idPostagem));

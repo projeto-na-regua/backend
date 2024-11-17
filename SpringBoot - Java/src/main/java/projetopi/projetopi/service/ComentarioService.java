@@ -83,7 +83,7 @@ public class ComentarioService {
         List<Midia> midias = midiaRepository.findByComentario(comentario);
 
         dto.setMidia(midias.isEmpty() ?  null : imageService.getImgURL(midias.get(0).getArquivo(), "comunidade"));
-        dto.setImgPerfil(comentario.getUsuario().getImgPerfil() == null? null : imageService.getImgURL(dto.getImgPerfil(), "usuario") );
+        dto.setImgPerfil(comentario.getUsuario().getImgPerfil() == null? null : imageService.getImgURL(comentario.getUsuario().getImgPerfil(), "usuario") );
 
         return new ComentarioConsulta(comentario,  curtidaRepository.countByComentario_IdAndIsActiveTrue(comentario.getId()));
     }
@@ -127,7 +127,7 @@ public class ComentarioService {
             ComentarioConsulta comentarioConsulta = new ComentarioConsulta(comentario,  curtidaRepository.countByComentario_IdAndIsActiveTrue(comentario.getId()));
             List<Midia> midias = midiaRepository.findByComentario(comentario);
             comentarioConsulta.setMidia(midias.isEmpty() ?  null : imageService.getImgURL(midias.get(0).getArquivo(), "comunidade"));
-            comentarioConsulta.setImgPerfil(comentario.getUsuario().getImgPerfil() == null? null : imageService.getImgURL(comentarioConsulta.getImgPerfil(), "usuario") );
+            comentarioConsulta.setImgPerfil(comentario.getUsuario().getImgPerfil() == null? null : imageService.getImgURL(comentario.getUsuario().getImgPerfil(), "usuario") );
             dtos.add(comentarioConsulta);
         }
 

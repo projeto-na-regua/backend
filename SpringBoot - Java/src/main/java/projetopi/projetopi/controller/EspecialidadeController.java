@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import projetopi.projetopi.entity.Especialidade;
 import projetopi.projetopi.repository.EspecialidadeRepository;
+import projetopi.projetopi.service.EspecialidadeService;
 
 import java.util.List;
 
@@ -17,6 +18,9 @@ public class EspecialidadeController {
 
     @Autowired
     private EspecialidadeRepository especialidadeRepository;
+
+    @Autowired
+    EspecialidadeService service;
 
     @GetMapping
     public ResponseEntity<List<Especialidade>> getEspecialidades(){
