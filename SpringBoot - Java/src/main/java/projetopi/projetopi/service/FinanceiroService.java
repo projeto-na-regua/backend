@@ -92,13 +92,14 @@ public class FinanceiroService {
     }
 
 
-    public Financa postFinanca(String token, FinancaCriacao lancarFinanca) {
+    public void postFinanca(String token, FinancaCriacao lancarFinanca) {
 
         global.validarBarbeiroAdm(token, "Barbeiro");
         global.validaBarbearia(token);
 
         Barbearia barbearia = global.getBarbeariaByToken(token);
-        return financeiroRepository.save( new Financa(lancarFinanca.getValor(), LocalDateTime.now(), barbearia, lancarFinanca.getDespesa()));
+
+        financeiroRepository.save( new Financa(lancarFinanca.getValor(), LocalDateTime.now(), barbearia, lancarFinanca.getDespesa()));
 
 
     }

@@ -1,3 +1,4 @@
+
 package projetopi.projetopi.service;
 
 import com.google.auth.Credentials;
@@ -47,7 +48,7 @@ public class ImageService {
 
 //            String DOWNLOAD_URL = "https://firebasestorage.googleapis.com/v0/b/" + bucketFirebase.getName() + "/o/%s?alt=media";
 //            return String.format(DOWNLOAD_URL, URLEncoder.encode(fileName, StandardCharsets.UTF_8));
-              return fileName;
+            return fileName;
         }
     }
 
@@ -84,15 +85,15 @@ public class ImageService {
     public BucketFirebase defineKeyBucket(String typeStorage) {
         switch (typeStorage.toLowerCase()) {
             case "barbearia":
-                return new BucketFirebase("naregua-upload.appspot.com", "naregua-upload-firebase-adminsdk-9hly7-6fe030a9b8.json");
+                return new BucketFirebase("naregua-upload.appspot.com", "naregua-upload-firebase-adminsdk-9hly7-454496d7de.json");
             case "usuario":
-                return new BucketFirebase("upload-usuarios.appspot.com", "upload-usuarios-firebase-adminsdk-6r1vz-565bdbf21c.json");
+                return new BucketFirebase("upload-usuarios.appspot.com", "upload-usuarios-firebase-adminsdk-6r1vz-cfc61531f3.json");
             case "comunidade":
-                return new BucketFirebase("upload-comunidade.appspot.com", "upload-comunidade-firebase-adminsdk-sxo3w-de42cb0bae.json");
+                return new BucketFirebase("upload-comunidade.appspot.com", "upload-comunidade-firebase-adminsdk-sxo3w-56c4ed2507.json");
             case "galeria":
-                return new BucketFirebase("upload-galeria.appspot.com", "upload-galeria-firebase-adminsdk-d6ewd-1312a87bcb.json");
+                return new BucketFirebase("upload-galeria.appspot.com", "upload-galeria-firebase-adminsdk-d6ewd-34985e2190.json");
             case "chat":
-                return new BucketFirebase("chat-5568f.appspot.com", "chat-5568f-firebase-adminsdk-unsxe-8a450dcc9a.json");
+                return new BucketFirebase("chat-5568f.appspot.com", "chat-5568f-firebase-adminsdk-unsxe-21134a8356.json");
             default:
                 return null; // Retorna null para tipos inválidos
         }

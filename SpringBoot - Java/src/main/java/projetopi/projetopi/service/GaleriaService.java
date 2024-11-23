@@ -46,6 +46,8 @@ public class GaleriaService {
     private ImageService imageService;
 
 
+
+
     public List<GaleriaConsulta> getImages(String tk){
 
         global.validaCliente(tk, "Cliente");
@@ -54,7 +56,7 @@ public class GaleriaService {
         List<ImgsGaleria> images = galeriaRepository.findByClienteIdAndIsActiveTrueOrIsActiveIsNull(id);
 
         List<GaleriaConsulta> dtos = images.stream()
-                .map(img -> new GaleriaConsulta(img, img.getImagem()))
+                .map(img -> new GaleriaConsulta(img, imageService.getImgURL("galeria", img.getImagem())))
                 .collect(Collectors.toList());
 
         if (images.isEmpty()) throw new ResponseStatusException(HttpStatusCode.valueOf(204));
@@ -71,7 +73,7 @@ public class GaleriaService {
         String imageUrl = imageService.upload(imagem, "galeria");
         Cliente cliente = clienteRepository.findById(id).orElseThrow(() -> new RecursoNaoEncontradoException("Cliente", id));
         ImgsGaleria imgsGaleria = galeriaRepository.save(new ImgsGaleria(imageUrl, descricao, cliente));
-        return new GaleriaConsulta(imgsGaleria, imgsGaleria.getImagem());
+        return new GaleriaConsulta(imgsGaleria,imageService.getImgURL("galeria", imgsGaleria.getImagem()));
 
     }
 
