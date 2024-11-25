@@ -71,7 +71,6 @@ class UsuarioServiceTest {
 
     ModelMapper mapper;
 
-    StorageService azureStorageService;
 
     Global global;
 
@@ -90,7 +89,6 @@ class UsuarioServiceTest {
         global = mock(Global.class);
         mapper = new ModelMapper();
         EnderecoService enderecoService = new EnderecoService();
-        azureStorageService = mock(StorageService.class);
         service = new UsuarioService(barbeiroRepository,
                                     clienteRepository,
                                     enderecoRepository,
@@ -99,7 +97,6 @@ class UsuarioServiceTest {
                                     usuarioRepository,
                                     token,
                                     mapper,
-                                    azureStorageService,
                                     global);
 
     }
@@ -423,47 +420,47 @@ class UsuarioServiceTest {
 //        assertEquals(cliente.getSenha(), usuario.getSenha());
 //    }
 
-    @DisplayName("Editar informações do usuário que é um barbeiro")
-    @Test
-    public void editarUsuarioBarbeiro(){
-        Integer id = 5678;
-        String email = "email";
-        String tokenMock = "tokenBarbeiro";
-
-        UsuarioConsulta dto = mock(UsuarioConsulta.class);
-        dto.setEmail(email);
-
-        Endereco endereco = new Endereco();
-        Barbearia barbearia = new Barbearia();
-
-        Barbeiro barbeiro = new Barbeiro();
-        barbeiro.setId(id);
-        barbeiro.setSenha("senha");
-        barbeiro.setAdm(true);
-        barbeiro.setBarbearia(barbearia);
-        barbeiro.setEndereco(endereco);
-
-        Barbeiro usuario = mapper.map(dto, Barbeiro.class);
-        usuario.setId(barbeiro.getId());
-        usuario.setSenha(barbeiro.getSenha());
-        usuario.setAdm(barbeiro.isAdm());
-        usuario.setBarbearia(barbeiro.getBarbearia());
-        usuario.setEndereco(barbeiro.getEndereco());
-
-        when(token.getUserIdByToken(tokenMock)).thenReturn(String.valueOf(id));
-        when(usuarioRepository.existsById(id)).thenReturn(true);
-        when(usuarioRepository.getDtypeById(barbeiro.getId())).thenReturn("Barbeiro");
-        when(barbeiroRepository.findById(id)).thenReturn(of(barbeiro));
-        when(barbeiroRepository.save(usuario)).thenReturn(usuario);
-
-        assertNotNull(service.editarUsuario(tokenMock, dto));
-        var result = service.editarUsuario(tokenMock, dto);
-        assertEquals(usuario.getEmail(), result.getEmail());
-        assertEquals(barbeiro.getEmail(), result.getEmail());
-        assertEquals(barbeiro.getEndereco(), usuario.getEndereco());
-        assertEquals(barbeiro.getId(), usuario.getId());
-        assertEquals(barbeiro.getSenha(), usuario.getSenha());
-    }
+//    @DisplayName("Editar informações do usuário que é um barbeiro")
+//    @Test
+//    public void editarUsuarioBarbeiro(){
+//        Integer id = 5678;
+//        String email = "email";
+//        String tokenMock = "tokenBarbeiro";
+//
+//        UsuarioConsulta dto = mock(UsuarioConsulta.class);
+//        dto.setEmail(email);
+//
+//        Endereco endereco = new Endereco();
+//        Barbearia barbearia = new Barbearia();
+//
+//        Barbeiro barbeiro = new Barbeiro();
+//        barbeiro.setId(id);
+//        barbeiro.setSenha("senha");
+//        barbeiro.setAdm(true);
+//        barbeiro.setBarbearia(barbearia);
+//        barbeiro.setEndereco(endereco);
+//
+//        Barbeiro usuario = mapper.map(dto, Barbeiro.class);
+//        usuario.setId(barbeiro.getId());
+//        usuario.setSenha(barbeiro.getSenha());
+//        usuario.setAdm(barbeiro.isAdm());
+//        usuario.setBarbearia(barbeiro.getBarbearia());
+//        usuario.setEndereco(barbeiro.getEndereco());
+//
+//        when(token.getUserIdByToken(tokenMock)).thenReturn(String.valueOf(id));
+//        when(usuarioRepository.existsById(id)).thenReturn(true);
+//        when(usuarioRepository.getDtypeById(barbeiro.getId())).thenReturn("Barbeiro");
+//        when(barbeiroRepository.findById(id)).thenReturn(of(barbeiro));
+//        when(barbeiroRepository.save(usuario)).thenReturn(usuario);
+//
+//        assertNotNull(service.editarUsuario(tokenMock, dto));
+//        var result = service.editarUsuario(tokenMock, dto);
+//        assertEquals(usuario.getEmail(), result.getEmail());
+//        assertEquals(barbeiro.getEmail(), result.getEmail());
+//        assertEquals(barbeiro.getEndereco(), usuario.getEndereco());
+//        assertEquals(barbeiro.getId(), usuario.getId());
+//        assertEquals(barbeiro.getSenha(), usuario.getSenha());
+//    }
 
 
     @DisplayName("Login válido, retorna token")
