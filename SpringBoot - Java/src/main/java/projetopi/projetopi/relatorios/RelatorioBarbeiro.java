@@ -1,28 +1,59 @@
 package projetopi.projetopi.relatorios;
 
-import projetopi.projetopi.entity.Barbeiro;
+import projetopi.projetopi.dominio.Barbeiro;
+import projetopi.projetopi.dominio.Usuario;
 
-import java.io.*;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 
 public class RelatorioBarbeiro {
     //trocar a tipagem da lista para o tipo da sua classe
-    public static void gravarRelatorioFinanceiro(List<Barbeiro> lista, ByteArrayOutputStream outputStream) {
-        Formatter saida = new Formatter(outputStream);
+    public static void gravarRelatorioFinanceiro(List<Barbeiro> lista, String nomeArq) {
+        FileWriter arq = null;
+        Formatter saida = null;
+        Boolean deuRuim = false;
 
-        //Cabeçalho:
-        saida.format("%s;%s;%s;%s\n", "NOME_BARBEIRO","CELULAR","E-MAIL","ADMINISTRADOR");
+        nomeArq += ".csv";
+
+        // Bloco try-catch para abrir o arquivo
+        try {
+            arq = new FileWriter(nomeArq);
+            saida = new Formatter(arq);
+        } catch (IOException erro) {
+            System.out.println("Erro ao abrir o arquivo");
+            System.exit(1);
+        }
+            //Cabeçalho:
+            saida.format("%s;%s;%s;%s;%s\n", "ID","NOME_BARBEIRO","CELULAR","E-MAIL","ADMINISTRADOR");
 
         try {
             for (int i = 0; i < lista.size(); i++) {
                 //Recupere um elemento da lista e formate aqui:
                 Barbeiro b = lista.get(i);
-                saida.format("%s;%s;%s;%s\n", b.getNome(), b.getCelular(), b.getEmail(), b.isAdm() ? "Sim" : "Não");
+                saida.format("%d;%s;%s;%s;%b\n",
+                        b.getId(),
+                        b.getNome(),
+                        b.getCelular() == null ? "" : b.getCelular(),
+                        b.getEmail() == null ? "" : b.getEmail(),
+                        b.isAdm() ? "Sim" : "Não");
             }
         } catch (FormatterClosedException erro) {
             System.out.println("Erro ao gravar o arquivo");
+            deuRuim = true;
         } finally {
             saida.close();
+            try {
+                arq.close();
+            } catch (IOException erro) {
+                System.out.println("Erro ao fechar o arquivo");
+                deuRuim = true;
+            }
+            if (deuRuim) {
+                System.exit(1);
+            }
         }
     }
 

@@ -1,17 +1,11 @@
-package projetopi.projetopi.entity;
+package projetopi.projetopi.dominio;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.Setter;
 
-import java.util.List;
-
-@Getter
-@Setter
 @Entity
 public abstract class Usuario {
     @Id
@@ -20,7 +14,7 @@ public abstract class Usuario {
     private Integer id;
 
     @NotBlank
-    @Size(min = 5)
+    @Size(min = 5, max = 120)
     @Column(name="nome", nullable = false)
     private String nome;
 
@@ -30,7 +24,7 @@ public abstract class Usuario {
     @Column(name="email")
     private String email;
 
-    @Size(min = 8)
+    @Size(min = 8, max = 12)
     @NotBlank
     @Column(name="senha")
     private String senha;
@@ -41,23 +35,8 @@ public abstract class Usuario {
     private String celular;
 
     @JsonIgnore
-    @Column(name="img_perfil")
-    private String imgPerfil;
-
-    @JsonIgnore
     @Column(name = "dtype", insertable = false, updatable = false)
     private String dtype;
-
-    @OneToOne
-    @JoinColumn(name = "usuario_fk_endereco", nullable = true)
-    private Endereco endereco;
-
-    @OneToOne
-    @JoinColumn(name = "usuario_fk_especialidade", nullable = true)
-    private Especialidade especialidade;
-
-    @Column(name="username")
-    private String username;
 
 
     public Usuario(String nome, String email, String celular) {
@@ -66,18 +45,7 @@ public abstract class Usuario {
         this.celular = celular;
     }
 
-    public Usuario(String nome, String email, String senha, String celular, Endereco endereco, String username) {
-        this.nome = nome;
-        this.email = email;
-        this.senha = senha;
-        this.celular = celular;
-        this.endereco = endereco;
-        this.username = username;
-    }
 
-    public Usuario(Integer id) {
-        this.id = id;
-    }
 
     public Usuario(String nome) {
         this.nome = nome;
@@ -85,14 +53,59 @@ public abstract class Usuario {
 
     public Usuario(){}
 
-    public Usuario(Integer id, String nome, String email, String senha, String celular, String imgPerfil, String dtype, Endereco endereco) {
+    public Usuario(Integer id, String nome, String email, String senha, String celular) {
         this.id = id;
         this.nome = nome;
         this.email = email;
         this.senha = senha;
         this.celular = celular;
-        this.imgPerfil = imgPerfil;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getSenha() {
+        return senha;
+    }
+
+    public void setSenha(String senha) {
+        this.senha = senha;
+    }
+
+    public String getCelular() {
+        return celular;
+    }
+
+    public void setCelular(String celular) {
+        this.celular = celular;
+    }
+
+    public String getDtype() {
+        return dtype;
+    }
+
+    public void setDtype(String dtype) {
         this.dtype = dtype;
-        this.endereco = endereco;
     }
 }
