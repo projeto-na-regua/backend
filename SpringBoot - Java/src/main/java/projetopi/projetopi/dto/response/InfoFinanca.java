@@ -1,6 +1,6 @@
 package projetopi.projetopi.dto.response;
 
-import projetopi.projetopi.entity.Financa;
+import projetopi.projetopi.dominio.Financa;
 
 import java.time.LocalDateTime;
 
@@ -15,7 +15,7 @@ public class InfoFinanca {
     public InfoFinanca() {}
 
     public InfoFinanca(Financa financa) {
-        this.barbeariaId = financa.getBarbearia().getId();
+        this.barbeariaId = financa.getBarbeariaId();
         this.dtLancamento = financa.getDtLancamento();
         this.valor = financa.getValor();
     }
