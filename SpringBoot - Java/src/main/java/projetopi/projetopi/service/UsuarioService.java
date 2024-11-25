@@ -1,38 +1,21 @@
 package projetopi.projetopi.service;
 
 
-import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClient;
 import org.springframework.web.multipart.MultipartFile;
-import projetopi.projetopi.controller.UsuarioController;
 import projetopi.projetopi.dto.mappers.UsuarioMapper;
 import projetopi.projetopi.dto.response.*;
 import projetopi.projetopi.entity.*;
 import projetopi.projetopi.dto.request.CadastroBarbearia;
 import projetopi.projetopi.dto.request.CadastroCliente;
 import projetopi.projetopi.dto.request.LoginUsuario;
-import projetopi.projetopi.exception.ConflitoException;
-import projetopi.projetopi.exception.ErroServidorException;
 import projetopi.projetopi.exception.RecursoNaoEncontradoException;
 import projetopi.projetopi.repository.*;
 import projetopi.projetopi.util.Dia;
 import projetopi.projetopi.util.Global;
 import projetopi.projetopi.util.Token;
-
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.List;
 
 import static org.springframework.http.ResponseEntity.ok;
 
@@ -62,7 +45,7 @@ public class UsuarioService {
 
 
 
-    public UsuarioService(BarbeiroRepository barbeiroRepository, ClienteRepository clienteRepository, EnderecoRepository enderecoRepository, BarbeariasRepository barbeariasRepository, DiaSemanaRepository diaSemanaRepository, UsuarioRepository usuarioRepository, Token token, ModelMapper mapper, StorageService azureStorageService, Global global) {
+    public UsuarioService(BarbeiroRepository barbeiroRepository, ClienteRepository clienteRepository, EnderecoRepository enderecoRepository, BarbeariasRepository barbeariasRepository, DiaSemanaRepository diaSemanaRepository, UsuarioRepository usuarioRepository, Token token, ModelMapper mapper, Global global) {
         this.barbeiroRepository = barbeiroRepository;
         this.clienteRepository = clienteRepository;
         this.enderecoRepository = enderecoRepository;
@@ -199,15 +182,17 @@ public class UsuarioService {
 
     public PerfilUsuarioConsulta getPerfil(String t){
         global.validarUsuarioExiste(t);
-        PerfilUsuarioConsulta dto  = new PerfilUsuarioConsulta(global.getBarbeiroByToken(t));
-        dto.setImgPerfil(imageService.getImgURL(dto.getImgPerfil(), "usuario"));
+        PerfilUsuarioConsulta dto  = new PerfilUsuarioConsulta(global.getUsuarioByToken(t));
+        if(dto.getImgPerfil() != null && !(dto.getImgPerfil().isEmpty())){
+            dto.setImgPerfil(imageService.getImgURL(dto.getImgPerfil(), "usuario"));
+        }
         return dto;
 
     }
 
     public DtypeConsulta getUsuario(String t){
         global.validarUsuarioExiste(t);
-        return mapper.map(global.getBarbeiroByToken(t), DtypeConsulta.class);
+        return mapper.map(global.getUsuarioByToken(t), DtypeConsulta.class);
     }
 
 
@@ -215,7 +200,7 @@ public class UsuarioService {
         global.validarUsuarioExiste(tk);
 
         String imageUrl = imageService.upload(file, "usuario");
-        Usuario usuario = global.getBarbeiroByToken(tk);
+        Usuario usuario = global.getUsuarioByToken(tk);
         usuario.setImgPerfil(imageUrl);
         usuarioRepository.save(usuario);
         return new ImgConsulta(usuario.getImgPerfil());

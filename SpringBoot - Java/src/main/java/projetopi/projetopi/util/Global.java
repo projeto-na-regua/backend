@@ -31,14 +31,14 @@ public class Global {
 
 
     public void validarBarbeiroAdm(String token, String recurso){
-        Barbeiro barbeiro = (Barbeiro) getBarbeiroByToken(token);
+        Barbeiro barbeiro = (Barbeiro) getUsuarioByToken(token);
         if (!barbeiro.isAdm() || barbeiro.getBarbearia() == null){
             throw new AcessoNegadoException(recurso);
         }
     }
 
     public void validaBarbeiro(String token, String recurso){
-        Integer id = getBarbeiroByToken(token).getId();
+        Integer id = getUsuarioByToken(token).getId();
         if (!barbeiroRepository.existsById(id)){
             throw new AcessoNegadoException(recurso);
         }
@@ -58,13 +58,13 @@ public class Global {
         }
     }
 
-    public Usuario getBarbeiroByToken(String token){
+    public Usuario getUsuarioByToken(String token){
         Integer id  = Integer.valueOf(tk.getUserIdByToken(token));
         return usuarioRepository.findById(id).get();
     }
 
     public Barbearia getBarbeariaByToken(String token){
-        Barbeiro b = (Barbeiro) getBarbeiroByToken(token);
+        Barbeiro b = (Barbeiro) getUsuarioByToken(token);
         return b.getBarbearia();
     }
 

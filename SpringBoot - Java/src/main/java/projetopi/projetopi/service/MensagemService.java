@@ -7,10 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import projetopi.projetopi.dto.mappers.MensagemMapper;
-import projetopi.projetopi.dto.request.MensagemCriacao;
 import projetopi.projetopi.dto.response.ChatResposta;
 import projetopi.projetopi.dto.response.MensagemResposta;
-import projetopi.projetopi.entity.Barbearia;
 import projetopi.projetopi.entity.Chat;
 import projetopi.projetopi.entity.Mensagem;
 import projetopi.projetopi.entity.Usuario;
@@ -37,24 +35,22 @@ public class MensagemService {
     @Autowired
     private ImageService imageService;
 
-    public MensagemResposta sendMessage(String token, Integer id, String mensagem, String tipo){
-        boolean isUsuario = tipo.equalsIgnoreCase("usuario");
-        Chat chat = chatService.getOrCreatedChat(token, id, isUsuario);
-        Usuario usuario = global.getBarbeiroByToken(token);
-        Mensagem novaMensagem = new Mensagem(chat, usuario, mensagem);
-        return mapper.toDto(mensagemRepository.save(novaMensagem), chat);
-    }
+    @Autowired
+    private NotificacoesService notificacoesService;
+
 
     public MensagemResposta sendMessage(String token, Integer id,  String mensagem, MultipartFile file,  String tipo){
         boolean isUsuario = tipo.equalsIgnoreCase("usuario");
         Chat chat = chatService.getOrCreatedChat(token, id, isUsuario);
-        Usuario usuario = global.getBarbeiroByToken(token);
+        Usuario usuario = global.getUsuarioByToken(token);
         Mensagem novaMensagem = new Mensagem(chat, usuario, mensagem);
 
         if (file != null && !file.isEmpty()) {
             novaMensagem.setFilename(imageService.upload(file, "chat"));
         }
 
+
+        notificacoesService.notificarMensagem(token, chat);
         return mapper.toDto(mensagemRepository.save(novaMensagem), chat);
     }
 

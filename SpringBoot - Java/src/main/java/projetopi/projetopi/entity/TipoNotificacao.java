@@ -25,4 +25,8 @@ public class TipoNotificacao {
     @Column(name = "data_criacao", nullable = false)
     private LocalDateTime dataCriacao;
 
+    public TipoNotificacao(String nome) {
+        this.nome = nome;
+        this.dataCriacao = LocalDateTime.now();
+    }
 }
