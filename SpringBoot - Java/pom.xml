@@ -15,7 +15,7 @@
 	<name>projetopi</name>
 	<description>Project for SpringBoot</description>
 	<properties>
-		<java.version>18</java.version>
+		<java.version>17</java.version>
 	</properties>
 
 	<dependencyManagement>
