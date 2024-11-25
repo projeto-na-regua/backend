@@ -8,25 +8,28 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Java version
+        uses: actions/setup-java@v1
         with:
-          distribution: 'temurin'
           java-version: '17'
 
-      # Alterar para o diretório 'SpringBoot - Java' antes de executar os comandos Maven
+      # Ajuste para o diretório correto no ambiente Ubuntu
       - name: Build with Maven - clean install
-        run: mvn clean install
-        working-directory: C:/GitHub/backend/SpringBoot\ -\ Java  # Caminho do diretório
+        run: |
+          cd "SpringBoot - Java"  # Caminho correto para o diretório dentro do repositório
+          mvn clean install
+        shell: bash
 
-      # Alterar para o diretório 'SpringBoot - Java' antes de executar o segundo comando Maven
+      # Ajuste para o diretório correto no ambiente Ubuntu
       - name: Build with Maven - clean package
-        run: mvn -B clean package -DskipTests
-        working-directory: C:/GitHub/backend/SpringBoot\ -\ Java  # Caminho do diretório
+        run: |
+          cd "SpringBoot - Java"  # Caminho correto para o diretório dentro do repositório
+          mvn -B clean package -DskipTests
+        shell: bash
 
   test:
     runs-on: ubuntu-latest
@@ -41,10 +44,12 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      # Alterar para o diretório 'SpringBoot - Java' antes de executar os testes
+      # Ajuste para o diretório correto no ambiente Ubuntu
       - name: Run tests with Maven
-        run: mvn test
-        working-directory: C:/GitHub/backend/SpringBoot\ -\ Java  # Caminho do diretório
+        run: |
+          cd "SpringBoot - Java"  # Caminho correto para o diretório dentro do repositório
+          mvn test
+        shell: bash
 
   docker:
     runs-on: ubuntu-latest
