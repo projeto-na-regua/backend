@@ -5,10 +5,10 @@ LABEL author="melissaneves"
 WORKDIR /build
 
 # Copia o conteúdo do projeto para o contêiner
-COPY . .
+COPY .. .
 
 # Entra na pasta desejada antes de rodar o Maven (substitua "meu_projeto" pelo nome correto da pasta)
-WORKDIR /build/SpringBoot - Java
+WORKDIR /build
 
 # Executa o Maven para construir o projeto
 RUN mvn clean package -DskipTests -Dcheckstyle.skip=true
@@ -20,7 +20,7 @@ FROM openjdk:17-slim
 WORKDIR /app
 
 # Copia o JAR gerado na etapa de construção para o contêiner final
-COPY --from=builder /build/meu_projeto/target/*.jar /app/app.jar
+COPY --from=builder /build/target/*.jar /app/app.jar
 
 # Define o comando padrão para executar o aplicativo
 CMD ["java", "-jar", "app.jar"]

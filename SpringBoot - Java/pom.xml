@@ -10,7 +10,7 @@
 		<relativePath/>
 	</parent>
 	<groupId>projetopi</groupId>
-	<artifactId>projetopi</artifactId>
+	<artifactId>naregua</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>projetopi</name>
 	<description>Project for SpringBoot</description>

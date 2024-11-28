@@ -1,0 +1,32 @@
+name: Deploy naregua
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    steps:
+      # Login no Docker Hub usando a chave secreta
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USER }}" --password-stdin
+
+      # Baixar a imagem mais recente do Docker Hub
+      - name: Pull Docker image
+        run: docker pull melissaneves/naregua-api:latest
+
+      # Parar o container existente, caso esteja em execução
+      - name: Stop Docker container (if running)
+        run: |
+          docker ps -q --filter "name=naregua-api" | grep -q . && docker stop naregua-api || echo "Container not running"
+
+      # Remover o container, caso exista
+      - name: Remove Docker container (if exists)
+        run: |
+          docker ps -aq --filter "name=naregua-api" | grep -q . && docker rm naregua-api || echo "Container does not exist"
+
+      # Executar o novo container Docker com a nova imagem
+      - name: Run new Docker container
+        run: docker run --name naregua-api -d -p 8080:8080 melissaneves/naregua-api:latest
