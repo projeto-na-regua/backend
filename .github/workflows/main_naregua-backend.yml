@@ -75,7 +75,7 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: ./SpringBoot\ -\ Java  # Contexto de build no diretório correto
-          file: ./SpringBoot\ -\ Java/Dockerfile  # Caminho do Dockerfile dentro do diretório
+          context: "./SpringBoot - Java"  # Usando caminho correto
+          file: "./SpringBoot - Java/Dockerfile"  # Caminho correto para o Dockerfile
           push: true
           tags: melissaneves/naregua-api:latest
