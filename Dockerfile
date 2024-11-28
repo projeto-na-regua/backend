@@ -21,7 +21,6 @@ FROM openjdk:17-slim
 WORKDIR /app
 
 # Copia o JAR gerado na etapa de construção para o contêiner final
-COPY --from=builder "/build/SpringBoot - Java/target/*.jar" /app/app.jar  # Usando aspas também aqui
-
+COPY --from=builder "/build/SpringBoot - Java/target/*.jar" /app/app.jar
 # Define o comando padrão para executar o aplicativo
 CMD ["java", "-jar", "app.jar"]
