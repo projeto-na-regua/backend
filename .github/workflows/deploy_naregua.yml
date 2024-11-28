@@ -1,4 +1,4 @@
-name: Deploy naregua
+name: Deploy Naregua Api
 
 on:
   push:
