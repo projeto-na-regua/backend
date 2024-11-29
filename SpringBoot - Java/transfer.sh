@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SERVER_IP="44.202.27.20"
+SERVER_IP="3.91.45.239"
 
 # Execute o Maven para limpar e compilar o projeto
 mvn clean install
@@ -10,7 +10,7 @@ if [ $? -eq 0 ]; then
   echo "Build bem-sucedido, iniciando a transferência do arquivo..."
   
   # Comando SCP para transferir o arquivo .jar para o servidor remoto
-  scp -i "C:/GitHub/provisionamento/id_rsa.pem" "C:/GitHub/backend/SpringBoot - Java/target/projetopi-0.0.1-SNAPSHOT.jar" ubuntu@$SERVER_IP:/home/ubuntu
+  scp -i "C:/GitHub/provisionamento/id_rsa.pem" "C:/GitHub/backend/SpringBoot - Java/transfers-keys.sh" ubuntu@$SERVER_IP:/home/ubuntu
   
   # Verifique se a transferência foi bem-sucedida
   if [ $? -eq 0 ]; then
