@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Configuração
-SERVER_IP="18.233.99.97"
+SERVER_IP="3.91.45.239"
 KEY_PATH="C:/GitHub/provisionamento/id_rsa.pem"
 BASE_PATH="C:/GitHub/backend/SpringBoot - Java/target/classes"
 REMOTE_PATH="/home/ubuntu"
