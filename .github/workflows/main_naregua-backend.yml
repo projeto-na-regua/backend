@@ -20,14 +20,14 @@ jobs:
       # Ajuste para o diretório correto no ambiente Ubuntu
       - name: Build with Maven - clean install
         run: |
-          cd "SpringBoot - Java"  # Caminho correto para o diretório dentro do repositório
+          cd "SpringBoot - Java"  
           mvn clean install
         shell: bash
 
       # Ajuste para o diretório correto no ambiente Ubuntu
       - name: Build with Maven - clean package
         run: |
-          cd "SpringBoot - Java"  # Caminho correto para o diretório dentro do repositório
+          cd "SpringBoot - Java" 
           mvn -B clean package -DskipTests
         shell: bash
 
