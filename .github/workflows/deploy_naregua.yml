@@ -9,7 +9,7 @@ jobs:
   deploy:
     runs-on: [self-hosted]
     steps:
-      # Login no Docker Hub usando a chave secreta
+     # Login no Docker Hub usando a chave secreta
       - name: Log in to Docker Hub
         run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USER }}" --password-stdin
 
@@ -27,6 +27,13 @@ jobs:
         run: |
           docker ps -aq --filter "name=naregua-api" | grep -q . && docker rm naregua-api || echo "Container does not exist"
 
-      # Executar o novo container Docker com a nova imagem
+      # Copiar as chaves para o diretório do container
+      - name: Copy Firebase keys to Docker container
+        run: |
+          # Caminhos das chaves
+          cp /home/ubuntu/chat-5568f-firebase-adminsdk-unsxe-21134a8356.json /home/ubuntu/naregua-upload-firebase-adminsdk-9hly7-454496d7de.json /home/ubuntu/upload-comunidade-firebase-adminsdk-sxo3w-56c4ed2507.json /home/ubuntu/upload-galeria-firebase-adminsdk-d6ewd-34985e2190.json /home/ubuntu/upload-usuarios-firebase-adminsdk-6r1vz-cfc61531f3.json /home/ubuntu/config/
+
+      # Executar o novo container Docker com a nova imagem, montando as chaves diretamente
       - name: Run new Docker container
-        run: docker run --name naregua-api -d -p 8080:8080 melissaneves/naregua-api:latest
+        run: |
+          docker run --name naregua-api -d -p 8080:8080 -v /home/ubuntu/config:/app/config melissaneves/naregua-api:latest
