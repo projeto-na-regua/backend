@@ -73,7 +73,7 @@ public class GaleriaService {
         String imageUrl = imageService.upload(imagem, "galeria");
         Cliente cliente = clienteRepository.findById(id).orElseThrow(() -> new RecursoNaoEncontradoException("Cliente", id));
         ImgsGaleria imgsGaleria = galeriaRepository.save(new ImgsGaleria(imageUrl, descricao, cliente));
-        return new GaleriaConsulta(imgsGaleria,imageService.getImgURL("galeria", imgsGaleria.getImagem()));
+        return new GaleriaConsulta(imgsGaleria,imageService.getImgURL(imgsGaleria.getImagem(), "galeria"));
 
     }
 

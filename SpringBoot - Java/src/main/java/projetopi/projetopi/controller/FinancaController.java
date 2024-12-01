@@ -45,6 +45,7 @@ public class FinancaController {
     @PostMapping("/lancar-valor")
     public ResponseEntity<Void> postFinancasPorBarbearia(@RequestHeader("Authorization") String token,
                                                                    @RequestBody FinancaCriacao lancarFinanca){
+        service.postFinanca(token, lancarFinanca);
         return status(201).build();
     }
 

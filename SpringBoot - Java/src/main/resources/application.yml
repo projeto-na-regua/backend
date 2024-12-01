@@ -16,18 +16,8 @@ spring:
         hibernate:
           dialect: org.hibernate.dialect.MySQL8Dialect
 
-cloud:
-  aws:
-    credentials:
-      access-key: ${AWS_ACCESS_KEY_ID}
-      secret-key: ${AWS_SECRET_ACCESS_KEY}
-    region:
-      static: us-east-1
-    stack:
-      auto: false
-  s3:
-    bucket: ${BUCKET_NAME} # Nome do bucket S
-
-  server:
-    port: 8080
-    address: 0.0.0.0
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui/index.html
