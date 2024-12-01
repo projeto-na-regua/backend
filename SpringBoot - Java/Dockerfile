@@ -1,3 +1,4 @@
+# Etapa de build
 FROM maven:3-openjdk-17 AS builder
 LABEL author="melissaneves"
 
@@ -6,9 +7,6 @@ WORKDIR /build
 
 # Copia o conteúdo do projeto para o contêiner
 COPY .. .
-
-# Entra na pasta desejada antes de rodar o Maven (substitua "meu_projeto" pelo nome correto da pasta)
-WORKDIR /build
 
 # Executa o Maven para construir o projeto
 RUN mvn clean package -DskipTests -Dcheckstyle.skip=true
@@ -22,5 +20,12 @@ WORKDIR /app
 # Copia o JAR gerado na etapa de construção para o contêiner final
 COPY --from=builder /build/target/*.jar /app/app.jar
 
+# Copia os arquivos de credenciais do Firebase para o contêiner final
+COPY --from=builder /build/src/main/resources/*.json /app/config/
+
+# Define o caminho base das credenciais como variável de ambiente (opcional)
+ENV CREDENTIALS_PATH=/app/config/
+
 # Define o comando padrão para executar o aplicativo
 CMD ["java", "-jar", "app.jar"]
+

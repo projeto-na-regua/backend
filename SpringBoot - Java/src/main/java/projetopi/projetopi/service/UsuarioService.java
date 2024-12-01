@@ -70,6 +70,8 @@ public class UsuarioService {
 
         if (file != null && !file.isEmpty()) {
             String fileName = imageService.upload(file, "usuario");
+
+
             cliente.setImgPerfil(fileName);
         }
 
