@@ -7,7 +7,7 @@ on:
 
 jobs:
   deploy:
-    runs-on: self-hosted
+    runs-on: [self-hosted]
     steps:
       # Login no Docker Hub usando a chave secreta
       - name: Log in to Docker Hub
