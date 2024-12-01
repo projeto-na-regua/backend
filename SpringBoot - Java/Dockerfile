@@ -11,6 +11,9 @@ COPY . .
 # Executa o Maven para construir o projeto
 RUN mvn clean package -DskipTests -Dcheckstyle.skip=true
 
+# Verifique os arquivos dentro de /build/target/classes
+RUN ls -R /build/target/classes/
+
 # Etapa de execução
 FROM openjdk:17-slim
 
@@ -24,7 +27,6 @@ RUN mkdir -p /app/config
 COPY --from=builder /build/target/*.jar /app/app.jar
 
 # Copia os arquivos de credenciais do Firebase da pasta de build para o contêiner
-# Tentamos copiar diretamente de target/classes para /app/config/
 COPY --from=builder /build/target/classes/*.json /app/config/
 
 # Define o caminho base das credenciais como variável de ambiente (opcional)
