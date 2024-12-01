@@ -23,7 +23,7 @@ public class ImageService {
             return this.uploadFile(multipartFile.getInputStream(), multipartFile, fileName, typeStorage);
         } catch (Exception e) {
             e.printStackTrace();
-            return "Image couldn't upload, Something went wrong";
+            throw new IllegalArgumentException("Image couldn't upload, Something went wrong");
         }
     }
 
@@ -62,7 +62,7 @@ public class ImageService {
     public String getImgURL(String fileName, String typeStorage) {
         BucketFirebase bucketFirebase = this.defineKeyBucket(typeStorage);
         if (bucketFirebase == null) {
-            return "Invalid storage type: " + typeStorage;
+            throw new IllegalArgumentException("Image couldn't upload, Something went wrong");
         }
 
         try (InputStream inputStream = ImageService.class.getClassLoader().getResourceAsStream(bucketFirebase.getKey())) {
@@ -78,7 +78,7 @@ public class ImageService {
             }
         } catch (IOException e) {
             e.printStackTrace();
-            return "Error while getting image link";
+            throw new IllegalArgumentException("Error while getting image link");
         }
     }
 
