@@ -21,7 +21,7 @@ WORKDIR /app
 COPY --from=builder /build/target/*.jar /app/app.jar
 
 # Copia os arquivos de credenciais do Firebase para o contêiner final
-COPY --from=builder /build/classes/target/*.json /app/config/
+COPY --from=builder /build/target/classes/*.json /app/config/
 
 # Define o caminho base das credenciais como variável de ambiente (opcional)
 ENV CREDENTIALS_PATH=/app/config/
