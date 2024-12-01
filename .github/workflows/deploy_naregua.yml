@@ -15,7 +15,9 @@ jobs:
 
       # Baixar a imagem mais recente do Docker Hub
       - name: Pull Docker image
-        run: docker pull melissaneves/naregua-api:latest
+        run: |
+          docker pull melissaneves/naregua-api:latest
+          docker images | grep melissaneves/naregua-api
 
       # Parar o container existente, caso esteja em execução
       - name: Stop Docker container (if running)
@@ -36,4 +38,6 @@ jobs:
       # Executar o novo container Docker com a nova imagem, montando as chaves diretamente
       - name: Run new Docker container
         run: |
+          |
           docker run --name naregua-api -d -p 8080:8080 -v /home/ubuntu/config:/app/config melissaneves/naregua-api:latest
+          docker ps | grep naregua-api
