@@ -6,7 +6,7 @@ LABEL author="melissaneves"
 WORKDIR /build
 
 # Copia o conteúdo do projeto para o contêiner
-COPY .. .
+COPY . .
 
 # Executa o Maven para construir o projeto
 RUN mvn clean package -DskipTests -Dcheckstyle.skip=true
@@ -17,10 +17,14 @@ FROM openjdk:17-slim
 # Define o diretório de trabalho para a aplicação
 WORKDIR /app
 
+# Cria o diretório /app/config se não existir
+RUN mkdir -p /app/config
+
 # Copia o JAR gerado na etapa de construção para o contêiner final
 COPY --from=builder /build/target/*.jar /app/app.jar
 
-# Copia os arquivos de credenciais do Firebase para o contêiner final
+# Copia os arquivos de credenciais do Firebase da pasta de build para o contêiner
+# Tentamos copiar diretamente de target/classes para /app/config/
 COPY --from=builder /build/target/classes/*.json /app/config/
 
 # Define o caminho base das credenciais como variável de ambiente (opcional)
@@ -28,4 +32,3 @@ ENV CREDENTIALS_PATH=/app/config/
 
 # Define o comando padrão para executar o aplicativo
 CMD ["java", "-jar", "app.jar"]
-
