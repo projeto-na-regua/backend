@@ -56,7 +56,8 @@ public class FuncionarioService {
     @Autowired
     private ServicoRepository servicoRepository;
 
-    private final ImageService imageService;
+    @Autowired
+    private ImageService imageService;
 
 
     @Autowired
@@ -67,6 +68,9 @@ public class FuncionarioService {
 
     @Autowired
     private Global global;
+
+    @Autowired
+    private UsuarioMapper usuarioService;
 
     public boolean isCliente(String token){
         return usuarioRepository.findById(Integer.valueOf(tk.getUserIdByToken(token))).get().getDtype().equals("Cliente");
@@ -81,7 +85,7 @@ public class FuncionarioService {
             throw new ResponseStatusException(HttpStatusCode.valueOf(204));
         }
 
-        return UsuarioMapper.toDto(barbeiros);
+        return usuarioService.toDto(barbeiros);
     }
 
     public List<BarbeiroConsulta> getFuncionariosCliente(String token, Integer idBarbearia){
@@ -92,7 +96,7 @@ public class FuncionarioService {
             throw new ResponseStatusException(HttpStatusCode.valueOf(204));
         }
 
-        return UsuarioMapper.toDto(barbeiros);
+        return usuarioService.toDto(barbeiros);
     }
 
     public List<String> getImagePerfilCliente(String token, Integer idBarbearia) {
@@ -132,7 +136,7 @@ public class FuncionarioService {
             throw new ResponseStatusException(HttpStatusCode.valueOf(204));
         }
 
-        return UsuarioMapper.toDto(barbeiros);
+        return usuarioService.toDto(barbeiros);
     }
 
     public List<BarbeiroConsulta> getFuncionariosByServicoForCliente(String token, Integer idServico){
@@ -154,13 +158,14 @@ public class FuncionarioService {
             throw new ResponseStatusException(HttpStatusCode.valueOf(204));
         }
 
-        return UsuarioMapper.toDto(barbeiros);
+        return usuarioService.toDto(barbeiros);
     }
 
     public BarbeiroConsulta getFuncionarioEspecifico(String email, String token){
         validarPermissioes(token);
         validarBarbeiro(email);
-        return mapper.map(barbeiroRepository.findByEmail(email), BarbeiroConsulta.class);
+        Barbeiro barbeiro = barbeiroRepository.findByEmail(email);
+        return new BarbeiroConsulta(barbeiro, imageService.getImgURL(barbeiro.getImgPerfil(), "usuario"));
     }
 
 
@@ -169,8 +174,8 @@ public class FuncionarioService {
         validarBarbeiroConflito(nvBarbeiro.getEmail());
         Barbeiro b = mapper.map(nvBarbeiro, Barbeiro.class);
         b.setBarbearia(getBarbeariaByToken(token));
-        barbeiroRepository.save(b);
-        return mapper.map(b, BarbeiroConsulta.class);
+        Barbeiro barbeiro = barbeiroRepository.save(b);
+        return new BarbeiroConsulta(barbeiro, imageService.getImgURL(barbeiro.getImgPerfil(), "usuario"));
     }
 
 

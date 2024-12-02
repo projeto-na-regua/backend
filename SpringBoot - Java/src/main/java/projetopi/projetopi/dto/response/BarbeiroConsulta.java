@@ -25,4 +25,12 @@ public class BarbeiroConsulta {
         this.imgPerfil = barbeiro.getImgPerfil();
         this.especialidade = barbeiro.getEspecialidade() == null ? null : barbeiro.getEspecialidade().getNome();
     }
+
+    public BarbeiroConsulta(Barbeiro barbeiro, String linkImg) {
+        this.id = barbeiro.getId();
+        this.nome = barbeiro.getNome();
+        this.email = barbeiro.getEmail();
+        this.imgPerfil = linkImg;
+        this.especialidade = barbeiro.getEspecialidade() == null ? null : barbeiro.getEspecialidade().getNome();
+    }
 }

@@ -39,6 +39,9 @@ public class UsuarioService {
     public ModelMapper mapper;
 
     @Autowired
+    private UsuarioMapper usuarioMapper;
+
+    @Autowired
     private ImageService imageService;
     @Autowired
     private EnderecoService enderecoService;
@@ -66,7 +69,7 @@ public class UsuarioService {
         global.validarEnderecoCadastrado(endereco);
 
         Integer idEndereco = endereco.getId();
-        Cliente cliente = UsuarioMapper.toDto(nvCliente);
+        Cliente cliente = usuarioMapper.toDto(nvCliente);
 
         if (file != null && !file.isEmpty()) {
             String fileName = imageService.upload(file, "usuario");
