@@ -48,8 +48,9 @@ public class UsuarioMapper {
         for (Barbeiro b: barbeiros){
 
             dtos.add(new BarbeiroConsulta(b,
-                    imageService.getImgURL(
+
                     b.getImgPerfil() == null ? null :
+                    imageService.getImgURL(
                     b.getImgPerfil(), "usuario")));
         }
         return dtos;
