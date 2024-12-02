@@ -35,8 +35,7 @@ jobs:
       # Copiar as chaves para o diretório
       - name: Copy Firebase keys to host directory
         run: |
-          cp /home/ubuntu/chat-5568f-firebase-adminsdk-unsxe-21134a8356.json /home/ubuntu/naregua-upload-firebase-adminsdk-9hly7-454496d7de.json /home/ubuntu/upload-comunidade-firebase-adminsdk-sxo3w-56c4ed2507.json /home/ubuntu/upload-galeria-firebase-adminsdk-d6ewd-34985e2190.json /home/ubuntu/upload-usuarios-firebase-adminsdk-6r1vz-cfc61531f3.json /home/ubuntu/config/
-
+           cp /home/ubuntu/chat-5568f-firebase-adminsdk-unsxe-21134a8356.json /home/ubuntu/naregua-upload-firebase-adminsdk-9hly7-454496d7de.json /home/ubuntu/upload-comunidade-firebase-adminsdk-sxo3w-56c4ed2507.json /home/ubuntu/upload-galeria-firebase-adminsdk-d6ewd-34985e2190.json /home/ubuntu/upload-usuarios-firebase-adminsdk-6r1vz-cfc61531f3.json /home/ubuntu/config/
       # Executar o novo container Docker com a nova imagem, montando as chaves diretamente
       - name: Run new Docker container
         run: |
