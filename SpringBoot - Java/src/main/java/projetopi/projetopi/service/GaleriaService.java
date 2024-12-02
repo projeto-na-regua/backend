@@ -56,7 +56,7 @@ public class GaleriaService {
         List<ImgsGaleria> images = galeriaRepository.findByClienteIdAndIsActiveTrueOrIsActiveIsNull(id);
 
         List<GaleriaConsulta> dtos = images.stream()
-                .map(img -> new GaleriaConsulta(img, imageService.getImgURL("galeria", img.getImagem())))
+                .map(img -> new GaleriaConsulta(img, imageService.getImgURL(img.getImagem(), "galeria")))
                 .collect(Collectors.toList());
 
         if (images.isEmpty()) throw new ResponseStatusException(HttpStatusCode.valueOf(204));
