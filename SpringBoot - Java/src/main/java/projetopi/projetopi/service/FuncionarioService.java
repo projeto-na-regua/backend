@@ -165,7 +165,7 @@ public class FuncionarioService {
         validarPermissioes(token);
         validarBarbeiro(email);
         Barbeiro barbeiro = barbeiroRepository.findByEmail(email);
-        return new BarbeiroConsulta(barbeiro, imageService.getImgURL(barbeiro.getImgPerfil(), "usuario"));
+        return new BarbeiroConsulta(barbeiro, barbeiro.getImgPerfil() == null ? null : imageService.getImgURL(barbeiro.getImgPerfil(), "usuario"));
     }
 
 
@@ -175,7 +175,7 @@ public class FuncionarioService {
         Barbeiro b = mapper.map(nvBarbeiro, Barbeiro.class);
         b.setBarbearia(getBarbeariaByToken(token));
         Barbeiro barbeiro = barbeiroRepository.save(b);
-        return new BarbeiroConsulta(barbeiro, imageService.getImgURL(barbeiro.getImgPerfil(), "usuario"));
+        return new BarbeiroConsulta(barbeiro, barbeiro.getImgPerfil() == null ? null : imageService.getImgURL(barbeiro.getImgPerfil(), "usuario"));
     }
 
 
