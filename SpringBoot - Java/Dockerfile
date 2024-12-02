@@ -38,5 +38,6 @@ ENV GOOGLE_APPLICATION_CREDENTIALS_UPLOAD_GALERIA="/app/config/upload-galeria-fi
 ENV GOOGLE_APPLICATION_CREDENTIALS_UPLOAD_USUARIOS="/app/config/upload-usuarios-firebase-adminsdk-6r1vz-cfc61531f3.json"
 
 
+
 # Define o comando padrão para executar o aplicativo
 CMD ["java", "-jar", "app.jar"]
