@@ -30,6 +30,9 @@ public class EnderecoService {
     @Autowired
     private Global global;
 
+    @Autowired
+    private UsuarioMapper usuarioMapper;
+
 
     private static final Logger log = LoggerFactory.getLogger(UsuarioController.class);
 
@@ -74,7 +77,7 @@ public class EnderecoService {
     }
 
     public Endereco cadastroEndereco(CadastroCliente nvCliente) {
-        Endereco endereco = UsuarioMapper.toDtoEndereco(nvCliente);
+        Endereco endereco = usuarioMapper.toDtoEndereco(nvCliente);
         setCoordenadas(endereco);
         return repository.save(endereco);
     }
