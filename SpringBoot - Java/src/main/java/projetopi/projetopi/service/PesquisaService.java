@@ -54,7 +54,7 @@ public class PesquisaService {
     public List<BarbeariaPesquisa> filtroBarberiasNome(String token, String nomeBarbearia) {
         global.validaCliente(token, "Cliente");
         List<Barbearia> barbearias = barbeariasRepository.findByNomeNegocioContaining(nomeBarbearia);
-        return barbearias.stream().map(BarbeariaPesquisa::new).collect(Collectors.toList());
+        return dtoLisBarbearia(barbearias);
     }
 
 
