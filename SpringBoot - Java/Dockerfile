@@ -30,7 +30,14 @@ COPY --from=builder /build/target/*.jar /app/app.jar
 COPY --from=builder /build/target/classes/*.json /app/config/
 
 # Define o caminho base das credenciais como variável de ambiente (opcional)
-ENV CREDENTIALS_PATH=/app/config/
+# Define as variáveis de ambiente para apontar para os arquivos de credenciais do Firebase
+ENV GOOGLE_APPLICATION_CREDENTIALS_CHAT="/app/config/chat-5568f-firebase-adminsdk-unsxe-21134a8356.json"
+ENV GOOGLE_APPLICATION_CREDENTIALS_NAREGUA_UPLOAD="/app/config/naregua-upload-firebase-adminsdk-9hly7-454496d7de.json"
+ENV GOOGLE_APPLICATION_CREDENTIALS_UPLOAD_COMUNIDADE="/app/config/upload-comunidade-firebase-adminsdk-sxo3w-56c4ed2507.json"
+ENV GOOGLE_APPLICATION_CREDENTIALS_UPLOAD_GALERIA="/app/config/upload-galeria-firebase-adminsdk-d6ewd-34985e2190.json"
+ENV GOOGLE_APPLICATION_CREDENTIALS_UPLOAD_USUARIOS="/app/config/upload-usuarios-firebase-adminsdk-6r1vz-cfc61531f3.json"
+
+
 
 # Define o comando padrão para executar o aplicativo
 CMD ["java", "-jar", "app.jar"]

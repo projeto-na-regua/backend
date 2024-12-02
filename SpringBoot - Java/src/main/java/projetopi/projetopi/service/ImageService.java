@@ -1,4 +1,3 @@
-
 package projetopi.projetopi.service;
 
 import com.google.auth.Credentials;
@@ -8,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import projetopi.projetopi.dto.response.BucketFirebase;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
@@ -38,17 +38,23 @@ public class ImageService {
                 .setContentType(multipartFile.getContentType())
                 .build();
 
-        // Obtém credenciais para o Firebase
-        try (InputStream credentialsStream = ImageService.class.getClassLoader().getResourceAsStream(bucketFirebase.getKey())) {
+        // Obter credenciais a partir do caminho configurado nas variáveis de ambiente
+        String credentialsPath = System.getenv(bucketFirebase.getKey());
+        if (credentialsPath == null) {
+            throw new IllegalArgumentException("Firebase credentials not found in environment variables.");
+        }
+
+        try (InputStream credentialsStream = new FileInputStream(credentialsPath)) {
             Credentials credentials = GoogleCredentials.fromStream(credentialsStream);
             Storage storage = StorageOptions.newBuilder().setCredentials(credentials).build().getService();
 
             // Faz o upload do InputStream diretamente para o Firebase
-            storage.create(blobInfo, inputStream.readAllBytes());
+            storage.create(blobInfo, inputStream);
 
-//            String DOWNLOAD_URL = "https://firebasestorage.googleapis.com/v0/b/" + bucketFirebase.getName() + "/o/%s?alt=media";
-//            return String.format(DOWNLOAD_URL, URLEncoder.encode(fileName, StandardCharsets.UTF_8));
             return fileName;
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new IllegalArgumentException("Error during image upload");
         }
     }
 
@@ -62,19 +68,27 @@ public class ImageService {
     public String getImgURL(String fileName, String typeStorage) {
         BucketFirebase bucketFirebase = this.defineKeyBucket(typeStorage);
         if (bucketFirebase == null) {
-            throw new IllegalArgumentException("Image couldn't upload, Something went wrong");
+            throw new IllegalArgumentException("Invalid storage type: " + typeStorage);
         }
 
-        try (InputStream inputStream = ImageService.class.getClassLoader().getResourceAsStream(bucketFirebase.getKey())) {
-            Credentials credentials = GoogleCredentials.fromStream(inputStream);
-            Storage storage = StorageOptions.newBuilder().setCredentials(credentials).build().getService();
-            Blob blob = storage.get(BlobId.of(bucketFirebase.getName(), fileName));
+        try {
+            // Obtém o caminho da variável de ambiente para as credenciais
+            String credentialsPath = System.getenv(bucketFirebase.getKey());
+            if (credentialsPath == null) {
+                throw new IllegalArgumentException("Firebase credentials not found in environment variables.");
+            }
 
-            if (blob != null && blob.exists()) {
-                String DOWNLOAD_URL = "https://firebasestorage.googleapis.com/v0/b/" + bucketFirebase.getName() + "/o/%s?alt=media";
-                return String.format(DOWNLOAD_URL, URLEncoder.encode(fileName, StandardCharsets.UTF_8));
-            } else {
-                return "File not found";
+            try (InputStream inputStream = new FileInputStream(credentialsPath)) {
+                Credentials credentials = GoogleCredentials.fromStream(inputStream);
+                Storage storage = StorageOptions.newBuilder().setCredentials(credentials).build().getService();
+                Blob blob = storage.get(BlobId.of(bucketFirebase.getName(), fileName));
+
+                if (blob != null && blob.exists()) {
+                    String DOWNLOAD_URL = "https://firebasestorage.googleapis.com/v0/b/" + bucketFirebase.getName() + "/o/%s?alt=media";
+                    return String.format(DOWNLOAD_URL, URLEncoder.encode(fileName, StandardCharsets.UTF_8));
+                } else {
+                    return "File not found";
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -85,15 +99,15 @@ public class ImageService {
     public BucketFirebase defineKeyBucket(String typeStorage) {
         switch (typeStorage.toLowerCase()) {
             case "barbearia":
-                return new BucketFirebase("naregua-upload.appspot.com", "naregua-upload-firebase-adminsdk-9hly7-454496d7de.json");
+                return new BucketFirebase("naregua-upload.appspot.com", "GOOGLE_APPLICATION_CREDENTIALS_NAREGUA_UPLOAD");
             case "usuario":
-                return new BucketFirebase("upload-usuarios.appspot.com", "upload-usuarios-firebase-adminsdk-6r1vz-cfc61531f3.json");
+                return new BucketFirebase("upload-usuarios.appspot.com", "GOOGLE_APPLICATION_CREDENTIALS_UPLOAD_USUARIOS");
             case "comunidade":
-                return new BucketFirebase("upload-comunidade.appspot.com", "upload-comunidade-firebase-adminsdk-sxo3w-56c4ed2507.json");
+                return new BucketFirebase("upload-comunidade.appspot.com", "GOOGLE_APPLICATION_CREDENTIALS_UPLOAD_COMUNIDADE");
             case "galeria":
-                return new BucketFirebase("upload-galeria.appspot.com", "upload-galeria-firebase-adminsdk-d6ewd-34985e2190.json");
+                return new BucketFirebase("upload-galeria.appspot.com", "GOOGLE_APPLICATION_CREDENTIALS_UPLOAD_GALERIA");
             case "chat":
-                return new BucketFirebase("chat-5568f.appspot.com", "chat-5568f-firebase-adminsdk-unsxe-21134a8356.json");
+                return new BucketFirebase("chat-5568f.appspot.com", "GOOGLE_APPLICATION_CREDENTIALS_CHAT");
             default:
                 return null; // Retorna null para tipos inválidos
         }
